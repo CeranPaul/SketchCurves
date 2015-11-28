@@ -13,6 +13,21 @@
 		81414B071C08CE5E00A9DE83 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 81414B061C08CE5E00A9DE83 /* Assets.xcassets */; };
 		81414B0A1C08CE5E00A9DE83 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81414B081C08CE5E00A9DE83 /* LaunchScreen.storyboard */; };
 		81414B151C08CE5E00A9DE83 /* SketchGenTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81414B141C08CE5E00A9DE83 /* SketchGenTests.swift */; };
+		81414B241C08CEE200A9DE83 /* LineSeg.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81414B1F1C08CEE200A9DE83 /* LineSeg.swift */; };
+		81414B251C08CEE200A9DE83 /* OrthoVol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81414B201C08CEE200A9DE83 /* OrthoVol.swift */; };
+		81414B261C08CEE200A9DE83 /* PenCurve.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81414B211C08CEE200A9DE83 /* PenCurve.swift */; };
+		81414B271C08CEE200A9DE83 /* PenTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81414B221C08CEE200A9DE83 /* PenTypes.swift */; };
+		81414B281C08CEE200A9DE83 /* Point3D.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81414B231C08CEE200A9DE83 /* Point3D.swift */; };
+		81414B2B1C08CF0500A9DE83 /* Arc.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81414B291C08CF0500A9DE83 /* Arc.swift */; };
+		81414B2C1C08CF0500A9DE83 /* ArcPointsError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81414B2A1C08CF0500A9DE83 /* ArcPointsError.swift */; };
+		81414B2F1C08CF2B00A9DE83 /* CoincidentPointsError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81414B2D1C08CF2B00A9DE83 /* CoincidentPointsError.swift */; };
+		81414B301C08CF2B00A9DE83 /* Easel2D.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81414B2E1C08CF2B00A9DE83 /* Easel2D.swift */; };
+		81414B321C08CF5E00A9DE83 /* Vector3D.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81414B311C08CF5E00A9DE83 /* Vector3D.swift */; };
+		81414B361C08CF8C00A9DE83 /* LineSegTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81414B331C08CF8C00A9DE83 /* LineSegTests.swift */; };
+		81414B371C08CF8C00A9DE83 /* OrthoVolTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81414B341C08CF8C00A9DE83 /* OrthoVolTests.swift */; };
+		81414B381C08CF8C00A9DE83 /* Vector3DTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81414B351C08CF8C00A9DE83 /* Vector3DTests.swift */; };
+		81414B3A1C08CFAB00A9DE83 /* ArcTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81414B391C08CFAB00A9DE83 /* ArcTests.swift */; };
+		81414B3C1C090F2500A9DE83 /* CurveDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81414B3B1C090F2500A9DE83 /* CurveDemo.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -36,6 +51,21 @@
 		81414B101C08CE5E00A9DE83 /* SketchGenTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SketchGenTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		81414B141C08CE5E00A9DE83 /* SketchGenTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SketchGenTests.swift; sourceTree = "<group>"; };
 		81414B161C08CE5E00A9DE83 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		81414B1F1C08CEE200A9DE83 /* LineSeg.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LineSeg.swift; sourceTree = "<group>"; };
+		81414B201C08CEE200A9DE83 /* OrthoVol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OrthoVol.swift; sourceTree = "<group>"; };
+		81414B211C08CEE200A9DE83 /* PenCurve.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PenCurve.swift; sourceTree = "<group>"; };
+		81414B221C08CEE200A9DE83 /* PenTypes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PenTypes.swift; sourceTree = "<group>"; };
+		81414B231C08CEE200A9DE83 /* Point3D.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Point3D.swift; sourceTree = "<group>"; };
+		81414B291C08CF0500A9DE83 /* Arc.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Arc.swift; sourceTree = "<group>"; };
+		81414B2A1C08CF0500A9DE83 /* ArcPointsError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ArcPointsError.swift; sourceTree = "<group>"; };
+		81414B2D1C08CF2B00A9DE83 /* CoincidentPointsError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoincidentPointsError.swift; sourceTree = "<group>"; };
+		81414B2E1C08CF2B00A9DE83 /* Easel2D.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Easel2D.swift; sourceTree = "<group>"; };
+		81414B311C08CF5E00A9DE83 /* Vector3D.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Vector3D.swift; sourceTree = "<group>"; };
+		81414B331C08CF8C00A9DE83 /* LineSegTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LineSegTests.swift; sourceTree = "<group>"; };
+		81414B341C08CF8C00A9DE83 /* OrthoVolTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OrthoVolTests.swift; sourceTree = "<group>"; };
+		81414B351C08CF8C00A9DE83 /* Vector3DTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Vector3DTests.swift; sourceTree = "<group>"; };
+		81414B391C08CFAB00A9DE83 /* ArcTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ArcTests.swift; sourceTree = "<group>"; };
+		81414B3B1C090F2500A9DE83 /* CurveDemo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CurveDemo.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -77,6 +107,17 @@
 		81414AFE1C08CE5E00A9DE83 /* SketchGen */ = {
 			isa = PBXGroup;
 			children = (
+				81414B3B1C090F2500A9DE83 /* CurveDemo.swift */,
+				81414B311C08CF5E00A9DE83 /* Vector3D.swift */,
+				81414B2D1C08CF2B00A9DE83 /* CoincidentPointsError.swift */,
+				81414B2E1C08CF2B00A9DE83 /* Easel2D.swift */,
+				81414B291C08CF0500A9DE83 /* Arc.swift */,
+				81414B2A1C08CF0500A9DE83 /* ArcPointsError.swift */,
+				81414B1F1C08CEE200A9DE83 /* LineSeg.swift */,
+				81414B201C08CEE200A9DE83 /* OrthoVol.swift */,
+				81414B211C08CEE200A9DE83 /* PenCurve.swift */,
+				81414B221C08CEE200A9DE83 /* PenTypes.swift */,
+				81414B231C08CEE200A9DE83 /* Point3D.swift */,
 				81414AFF1C08CE5E00A9DE83 /* AppDelegate.swift */,
 				81414B011C08CE5E00A9DE83 /* ViewController.swift */,
 				81414B031C08CE5E00A9DE83 /* Main.storyboard */,
@@ -90,6 +131,10 @@
 		81414B131C08CE5E00A9DE83 /* SketchGenTests */ = {
 			isa = PBXGroup;
 			children = (
+				81414B391C08CFAB00A9DE83 /* ArcTests.swift */,
+				81414B331C08CF8C00A9DE83 /* LineSegTests.swift */,
+				81414B341C08CF8C00A9DE83 /* OrthoVolTests.swift */,
+				81414B351C08CF8C00A9DE83 /* Vector3DTests.swift */,
 				81414B141C08CE5E00A9DE83 /* SketchGenTests.swift */,
 				81414B161C08CE5E00A9DE83 /* Info.plist */,
 			);
@@ -146,6 +191,7 @@
 				TargetAttributes = {
 					81414AFB1C08CE5E00A9DE83 = {
 						CreatedOnToolsVersion = 7.1.1;
+						DevelopmentTeam = K62A888Z9M;
 					};
 					81414B0F1C08CE5E00A9DE83 = {
 						CreatedOnToolsVersion = 7.1.1;
@@ -198,7 +244,18 @@
 			buildActionMask = 2147483647;
 			files = (
 				81414B021C08CE5E00A9DE83 /* ViewController.swift in Sources */,
+				81414B261C08CEE200A9DE83 /* PenCurve.swift in Sources */,
+				81414B301C08CF2B00A9DE83 /* Easel2D.swift in Sources */,
+				81414B3C1C090F2500A9DE83 /* CurveDemo.swift in Sources */,
+				81414B321C08CF5E00A9DE83 /* Vector3D.swift in Sources */,
+				81414B2B1C08CF0500A9DE83 /* Arc.swift in Sources */,
+				81414B2F1C08CF2B00A9DE83 /* CoincidentPointsError.swift in Sources */,
+				81414B241C08CEE200A9DE83 /* LineSeg.swift in Sources */,
+				81414B251C08CEE200A9DE83 /* OrthoVol.swift in Sources */,
 				81414B001C08CE5E00A9DE83 /* AppDelegate.swift in Sources */,
+				81414B271C08CEE200A9DE83 /* PenTypes.swift in Sources */,
+				81414B281C08CEE200A9DE83 /* Point3D.swift in Sources */,
+				81414B2C1C08CF0500A9DE83 /* ArcPointsError.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -207,6 +264,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				81414B151C08CE5E00A9DE83 /* SketchGenTests.swift in Sources */,
+				81414B3A1C08CFAB00A9DE83 /* ArcTests.swift in Sources */,
+				81414B361C08CF8C00A9DE83 /* LineSegTests.swift in Sources */,
+				81414B371C08CF8C00A9DE83 /* OrthoVolTests.swift in Sources */,
+				81414B381C08CF8C00A9DE83 /* Vector3DTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -327,10 +388,13 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = SketchGen/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.cerandm.SketchGen;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 			};
 			name = Debug;
 		};
@@ -338,10 +402,13 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = SketchGen/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.cerandm.SketchGen;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 			};
 			name = Release;
 		};
