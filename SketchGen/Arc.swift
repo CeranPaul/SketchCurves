@@ -1,15 +1,14 @@
 //
 //  Arc.swift
-//  CurveLab
 //
 //  Created by Paul Hollingshead on 11/7/15.
-//  Copyright © 2015 Ceran Digital Media. All rights reserved.
+//  Copyright © 2015 Ceran Digital Media. All rights reserved.  See LICENSE.md
 //
 
 import Foundation
 import UIKit
 
-/// A circular arc
+/// A circular arc, either whole, or a portion
 public class Arc: PenCurve {
     
     /// Point around which the arc is swept
@@ -39,12 +38,12 @@ public class Arc: PenCurve {
     /// Which direction should be swept?
     var isClockwise:  Bool
     
-    
     /// The enum that hints at the meaning of the curve
     var usage: PenTypes
     
     /// The box that contains the curve
     var extent: OrthoVol
+    
     
     
     /// Build an arc from three points
@@ -95,7 +94,7 @@ public class Arc: PenCurve {
     
     /// Find the point along this line segment specified by the parameter 't'
     /// - Warning:  No checks are made for the value of t being inside some range
-    func pointAt(t: Double) -> Point3D  {
+    public func pointAt(t: Double) -> Point3D  {
         
         let deltaAngle = t * self.range
         
@@ -106,7 +105,7 @@ public class Arc: PenCurve {
     
     /// Angle should be in radians
     /// Assumes XY plane
-    func pointAtAngle(theta: Double) -> Point3D  {
+    public func pointAtAngle(theta: Double) -> Point3D  {
         
         let deltaX = self.rad * cos(theta)
         let deltaY = self.rad * sin(theta)
@@ -120,8 +119,21 @@ public class Arc: PenCurve {
         self.usage = purpose
     }
     
+    public func getOneEnd() -> Point3D {   // This may not give the correct answer, depend on 'isClockwise'
+        return start
+    }
+    
+    public func getOtherEnd() -> Point3D {   // This may not give the correct answer, depend on 'isClockwise'
+        return finish
+    }
+    
+    public func getRadius() -> Double   {
+        return rad
+    }
+    
+    
     /// Plot the arc segment.  This will be called by the UIView 'drawRect' function
-    func draw(context: CGContext)  {
+    public func draw(context: CGContext)  {
         
         let xCG: CGFloat = CGFloat(self.ctr.x)    // Convert to "CGFloat", and throw out Z coordinate
         let yCG: CGFloat = CGFloat(self.ctr.y)

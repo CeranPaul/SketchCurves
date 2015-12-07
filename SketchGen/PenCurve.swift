@@ -20,8 +20,13 @@ protocol PenCurve   {
     /// Supply the point on the curve for the input parameter value
     func pointAt(t: Double) -> Point3D
     
+    /// Retrieve the starting end
+    func getOneEnd() -> Point3D
+    
+    /// Retrieve the finishing end
+    func getOtherEnd() -> Point3D
+    
     /// Plot the curve.  Your classic example of polymorphism
     func draw(context: CGContext)
-    
     
 }

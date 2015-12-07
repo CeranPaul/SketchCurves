@@ -28,6 +28,15 @@
 		81414B381C08CF8C00A9DE83 /* Vector3DTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81414B351C08CF8C00A9DE83 /* Vector3DTests.swift */; };
 		81414B3A1C08CFAB00A9DE83 /* ArcTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81414B391C08CFAB00A9DE83 /* ArcTests.swift */; };
 		81414B3C1C090F2500A9DE83 /* CurveDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81414B3B1C090F2500A9DE83 /* CurveDemo.swift */; };
+		814F133C1C153ED0004AB22B /* Point3D.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81414B231C08CEE200A9DE83 /* Point3D.swift */; };
+		814F133D1C153ED7004AB22B /* Arc.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81414B291C08CF0500A9DE83 /* Arc.swift */; };
+		814F133E1C153EDD004AB22B /* Vector3D.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81414B311C08CF5E00A9DE83 /* Vector3D.swift */; };
+		814F133F1C153EEA004AB22B /* OrthoVol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81414B201C08CEE200A9DE83 /* OrthoVol.swift */; };
+		814F13401C153EF4004AB22B /* PenCurve.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81414B211C08CEE200A9DE83 /* PenCurve.swift */; };
+		814F13411C153EFA004AB22B /* PenTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81414B221C08CEE200A9DE83 /* PenTypes.swift */; };
+		814F13421C153F16004AB22B /* CoincidentPointsError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81414B2D1C08CF2B00A9DE83 /* CoincidentPointsError.swift */; };
+		814F13431C153F1E004AB22B /* ArcPointsError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81414B2A1C08CF0500A9DE83 /* ArcPointsError.swift */; };
+		814F13441C153F3E004AB22B /* LineSeg.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81414B1F1C08CEE200A9DE83 /* LineSeg.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -263,9 +272,18 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				814F13411C153EFA004AB22B /* PenTypes.swift in Sources */,
+				814F13441C153F3E004AB22B /* LineSeg.swift in Sources */,
 				81414B151C08CE5E00A9DE83 /* SketchGenTests.swift in Sources */,
+				814F13401C153EF4004AB22B /* PenCurve.swift in Sources */,
 				81414B3A1C08CFAB00A9DE83 /* ArcTests.swift in Sources */,
+				814F133D1C153ED7004AB22B /* Arc.swift in Sources */,
+				814F133E1C153EDD004AB22B /* Vector3D.swift in Sources */,
+				814F133F1C153EEA004AB22B /* OrthoVol.swift in Sources */,
 				81414B361C08CF8C00A9DE83 /* LineSegTests.swift in Sources */,
+				814F13431C153F1E004AB22B /* ArcPointsError.swift in Sources */,
+				814F133C1C153ED0004AB22B /* Point3D.swift in Sources */,
+				814F13421C153F16004AB22B /* CoincidentPointsError.swift in Sources */,
 				81414B371C08CF8C00A9DE83 /* OrthoVolTests.swift in Sources */,
 				81414B381C08CF8C00A9DE83 /* Vector3DTests.swift in Sources */,
 			);
@@ -455,6 +473,7 @@
 				81414B1B1C08CE5E00A9DE83 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		81414B1C1C08CE5E00A9DE83 /* Build configuration list for PBXNativeTarget "SketchGenTests" */ = {
 			isa = XCConfigurationList;
@@ -463,6 +482,7 @@
 				81414B1E1C08CE5E00A9DE83 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

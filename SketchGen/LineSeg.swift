@@ -2,6 +2,7 @@
 //  LineSeg.swift
 //
 //  Created by Paul on 10/28/15.
+//  Copyright © 2015 Ceran Digital Media. All rights reserved.  See LICENSE.md
 //
 
 import Foundation
@@ -47,7 +48,7 @@ public class LineSeg: PenCurve {
     
     /// Find the point along this line segment specified by the parameter 't'
     /// - Warning:  No checks are made for the value of t being inside some range
-    func pointAt(t: Double) -> Point3D  {
+    public func pointAt(t: Double) -> Point3D  {
         
         let wholeVector = Vector3D.built(self.endAlpha, towards: self.endOmega)
         
@@ -77,7 +78,7 @@ public class LineSeg: PenCurve {
     
     
     /// Plot the line segment.  This will be called by the UIView 'drawRect' function
-    func draw(context: CGContext)  {
+    public func draw(context: CGContext)  {
         
         var xCG: CGFloat = CGFloat(self.endAlpha.x)    // Convert to "CGFloat", and throw out Z coordinate
         var yCG: CGFloat = CGFloat(self.endAlpha.y)
