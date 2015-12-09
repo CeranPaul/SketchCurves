@@ -66,67 +66,67 @@ public struct  Point3D: Equatable {
         return transformed
     }
     
-//         // This falls apart if the perpendicular is not of unit length
-//    static func projectToPlane(pip: Point3D, enalp: Plane) -> Point3D  {
-//        
-//        if Plane.isCoincident(enalp, pip: pip) {return pip }    // Shortcut!
-//
-//        // TODO:  Generate an exception if it is not a unit vector
-//        let flag1 = enalp.normal.isUnit()
-//        
-//        
-//        
-//        let planeCenter = enalp.location   // Referred to multiple times
-//        
-//        let bridge = Vector3D.built(planeCenter, towards: pip)   // Not nomrmalized
-//
-//             // This can be positive, or negative
-//        let distanceOffPlane = Vector3D.dotProduct(bridge, rhs: enalp.normal)
-//        
-//            // Resolve "bridge" into components that are perpendicular to the plane and are parallel to it
-//        let bridgeNormComponent = enalp.normal * distanceOffPlane
-//        let bridgePlaneComponent = bridge - bridgeNormComponent
-//        
-//        return planeCenter.offset(bridgePlaneComponent)   // Ignore the component normal to the plane
-//    }
-//    
-//    /// Generate a point by intersecting the line and the plane
-//    static func intersectLinePlane(enil: Line, enalp: Plane) throws -> Point3D {
-//        
-//            // Bail if the line is parallel to the plane
-//        guard !enalp.isParallel(enil) else {
-//            throw ParallelError(enil: enil, enalp: enalp)
-//        }
-//        
-//        if Plane.isCoincident(enalp, pip: enil.origin)  {return enil.origin}    // Shortcut!
-//        
-//        
-//             // Resolve the line direction into components normal to the plane and in plane
-//        let lineNormMag = Vector3D.dotProduct(enil.direction, rhs: enalp.normal)
-//        let lineNormComponent = enalp.normal * lineNormMag
-//        let lineInPlaneComponent = enil.direction - lineNormComponent
-//        
-//        
-//        let projectedLineOrigin = Point3D.projectToPlane(enil.origin, enalp: enalp)
-//        
-//        var drop = Vector3D.built(enil.origin, towards: projectedLineOrigin)
-//        drop.normalize()
-//        
-//        let closure = Vector3D.dotProduct(enil.direction, rhs: drop)
-//        
-//        
-//        let separation = Point3D.dist(projectedLineOrigin, pt2: enil.origin)
-//        
-//        var factor = separation / lineNormComponent.length()
-//        
-//        if closure < 0.0 { factor = factor * -1.0 }   // Dependent on the line origin's position relative to 
-//                                                      //  the plane normal
-//            
-//        let inPlaneOffset = lineInPlaneComponent * factor
-//        
-//        return projectedLineOrigin.offset(inPlaneOffset)
-//    }
-//    
+         // This falls apart if the perpendicular is not of unit length
+    static func projectToPlane(pip: Point3D, enalp: Plane) -> Point3D  {
+        
+        if Plane.isCoincident(enalp, pip: pip) {return pip }    // Shortcut!
+
+        // TODO:  Generate an exception if it is not a unit vector
+        let flag1 = enalp.normal.isUnit()
+        
+        
+        
+        let planeCenter = enalp.location   // Referred to multiple times
+        
+        let bridge = Vector3D.built(planeCenter, towards: pip)   // Not nomrmalized
+
+             // This can be positive, or negative
+        let distanceOffPlane = Vector3D.dotProduct(bridge, rhs: enalp.normal)
+        
+            // Resolve "bridge" into components that are perpendicular to the plane and are parallel to it
+        let bridgeNormComponent = enalp.normal * distanceOffPlane
+        let bridgePlaneComponent = bridge - bridgeNormComponent
+        
+        return planeCenter.offset(bridgePlaneComponent)   // Ignore the component normal to the plane
+    }
+    
+    /// Generate a point by intersecting the line and the plane
+    static func intersectLinePlane(enil: Line, enalp: Plane) throws -> Point3D {
+        
+            // Bail if the line is parallel to the plane
+        guard !enalp.isParallel(enil) else {
+            throw ParallelError(enil: enil, enalp: enalp)
+        }
+        
+        if Plane.isCoincident(enalp, pip: enil.origin)  {return enil.origin}    // Shortcut!
+        
+        
+             // Resolve the line direction into components normal to the plane and in plane
+        let lineNormMag = Vector3D.dotProduct(enil.direction, rhs: enalp.normal)
+        let lineNormComponent = enalp.normal * lineNormMag
+        let lineInPlaneComponent = enil.direction - lineNormComponent
+        
+        
+        let projectedLineOrigin = Point3D.projectToPlane(enil.origin, enalp: enalp)
+        
+        var drop = Vector3D.built(enil.origin, towards: projectedLineOrigin)
+        drop.normalize()
+        
+        let closure = Vector3D.dotProduct(enil.direction, rhs: drop)
+        
+        
+        let separation = Point3D.dist(projectedLineOrigin, pt2: enil.origin)
+        
+        var factor = separation / lineNormComponent.length()
+        
+        if closure < 0.0 { factor = factor * -1.0 }   // Dependent on the line origin's position relative to
+                                                      //  the plane normal
+        
+        let inPlaneOffset = lineInPlaneComponent * factor
+        
+        return projectedLineOrigin.offset(inPlaneOffset)
+    }
+    
 
     static func midway(alpha: Point3D, beta: Point3D) -> Point3D   {
         

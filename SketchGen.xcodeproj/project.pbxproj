@@ -37,6 +37,11 @@
 		814F13421C153F16004AB22B /* CoincidentPointsError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81414B2D1C08CF2B00A9DE83 /* CoincidentPointsError.swift */; };
 		814F13431C153F1E004AB22B /* ArcPointsError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81414B2A1C08CF0500A9DE83 /* ArcPointsError.swift */; };
 		814F13441C153F3E004AB22B /* LineSeg.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81414B1F1C08CEE200A9DE83 /* LineSeg.swift */; };
+		81CDCC1F1C17E3FD00060C8D /* Line.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81CDCC1E1C17E3FD00060C8D /* Line.swift */; };
+		81CDCC211C17E41400060C8D /* ParallelError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81CDCC201C17E41400060C8D /* ParallelError.swift */; };
+		81CDCC231C17E44B00060C8D /* Plane.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81CDCC221C17E44B00060C8D /* Plane.swift */; };
+		81CDCC251C17E4D200060C8D /* CoincidentPlanesError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81CDCC241C17E4D200060C8D /* CoincidentPlanesError.swift */; };
+		81CDCC271C17E4F000060C8D /* ParallelPlanesError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81CDCC261C17E4F000060C8D /* ParallelPlanesError.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -75,6 +80,11 @@
 		81414B351C08CF8C00A9DE83 /* Vector3DTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Vector3DTests.swift; sourceTree = "<group>"; };
 		81414B391C08CFAB00A9DE83 /* ArcTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ArcTests.swift; sourceTree = "<group>"; };
 		81414B3B1C090F2500A9DE83 /* CurveDemo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CurveDemo.swift; sourceTree = "<group>"; };
+		81CDCC1E1C17E3FD00060C8D /* Line.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Line.swift; sourceTree = "<group>"; };
+		81CDCC201C17E41400060C8D /* ParallelError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ParallelError.swift; sourceTree = "<group>"; };
+		81CDCC221C17E44B00060C8D /* Plane.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Plane.swift; sourceTree = "<group>"; };
+		81CDCC241C17E4D200060C8D /* CoincidentPlanesError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoincidentPlanesError.swift; sourceTree = "<group>"; };
+		81CDCC261C17E4F000060C8D /* ParallelPlanesError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ParallelPlanesError.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -116,6 +126,11 @@
 		81414AFE1C08CE5E00A9DE83 /* SketchGen */ = {
 			isa = PBXGroup;
 			children = (
+				81CDCC261C17E4F000060C8D /* ParallelPlanesError.swift */,
+				81CDCC241C17E4D200060C8D /* CoincidentPlanesError.swift */,
+				81CDCC221C17E44B00060C8D /* Plane.swift */,
+				81CDCC201C17E41400060C8D /* ParallelError.swift */,
+				81CDCC1E1C17E3FD00060C8D /* Line.swift */,
 				81414B3B1C090F2500A9DE83 /* CurveDemo.swift */,
 				81414B311C08CF5E00A9DE83 /* Vector3D.swift */,
 				81414B2D1C08CF2B00A9DE83 /* CoincidentPointsError.swift */,
@@ -256,14 +271,19 @@
 				81414B261C08CEE200A9DE83 /* PenCurve.swift in Sources */,
 				81414B301C08CF2B00A9DE83 /* Easel2D.swift in Sources */,
 				81414B3C1C090F2500A9DE83 /* CurveDemo.swift in Sources */,
+				81CDCC211C17E41400060C8D /* ParallelError.swift in Sources */,
 				81414B321C08CF5E00A9DE83 /* Vector3D.swift in Sources */,
+				81CDCC231C17E44B00060C8D /* Plane.swift in Sources */,
+				81CDCC1F1C17E3FD00060C8D /* Line.swift in Sources */,
 				81414B2B1C08CF0500A9DE83 /* Arc.swift in Sources */,
 				81414B2F1C08CF2B00A9DE83 /* CoincidentPointsError.swift in Sources */,
+				81CDCC271C17E4F000060C8D /* ParallelPlanesError.swift in Sources */,
 				81414B241C08CEE200A9DE83 /* LineSeg.swift in Sources */,
 				81414B251C08CEE200A9DE83 /* OrthoVol.swift in Sources */,
 				81414B001C08CE5E00A9DE83 /* AppDelegate.swift in Sources */,
 				81414B271C08CEE200A9DE83 /* PenTypes.swift in Sources */,
 				81414B281C08CEE200A9DE83 /* Point3D.swift in Sources */,
+				81CDCC251C17E4D200060C8D /* CoincidentPlanesError.swift in Sources */,
 				81414B2C1C08CF0500A9DE83 /* ArcPointsError.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
