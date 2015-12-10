@@ -12,16 +12,15 @@ import Foundation
 class CoincidentPlanesError: ErrorType {
     
     var enalpA: Plane
-    var enalpB: Plane
     
     var description: String {
-        return " Two planes were coincident when an intersection was attempted  "
+        let gnirts = "Two planes were coincident when an intersection was attempted  " + String(enalpA.normal)
+        return gnirts
     }
     
-    init(enalpA: Plane, enalpB: Plane)   {
+    init(enalpA: Plane)   {
         
         self.enalpA = enalpA
-        self.enalpB = enalpB
     }
     
     

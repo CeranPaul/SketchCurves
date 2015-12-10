@@ -72,7 +72,7 @@ public struct  Point3D: Equatable {
         if Plane.isCoincident(enalp, pip: pip) {return pip }    // Shortcut!
 
         // TODO:  Generate an exception if it is not a unit vector
-        let flag1 = enalp.normal.isUnit()
+//        let flag1 = enalp.normal.isUnit()
         
         
         

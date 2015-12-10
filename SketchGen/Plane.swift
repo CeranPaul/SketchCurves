@@ -7,6 +7,7 @@
 
 import Foundation
 
+/// Unbounded flat surface
 public struct Plane   {
     
     /// A point to locate the plane
@@ -16,6 +17,27 @@ public struct Plane   {
     var normal: Vector3D
     
     
+    init(spot: Point3D, arrow: Vector3D) throws  {
+        
+        self.location = spot
+        self.normal = arrow
+        
+        // In an 'init', this cannot be done at the top
+        guard (!self.normal.isZero()) else  {throw ZeroVectorError(dir: self.normal)}
+        guard (self.normal.isUnit()) else  {throw NonUnitDirectionError(dir: self.normal)}
+    }
+    
+    
+    /// Does the argument point lie on the plane?
+    public static func isCoincident(flat: Plane, pip:  Point3D) -> Bool  {
+        
+        let bridge = Vector3D.built(flat.location, towards: pip)
+        
+        // This can be positive, negative, or zero
+        let distanceOffPlane = Vector3D.dotProduct(bridge, rhs: flat.normal)  // FIXME:  Deal with coincident points
+        
+        return  abs(distanceOffPlane) < Point3D.Epsilon
+    }
     
     /// Check to see that the line direction is perpendicular to the normal
     func isParallel(enil: Line) -> Bool   {
@@ -32,40 +54,23 @@ public struct Plane   {
     }
     
     
-    func equals(rhs: Plane) -> Bool   {
-        
-        let flag1 = self.normal == rhs.normal
-        let flag2 = self.location == rhs.location
-        
-        return flag1 && flag2
-    }
     
-    
-    /// Check to see if the argument point lies on the plane
-    static func isCoincident(flat: Plane, pip:  Point3D) -> Bool  {
-        
-        let bridge = Vector3D.built(flat.location, towards: pip)
-        
-        // This can be positive, negative, or zero
-        let distanceOffPlane = Vector3D.dotProduct(bridge, rhs: flat.normal)  // FIXME:  Deal with coincident points
-        
-        return  abs(distanceOffPlane) < Point3D.Epsilon
-    }
-    
-    /// Normals are parallel or opposite
-    static func isParallel(lhs: Plane, rhs: Plane) -> Bool{
+    /// Are the normals either parallel or opposite?
+    /// - SeeAlso:  isCoincident and ==
+    public static func isParallel(lhs: Plane, rhs: Plane) -> Bool{
         
         return lhs.normal == rhs.normal || Vector3D.isOpposite(lhs.normal, rhs: rhs.normal)
     }
     
     /// Planes are parallel, and rhs location lies on lhs
-    static func isCoincident(lhs: Plane, rhs: Plane) -> Bool  {
+    /// - SeeAlso:  isParallel and ==
+    public static func isCoincident(lhs: Plane, rhs: Plane) -> Bool  {
         
-        return Plane.isParallel(lhs, rhs: rhs) && Plane.isCoincident(lhs, pip: rhs.location)
+        return Plane.isCoincident(lhs, pip: rhs.location) && Plane.isParallel(lhs, rhs: rhs)
     }
     
     
-    static func buildParallel(base: Plane, offset: Double, reverse: Bool) -> Plane  {
+    public static func buildParallel(base: Plane, offset: Double, reverse: Bool) throws -> Plane  {
     
         let jump = base.normal * offset    // offset can be a negative number
         
@@ -79,119 +84,32 @@ public struct Plane   {
             newNorm = base.normal * -1.0
         }
         
-        let sparkle = Plane(location: newLoc, normal: newNorm)
+        let sparkle =  try Plane(spot: newLoc, arrow: newNorm)
     
         return sparkle
     }
     
-    static func buildPerpThruLine(enil:  Line, enalp: Plane)  -> Plane   {
+    
+    /// Construct a new plane perpendicular to an existing plane, and through a line on that plane
+    public static func buildPerpThruLine(enil:  Line, enalp: Plane) throws -> Plane   {
         
+        // TODO:  Ensure that the input line is in the plane
         let newDir = Vector3D.crossProduct(enil.direction, rhs: enalp.normal)
         
-        return Plane(location: enil.origin, normal: newDir)
+        return try Plane(spot: enil.origin, arrow: newDir)
     }
     
-    /// Generate planes to approximate a corner between two input planes
-    /// - Parameter: radius: Radius of the corner
-    /// - Parameter: maxCrown: Largest allowable gap of the approximation
-    /// - Throws: ParallelPlanesError upon bad inputs
-    /// - Throws: CoincidentPlanesError also for bad inputs
-    static func genCorner(alpha: Plane, beta: Plane, radius: Double, maxCrown: Double, inside: Bool) throws -> [Plane]   {
-        
-        guard !isParallel(alpha, rhs: beta) else { throw ParallelPlanesError(enalpA: alpha, enalpB: beta) }
-
-        guard !Plane.isCoincident(alpha, rhs: beta) else { throw CoincidentPlanesError(enalpA: alpha, enalpB: beta) }
-        
-            // Adjust the offset for whether this is an inside or outside corner
-        var off = radius
-        if !inside  { off = -1.0 * radius }
-        
-            // Offset the planes
-        let offsetA = Plane.buildParallel(alpha, offset: off, reverse: !inside)
-        let offsetB = Plane.buildParallel(beta, offset: off, reverse: !inside)
-        
-        
-        /// Centerline of the cylinder
-        let cornerCenterline = try Line.intersectPlanes(offsetA, flatB: offsetB)
-        
-        /// Will consist of the first trim plane, a variable number of slender planes, each followed by its trim plane,
-        ///  though the final slender plane is followed by a trim plane at the tangent line.
-        var resultPlanes = Array<Plane>()   // The array to be returned
-        
-        let trimAlpha = Plane.buildPerpThruLine(cornerCenterline, enalp: alpha)
-        resultPlanes.append(trimAlpha)
-        
-        let trimBeta = Plane.buildPerpThruLine(cornerCenterline, enalp: beta)
-        // This will be added to the end of the array at the end of the func
-        
-        
-        
-        // Figure how many planes are needed to represent the fillet
-        let dotAB = Vector3D.dotProduct(alpha.normal, rhs: beta.normal)
-        
-        let angleRad = acos(dotAB)
-        
-        let arg = (radius - maxCrown) / radius
-        let theta = acos(arg)
-        let divisions = ceil(angleRad / theta)
-        let stepAngle = angleRad / divisions
-        
-        let divs = Int(divisions)
-        
-//        print(divs)
-        
-        // Generate a 'mid' point of the fillet centerline
-        //        let midCL = Point3D(x: filletCenterline.origin.x, y: filletCenterline.origin.y, z: 0.0)   // Brittle!
-        let midCL = cornerCenterline.origin
-        
-        // Create a 'mid' point on the tangency line
-        let tangency = try Line.intersectPlanes(alpha, flatB: trimAlpha)
-        
-        //        var priorMid = Point3D(x: tangency.origin.x, y: tangency.origin.y, z: 0.0)   // Brittle!
-        var priorMid = tangency.origin
-        
-        
-        let radialStart = alpha.normal.reverse()  // From the CL outwards
-        
-        // Generate the face planes and their trim planes
-        
-        for var i = 1; i <= divs; i++    {
-            
-            // Twist a vector
-            let steppedRadialVector = radialStart.twistAbout(cornerCenterline.direction, angleRad: stepAngle * Double(i))
-            
-            var radialOffset = steppedRadialVector * radius
-            if !inside  { radialOffset = steppedRadialVector * -1.0 * radius }
-            
-            let stepCenter = midCL.offset(radialOffset)
-            
-            // Generate a midpoint and then the plane
-            let skinnyCenter = Point3D.midway(priorMid, beta: stepCenter)
-            let chord = Vector3D.built(priorMid, towards: stepCenter)
-            let skinnyNorm = Vector3D.crossProduct(cornerCenterline.direction, rhs: chord)
-            
-            let skinny = Plane(location: skinnyCenter, normal: skinnyNorm)
-            resultPlanes.append(skinny)
-            
-            
-            if i != divs   {
-                
-                // Build a plane to trim that skinny section
-                let trimNorm = Vector3D.crossProduct(cornerCenterline.direction, rhs: steppedRadialVector)
-                
-                let tStep = steppedRadialVector * (radius / 2.0)
-                let trimCenter = midCL.offset(tStep)
-                
-                let skinnyTrim = Plane(location: trimCenter, normal: trimNorm)
-                resultPlanes.append(skinnyTrim)
-                
-                priorMid = stepCenter   // Bump references for the next iteration
-            }
-            
-        }   // End of loop to generate planes
-        
-        resultPlanes.append(trimBeta)
-        
-        return resultPlanes
-    }
 }
+
+
+/// Check for them being identical
+/// - SeeAlso:  isParallel and isCoincident
+public func == (lhs: Plane, rhs: Plane) -> Bool   {
+    
+    let flag1 = lhs.normal == rhs.normal    // Do they have the same direction?
+    
+    let flag2 = lhs.location == rhs.location    // Do they have identical locations?
+    
+    return flag1 && flag2
+}
+

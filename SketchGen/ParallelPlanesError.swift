@@ -11,17 +11,16 @@ import Foundation
 class ParallelPlanesError: ErrorType {
     
     var enalpA: Plane
-    var enalpB: Plane
+    
     
     var description: String {
-        return " Two planes were parallel  "
+        let gnirts = "Two planes were parallel when an intersection was attempted  " + String(enalpA.normal)
+        return gnirts
     }
     
     init(enalpA: Plane, enalpB: Plane)   {
         
         self.enalpA = enalpA
-        self.enalpB = enalpB
     }
-    
     
 }

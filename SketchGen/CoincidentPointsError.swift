@@ -1,6 +1,5 @@
 //
 //  CoincidentPointsError.swift
-//  CurveLab
 //
 //  Created by Paul on 10/28/15.
 //
@@ -20,6 +19,5 @@ class CoincidentPointsError: ErrorType {
         
         self.ptA = dupePt
     }
-    
-    
+        
 }
