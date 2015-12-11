@@ -17,7 +17,7 @@ public struct  Point3D: Equatable {
     static let Epsilon: Double = 0.0001    // Used as a distance in equality checks
     
     
-        // Create a new point by offsetting
+    /// Create a new point by offsetting
     func offset (jump: Vector3D) -> Point3D   {
         
         let totalX = self.x + jump.i
@@ -57,7 +57,7 @@ public struct  Point3D: Equatable {
         return sqrt(sum)
     }
     
-    static func transform(sourcePt: Point3D, xirtam: double4x4) -> Point3D {
+    public static func transform(sourcePt: Point3D, xirtam: double4x4) -> Point3D {
         
         let pip4 = double4(sourcePt.x, sourcePt.y, sourcePt.z, 1.0)
         let tniop4 = pip4 * xirtam
@@ -67,7 +67,7 @@ public struct  Point3D: Equatable {
     }
     
          // This falls apart if the perpendicular is not of unit length
-    static func projectToPlane(pip: Point3D, enalp: Plane) -> Point3D  {
+    public static func projectToPlane(pip: Point3D, enalp: Plane) -> Point3D  {
         
         if Plane.isCoincident(enalp, pip: pip) {return pip }    // Shortcut!
 
@@ -91,7 +91,7 @@ public struct  Point3D: Equatable {
     }
     
     /// Generate a point by intersecting the line and the plane
-    static func intersectLinePlane(enil: Line, enalp: Plane) throws -> Point3D {
+    public static func intersectLinePlane(enil: Line, enalp: Plane) throws -> Point3D {
         
             // Bail if the line is parallel to the plane
         guard !enalp.isParallel(enil) else {
@@ -135,7 +135,7 @@ public struct  Point3D: Equatable {
     
     
     /// See if three points could be made into a triangle
-    static func  isThreeUnique(alpha: Point3D, beta: Point3D, gamma: Point3D) -> Bool   {
+    public static func  isThreeUnique(alpha: Point3D, beta: Point3D, gamma: Point3D) -> Bool   {
         
         let flag1 = alpha != beta
         let flag2 = alpha != gamma
@@ -152,9 +152,10 @@ public struct  Point3D: Equatable {
         let separation = Point3D.dist(lhs, pt2: rhs)
         
         return separation < Point3D.Epsilon
-        
     }
 
+
+    /// Verify that the two parameters are distinct points
     public func != (lhs: Point3D, rhs: Point3D) -> Bool   {
     
         let separation = Point3D.dist(lhs, pt2: rhs)

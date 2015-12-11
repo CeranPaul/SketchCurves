@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8106F0011C1A7F6B00C74FE6 /* Point3DTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8106F0001C1A7F6B00C74FE6 /* Point3DTests.swift */; };
 		81414B001C08CE5E00A9DE83 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81414AFF1C08CE5E00A9DE83 /* AppDelegate.swift */; };
 		81414B021C08CE5E00A9DE83 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81414B011C08CE5E00A9DE83 /* ViewController.swift */; };
 		81414B051C08CE5E00A9DE83 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81414B031C08CE5E00A9DE83 /* Main.storyboard */; };
@@ -46,6 +47,8 @@
 		8183F2691C1A0872009CAF6B /* NonUnitDirectionError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8183F2671C1A0872009CAF6B /* NonUnitDirectionError.swift */; };
 		8183F26B1C1A0A16009CAF6B /* ZeroVectorError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8183F26A1C1A0A16009CAF6B /* ZeroVectorError.swift */; };
 		8183F26C1C1A0A16009CAF6B /* ZeroVectorError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8183F26A1C1A0A16009CAF6B /* ZeroVectorError.swift */; };
+		8183F26E1C1A672B009CAF6B /* LineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8183F26D1C1A672B009CAF6B /* LineTests.swift */; };
+		8183F2701C1A675A009CAF6B /* PlaneTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8183F26F1C1A675A009CAF6B /* PlaneTests.swift */; };
 		81CDCC1F1C17E3FD00060C8D /* Line.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81CDCC1E1C17E3FD00060C8D /* Line.swift */; };
 		81CDCC211C17E41400060C8D /* ParallelError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81CDCC201C17E41400060C8D /* ParallelError.swift */; };
 		81CDCC231C17E44B00060C8D /* Plane.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81CDCC221C17E44B00060C8D /* Plane.swift */; };
@@ -64,6 +67,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		8106F0001C1A7F6B00C74FE6 /* Point3DTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Point3DTests.swift; sourceTree = "<group>"; };
 		81414AFC1C08CE5E00A9DE83 /* SketchGen.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SketchGen.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		81414AFF1C08CE5E00A9DE83 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		81414B011C08CE5E00A9DE83 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -91,6 +95,8 @@
 		81414B3B1C090F2500A9DE83 /* CurveDemo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CurveDemo.swift; sourceTree = "<group>"; };
 		8183F2671C1A0872009CAF6B /* NonUnitDirectionError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NonUnitDirectionError.swift; sourceTree = "<group>"; };
 		8183F26A1C1A0A16009CAF6B /* ZeroVectorError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZeroVectorError.swift; sourceTree = "<group>"; };
+		8183F26D1C1A672B009CAF6B /* LineTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LineTests.swift; sourceTree = "<group>"; };
+		8183F26F1C1A675A009CAF6B /* PlaneTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaneTests.swift; sourceTree = "<group>"; };
 		81CDCC1E1C17E3FD00060C8D /* Line.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Line.swift; sourceTree = "<group>"; };
 		81CDCC201C17E41400060C8D /* ParallelError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ParallelError.swift; sourceTree = "<group>"; };
 		81CDCC221C17E44B00060C8D /* Plane.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Plane.swift; sourceTree = "<group>"; };
@@ -168,12 +174,15 @@
 		81414B131C08CE5E00A9DE83 /* SketchGenTests */ = {
 			isa = PBXGroup;
 			children = (
+				8106F0001C1A7F6B00C74FE6 /* Point3DTests.swift */,
 				81414B391C08CFAB00A9DE83 /* ArcTests.swift */,
 				81414B331C08CF8C00A9DE83 /* LineSegTests.swift */,
 				81414B341C08CF8C00A9DE83 /* OrthoVolTests.swift */,
 				81414B351C08CF8C00A9DE83 /* Vector3DTests.swift */,
 				81414B141C08CE5E00A9DE83 /* SketchGenTests.swift */,
 				81414B161C08CE5E00A9DE83 /* Info.plist */,
+				8183F26D1C1A672B009CAF6B /* LineTests.swift */,
+				8183F26F1C1A675A009CAF6B /* PlaneTests.swift */,
 			);
 			path = SketchGenTests;
 			sourceTree = "<group>";
@@ -318,12 +327,15 @@
 				8183F2631C18E308009CAF6B /* ParallelError.swift in Sources */,
 				814F133D1C153ED7004AB22B /* Arc.swift in Sources */,
 				814F133E1C153EDD004AB22B /* Vector3D.swift in Sources */,
+				8183F2701C1A675A009CAF6B /* PlaneTests.swift in Sources */,
 				814F133F1C153EEA004AB22B /* OrthoVol.swift in Sources */,
 				8183F2661C18E319009CAF6B /* ParallelPlanesError.swift in Sources */,
 				81414B361C08CF8C00A9DE83 /* LineSegTests.swift in Sources */,
 				8183F2621C18E2FF009CAF6B /* Line.swift in Sources */,
 				814F13431C153F1E004AB22B /* ArcPointsError.swift in Sources */,
+				8106F0011C1A7F6B00C74FE6 /* Point3DTests.swift in Sources */,
 				814F133C1C153ED0004AB22B /* Point3D.swift in Sources */,
+				8183F26E1C1A672B009CAF6B /* LineTests.swift in Sources */,
 				814F13421C153F16004AB22B /* CoincidentPointsError.swift in Sources */,
 				8183F2651C18E313009CAF6B /* CoincidentPlanesError.swift in Sources */,
 				81414B371C08CF8C00A9DE83 /* OrthoVolTests.swift in Sources */,

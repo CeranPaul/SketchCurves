@@ -1,6 +1,5 @@
 //
 //  Plane.swift
-//  CornerTri
 //
 //  Created by Paul on 8/11/15.
 //
@@ -17,6 +16,7 @@ public struct Plane   {
     var normal: Vector3D
     
     
+    /// Records parameters and checks to see that the normal is a legitimate vector
     init(spot: Point3D, arrow: Vector3D) throws  {
         
         self.location = spot

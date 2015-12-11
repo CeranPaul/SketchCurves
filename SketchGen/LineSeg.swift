@@ -12,7 +12,7 @@ import UIKit
 public class LineSeg: PenCurve {
     
     // End points
-    private var endAlpha: Point3D   // Private access to control modification
+    private var endAlpha: Point3D   // Private access to limit modification
     private var endOmega: Point3D
     
     
