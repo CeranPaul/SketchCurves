@@ -14,7 +14,7 @@ class ParallelError: ErrorType {
     var enalp: Plane
     
     var description: String {
-        return " Line and plane were parallel  "
+        return " Line and plane were parallel  " + String(enil.getDirection())
     }
     
     init(enil: Line, enalp: Plane)   {

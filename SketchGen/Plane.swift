@@ -10,10 +10,10 @@ import Foundation
 public struct Plane   {
     
     /// A point to locate the plane
-    var location: Point3D
+    internal var location: Point3D
     
     /// A vector perpendicular to the plane
-    var normal: Vector3D
+    internal var normal: Vector3D
     
     
     /// Records parameters and checks to see that the normal is a legitimate vector
@@ -27,6 +27,17 @@ public struct Plane   {
         guard (self.normal.isUnit()) else  {throw NonUnitDirectionError(dir: self.normal)}
     }
     
+    /// A getter for the point defining the plane
+    public func getLocation() -> Point3D   {
+        
+        return self.location
+    }
+    
+    /// A getter for the vector defining the plane
+    public func getNormal() -> Vector3D   {
+        
+        return self.normal
+    }
     
     /// Does the argument point lie on the plane?
     public static func isCoincident(flat: Plane, pip:  Point3D) -> Bool  {
@@ -42,7 +53,7 @@ public struct Plane   {
     /// Check to see that the line direction is perpendicular to the normal
     func isParallel(enil: Line) -> Bool   {
         
-        let perp = Vector3D.dotProduct(enil.direction, rhs: self.normal)
+        let perp = Vector3D.dotProduct(enil.getDirection(), rhs: self.normal)
         
         return abs(perp) < Vector3D.EpsilonV
     }
@@ -50,7 +61,7 @@ public struct Plane   {
     /// Check to see that the line is parallel to the plane, and lies on it
     func isCoincident(enil: Line) -> Bool  {
         
-        return self.isParallel(enil) && Plane.isCoincident(self, pip: enil.origin)
+        return self.isParallel(enil) && Plane.isCoincident(self, pip: enil.getOrigin())
     }
     
     
@@ -94,9 +105,9 @@ public struct Plane   {
     public static func buildPerpThruLine(enil:  Line, enalp: Plane) throws -> Plane   {
         
         // TODO:  Ensure that the input line is in the plane
-        let newDir = Vector3D.crossProduct(enil.direction, rhs: enalp.normal)
+        let newDir = Vector3D.crossProduct(enil.getDirection(), rhs: enalp.normal)
         
-        return try Plane(spot: enil.origin, arrow: newDir)
+        return try Plane(spot: enil.getOrigin(), arrow: newDir)
     }
     
 }

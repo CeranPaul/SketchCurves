@@ -9,7 +9,7 @@ import Foundation
 import UIKit
 
 /// A wire between two points
-public class LineSeg: PenCurve {
+public class LineSeg: PenCurve {    // Can this be a struct, instead?
     
     // End points
     private var endAlpha: Point3D   // Private access to limit modification
@@ -21,7 +21,6 @@ public class LineSeg: PenCurve {
     
     /// The box that contains the curve
     var extent: OrthoVol
-    
     
     
     
@@ -38,11 +37,9 @@ public class LineSeg: PenCurve {
         self.extent = OrthoVol(minX: -0.5, maxX: 0.5, minY: -0.5, maxY: 0.5, minZ: -0.5, maxZ: 0.5)
         
             // Because this is an 'init', a guard statement cannot be used at the top
-        if end1 == end2 { throw CoincidentPointsError(dupePt: end1) }
-        else   {
-            self.extent = try OrthoVol(corner1: self.endAlpha, corner2: self.endOmega)
-        }
-
+        guard (end1 != end2) else { throw CoincidentPointsError(dupePt: end1) }
+        
+        self.extent = try OrthoVol(corner1: self.endAlpha, corner2: self.endOmega)
         
     }
     
@@ -52,7 +49,7 @@ public class LineSeg: PenCurve {
         
         let wholeVector = Vector3D.built(self.endAlpha, towards: self.endOmega)
         
-        let scaled = wholeVector * t
+        let scaled = wholeVector * t    // Implies that 0 < t < 1
         
         let spot = self.endAlpha.offset(scaled)
         
@@ -68,13 +65,22 @@ public class LineSeg: PenCurve {
     
     /// Fetch the location of an end
     public func getOneEnd() -> Point3D   {
-            return endAlpha
+        return endAlpha
     }
     
     /// Fetch the location of the opposite end
     public func getOtherEnd() -> Point3D   {
         return endOmega
     }
+    
+    /// Flip the order of the end points  Used to align members of a Perimeter
+    public func reverse() -> Void  {
+        
+        let bubble = self.endAlpha
+        self.endAlpha = self.endOmega
+        self.endOmega = bubble
+    }
+    
     
     
     /// Plot the line segment.  This will be called by the UIView 'drawRect' function

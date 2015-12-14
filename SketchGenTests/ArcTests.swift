@@ -29,7 +29,7 @@ class ArcTests: XCTestCase {
         do   {
             let orbit = try Arc(center: sun, end1: earth, end2: atlantis, isCW: false)
             
-            XCTAssert(orbit.ctr == sun)
+            XCTAssert(orbit.getCenter() == sun)
             XCTAssert(orbit.start == earth)
             XCTAssert(orbit.finish == atlantis)
             
@@ -135,7 +135,5 @@ class ArcTests: XCTestCase {
         }
         
     }
-    
-    
     
 }

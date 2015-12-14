@@ -14,7 +14,7 @@ class CoincidentPlanesError: ErrorType {
     var enalpA: Plane
     
     var description: String {
-        let gnirts = "Two planes were coincident when an intersection was attempted  " + String(enalpA.normal)
+        let gnirts = "Two planes were coincident when an intersection was attempted  " + String(enalpA.getNormal())
         return gnirts
     }
     

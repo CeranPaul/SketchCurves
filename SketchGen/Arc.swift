@@ -12,7 +12,7 @@ import UIKit
 public class Arc: PenCurve {
     
     /// Point around which the arc is swept
-    var ctr: Point3D
+    private var ctr: Point3D
     
     /// Beginning point
     var start: Point3D
@@ -91,12 +91,16 @@ public class Arc: PenCurve {
         
     }
     
+    /// Simple getter for the center point
+    public func getCenter() -> Point3D   {
+        return self.ctr
+    }
     
     /// Find the point along this line segment specified by the parameter 't'
     /// - Warning:  No checks are made for the value of t being inside some range
     public func pointAt(t: Double) -> Point3D  {
         
-        let deltaAngle = t * self.range
+        let deltaAngle = t * self.range    // Implies that 0 < t < 1
         
         let spot = pointAtAngle(self.startAngle + deltaAngle)
      
@@ -240,17 +244,19 @@ public class Arc: PenCurve {
         return OrthoVol(minX: leastX, maxX: mostX, minY: leastY, maxY: mostY, minZ: -1 * rad / 10.0, maxZ: rad / 10.0)
     }
     
-    static func isArcable(center: Point3D, end1: Point3D, end2: Point3D) -> Bool  {
+    /// Check three points to see if they fit the pattern for defining an Arc
+    public static func isArcable(center: Point3D, end1: Point3D, end2: Point3D) -> Bool  {
         
         let dist1 = Point3D.dist(center, pt2: end1)
         let dist2 = Point3D.dist(center, pt2: end2)
         
-        let thumbsUp = (dist1 - dist2) < Point3D.Epsilon
+        let thumbsUp = abs(dist1 - dist2) < Point3D.Epsilon
         
         return thumbsUp
     }
     
-}
+}    // End of definition for struct Arc
+
 
 /// Check to see that both are built from the same points
 public func == (lhs: Arc, rhs: Arc) -> Bool   {

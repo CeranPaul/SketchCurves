@@ -31,13 +31,13 @@ class PlaneTests: XCTestCase {
             
             let llanoEstacado = try Plane(spot: nexus, arrow: horn)
         
-            XCTAssert(llanoEstacado.location.x == 2.0)
-            XCTAssert(llanoEstacado.location.y == 3.0)
-            XCTAssert(llanoEstacado.location.z == 4.0)
+            XCTAssert(llanoEstacado.getLocation().x == 2.0)
+            XCTAssert(llanoEstacado.getLocation().y == 3.0)
+            XCTAssert(llanoEstacado.getLocation().z == 4.0)
 
-            XCTAssert(llanoEstacado.normal.i == 3.0 / 13.0)
-            XCTAssert(llanoEstacado.normal.j == 4.0 / 13.0)
-            XCTAssert(llanoEstacado.normal.k == 12.0 / 13.0)
+            XCTAssert(llanoEstacado.getNormal().i == 3.0 / 13.0)
+            XCTAssert(llanoEstacado.getNormal().j == 4.0 / 13.0)
+            XCTAssert(llanoEstacado.getNormal().k == 12.0 / 13.0)
             
         }   catch   {
             print("Did you really throw an error in a test case?  Plane")

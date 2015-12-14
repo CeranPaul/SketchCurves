@@ -31,13 +31,13 @@ class LineTests: XCTestCase {
             
             let contrail = try Line(spot: nexus, arrow: horn)
             
-            XCTAssert(contrail.origin.x == -2.5)
-            XCTAssert(contrail.origin.y == 1.5)
-            XCTAssert(contrail.origin.z == 0.015)
+            XCTAssert(contrail.getOrigin().x == -2.5)
+            XCTAssert(contrail.getOrigin().y == 1.5)
+            XCTAssert(contrail.getOrigin().z == 0.015)
             
-            XCTAssert(contrail.direction.i == 12.0 / 13.0)
-            XCTAssert(contrail.direction.j == 3.0 / 13.0)
-            XCTAssert(contrail.direction.k == 4.0 / 13.0)
+            XCTAssert(contrail.getDirection().i == 12.0 / 13.0)
+            XCTAssert(contrail.getDirection().j == 3.0 / 13.0)
+            XCTAssert(contrail.getDirection().k == 4.0 / 13.0)
             
         }   catch   {
             print("Did you really throw an error in a test case?  Line")

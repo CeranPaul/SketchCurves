@@ -94,7 +94,8 @@ public struct OrthoVol   {
     }
     
     /// Build a brick from two points
-    /// Will prevent having a zero dimension for any of the three axes  But needs to adda check for coincident points
+    /// Will prevent having a zero dimension for any of the three axes  
+    /// - Throws: CoincidentPointsError
     public init(corner1: Point3D, corner2: Point3D) throws  {
         
         let sep = Point3D.dist(corner1, pt2: corner2)
@@ -145,26 +146,30 @@ public struct OrthoVol   {
     }
     
     
-    /// Simple getter
+    /// Simple getter for starting corner
     func  getOrigin() -> Point3D  {
         return self.origin
     }
     
+    /// Simple getter for the width
     func  getWidth() -> Double  {
         return self.width
     }
     
+    /// Simple getter for the height
     func  getHeight() -> Double  {
         return self.height
     }
     
+    /// Simple getter for the depth
     func  getDepth() -> Double  {
         return self.depth
     }
     
-}
+}   // End of definition for struct OrthoVol
 
-/// Construct a volume that contains the two input volumes
+
+/// Construct a volume that combines the two input volumes
 func + (lhs: OrthoVol, rhs: OrthoVol) -> OrthoVol   {
     
     let leastX = min(lhs.origin.x, rhs.origin.x)

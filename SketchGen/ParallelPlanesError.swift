@@ -14,11 +14,11 @@ class ParallelPlanesError: ErrorType {
     
     
     var description: String {
-        let gnirts = "Two planes were parallel when an intersection was attempted  " + String(enalpA.normal)
+        let gnirts = "Function failed because two planes were parallel " + String(enalpA.getNormal())
         return gnirts
     }
     
-    init(enalpA: Plane, enalpB: Plane)   {
+    init(enalpA: Plane)   {
         
         self.enalpA = enalpA
     }

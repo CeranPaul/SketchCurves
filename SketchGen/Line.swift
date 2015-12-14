@@ -7,27 +7,40 @@
 import Foundation
 
 /// Unbounded
-public struct Line {
+public struct Line: Equatable {
     
     /// A point to locate the line
-    var origin: Point3D
+    private var origin: Point3D
     
     /// Which way it extends
-    var direction: Vector3D
+    private var direction: Vector3D
     
     
-    // Should there be an init that checks for a unit direction vector?
+    // Force the direction vector to have unit length
     init (spot: Point3D, arrow: Vector3D) throws  {
         
         self.origin = spot
         self.direction = arrow
 
-        // Because this is an 'init', a guard statement cannot be used at the top
-        if self.direction.isZero()  {throw ZeroVectorError(dir: self.direction)}
-        if !self.direction.isUnit()  {throw NonUnitDirectionError(dir: self.direction)}
+        // Because this is an 'init', this cannot be done at the top
+        guard (!self.direction.isZero()) else  {throw ZeroVectorError(dir: self.direction)}
+        guard (self.direction.isUnit()) else  {throw NonUnitDirectionError(dir: self.direction)}
+    }
+    
+    /// Simple getter for the origin
+    public func getOrigin() -> Point3D  {
+        
+        return self.origin
+    }
+    
+    /// Simple getter for the direction
+    public func getDirection() -> Vector3D  {
+        
+        return self.direction
     }
     
     /// Checks to see if the trial point lies on the line
+    /// - SeeAlso:  Overloaded ==
     public func isCoincident(trial: Point3D) -> Bool   {
         
         var bridge = Vector3D.built(self.origin, towards: trial)
@@ -45,21 +58,22 @@ public struct Line {
     /// - Throws: CoincidentPlanesError if the inputs are coincident
     public static func intersectPlanes(flatA: Plane, flatB: Plane) throws -> Line   {
         
-        guard !Plane.isParallel(flatA, rhs: flatB) else { throw ParallelPlanesError(enalpA: flatA, enalpB: flatB) }
+        guard !Plane.isParallel(flatA, rhs: flatB) else { throw ParallelPlanesError(enalpA: flatA) }
             
         guard !Plane.isCoincident(flatA, rhs: flatB) else { throw CoincidentPlanesError(enalpA: flatA) }
         
+        
         /// Direction of the intersection line
-        var lineDir = Vector3D.crossProduct(flatA.normal, rhs: flatB.normal)
+        var lineDir = Vector3D.crossProduct(flatA.getNormal(), rhs: flatB.getNormal())
         lineDir.normalize()
         
         /// Vector on plane B that is perpendicular to the intersection line
-        var perpInB = Vector3D.crossProduct(lineDir, rhs: flatB.normal)
+        var perpInB = Vector3D.crossProduct(lineDir, rhs: flatB.getNormal())
         perpInB.normalize()
         
           // The ParallelPlanesError or CoincidentPlanesError should be avoided by the guard statements
             
-        let lineFromCenterB =  try Line(spot: flatB.location, arrow: perpInB)  // Can be either towards flatA,
+        let lineFromCenterB =  try Line(spot: flatB.getLocation(), arrow: perpInB)  // Can be either towards flatA,
                                                                                    // or away from it
             
         let intersectionPoint = try Point3D.intersectLinePlane(lineFromCenterB, enalp: flatA)
@@ -68,11 +82,13 @@ public struct Line {
         return common
     }
     
-}
+}    // End of definition for struct Line
+
 
 
 /// Check to see that the second origin lies on the first Line, and that
 ///  the directions are identical  Opposite direction will fail this test
+/// - SeeAlso:  isCoincident
 public func == (lhs: Line, rhs: Line) -> Bool   {
     
     let flag1 = lhs.isCoincident(rhs.origin)
