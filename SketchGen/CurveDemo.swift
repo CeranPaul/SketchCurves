@@ -31,24 +31,83 @@ class Roundy  {
         
         extent = OrthoVol(minX: -1.25, maxX: 1.25, minY: -1.25, maxY: 1.25, minZ: -1.25, maxZ: 1.25)   // A dummy value
         
-        let demoString = "stand"
+        let demoString = "cubic"
         
         switch demoString   {
             
-        case "box":  showBox()
+            case "box":  showBox()
         
-        case "eff": plotF()
+            case "eff": plotF()
             
-        case "segs": makeSegs()
+            case "segs": makeSegs()
             
-        case "stand": standProfile()
+            case "stand": standProfile()
             
-        case "track": trackSection()
+            case "track": trackSection()
+            
+            case "cubic": firstCubic()
             
         default:  showBox()   // Demonstrate the boundary box for an Arc
         }
         
     }
+    
+    /// Build and plot a trial cubic curve
+    /// Uses the default value of 'extent'
+    func firstCubic()   {
+        
+        let ax = 0.0;
+        let bx = 0.0;
+        let cx = 1.5;
+        let dx = -0.75;
+        
+        let ay = 0.4;
+        let by = -0.25;
+        let cy = -0.2;
+        let dy = -0.3;
+        
+        let az = 0.0;
+        let bz = 0.0;
+        let cz = 0.0;
+        let dz = 0.0;
+        
+        let swoop = Cubic(ax: ax, bx: bx, cx: cx, dx: dx, ay: ay, by: by, cy: cy, dy: dy, az: az, bz: bz, cz: cz, dz: dz)
+        
+        
+         // Disregarding the 'draw' function
+        
+        var priorPT = Point3D(x: dx, y: dy, z: dz)   // Starting coordinates for a line segment
+        
+        let segs = 15
+        let stepSize = 1.0 / Double(segs)
+        
+        for var g = 1; g <= segs; g++   {
+            
+            let stepU = Double(g) * stepSize
+            let stepPoint = swoop.pointAt(stepU)
+
+            /// LineSeg to be added to the display list
+            var stroke: PenCurve
+            
+            do   {
+                
+                stroke = try LineSeg(end1: priorPT, end2: stepPoint)
+                displayLines.append(stroke)
+                
+                priorPT = stepPoint   // Shuffle values in preparation for the next segment
+                
+            }  catch let error as CoincidentPointsError  {
+                let gnirts = error.description
+                print(gnirts)
+            }  catch  {
+                print("Some other error while adding a line")
+            }
+            
+
+        }
+        
+    }
+    
     
     /// Build an Arc, then illustrate its surrounding extent
     /// - Returns:  Void, but modifies 'displayLines' and 'displayPoints'

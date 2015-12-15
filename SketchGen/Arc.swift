@@ -33,7 +33,7 @@ public class Arc: PenCurve {
     var finishAngle: Double
     
     /// The sweep range
-    var range: Double
+    var range: Double   // Useful for figuring the arc length
     
     /// Which direction should be swept?
     var isClockwise:  Bool
@@ -254,6 +254,14 @@ public class Arc: PenCurve {
         
         return thumbsUp
     }
+    
+    /// Figure how far the point is off the curve, and how far along the curve it is.  Useful for picks
+    func resolveBridge(speck: Point3D) -> (along: Double, perp: Double)   {
+        
+        // TODO: Make this return something besides dummy values
+        return (1.0, 0.0)
+    }
+    
     
 }    // End of definition for struct Arc
 

@@ -29,4 +29,7 @@ protocol PenCurve   {
     /// Plot the curve.  Your classic example of polymorphism
     func draw(context: CGContext)
     
+    /// Figure how far the point is off the curve, and how far along the curve it is.  Useful for picks  
+    func resolveBridge(speck: Point3D) -> (along: Double, perp: Double)
+    
 }

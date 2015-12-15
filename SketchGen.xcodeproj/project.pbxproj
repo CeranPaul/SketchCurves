@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		8106F0011C1A7F6B00C74FE6 /* Point3DTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8106F0001C1A7F6B00C74FE6 /* Point3DTests.swift */; };
+		8106F0031C1FA12C00C74FE6 /* Cubic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8106F0021C1FA12C00C74FE6 /* Cubic.swift */; };
+		8106F0041C1FA12C00C74FE6 /* Cubic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8106F0021C1FA12C00C74FE6 /* Cubic.swift */; };
 		81414B001C08CE5E00A9DE83 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81414AFF1C08CE5E00A9DE83 /* AppDelegate.swift */; };
 		81414B021C08CE5E00A9DE83 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81414B011C08CE5E00A9DE83 /* ViewController.swift */; };
 		81414B051C08CE5E00A9DE83 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81414B031C08CE5E00A9DE83 /* Main.storyboard */; };
@@ -68,6 +70,7 @@
 
 /* Begin PBXFileReference section */
 		8106F0001C1A7F6B00C74FE6 /* Point3DTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Point3DTests.swift; sourceTree = "<group>"; };
+		8106F0021C1FA12C00C74FE6 /* Cubic.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Cubic.swift; sourceTree = "<group>"; };
 		81414AFC1C08CE5E00A9DE83 /* SketchGen.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SketchGen.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		81414AFF1C08CE5E00A9DE83 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		81414B011C08CE5E00A9DE83 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -167,6 +170,7 @@
 				81414B0B1C08CE5E00A9DE83 /* Info.plist */,
 				8183F2671C1A0872009CAF6B /* NonUnitDirectionError.swift */,
 				8183F26A1C1A0A16009CAF6B /* ZeroVectorError.swift */,
+				8106F0021C1FA12C00C74FE6 /* Cubic.swift */,
 			);
 			path = SketchGen;
 			sourceTree = "<group>";
@@ -308,6 +312,7 @@
 				81414B271C08CEE200A9DE83 /* PenTypes.swift in Sources */,
 				81414B281C08CEE200A9DE83 /* Point3D.swift in Sources */,
 				81CDCC251C17E4D200060C8D /* CoincidentPlanesError.swift in Sources */,
+				8106F0031C1FA12C00C74FE6 /* Cubic.swift in Sources */,
 				81414B2C1C08CF0500A9DE83 /* ArcPointsError.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -339,6 +344,7 @@
 				814F13421C153F16004AB22B /* CoincidentPointsError.swift in Sources */,
 				8183F2651C18E313009CAF6B /* CoincidentPlanesError.swift in Sources */,
 				81414B371C08CF8C00A9DE83 /* OrthoVolTests.swift in Sources */,
+				8106F0041C1FA12C00C74FE6 /* Cubic.swift in Sources */,
 				81414B381C08CF8C00A9DE83 /* Vector3DTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

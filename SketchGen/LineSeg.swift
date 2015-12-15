@@ -99,4 +99,21 @@ public class LineSeg: PenCurve {    // Can this be a struct, instead?
         CGContextStrokePath(context)
     }
     
+    /// Useful for picks  This is not part of the class that was included in SketchCurves
+    func resolveBridge(speck: Point3D) -> (along: Double, perp: Double)   {
+        
+        var unitAlong = Vector3D.built(self.endAlpha, towards: self.endOmega)
+        unitAlong.normalize()
+        
+        let bridge = Vector3D.built(self.endAlpha, towards: speck)
+        
+        let lenAlong = Vector3D.dotProduct(unitAlong, rhs: bridge)
+        
+        let componentAlong = unitAlong * lenAlong
+        
+        let componentPerp = bridge - componentAlong
+        
+        return (lenAlong, componentPerp.length())
+    }
+    
 }
