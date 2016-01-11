@@ -81,7 +81,22 @@ public class LineSeg: PenCurve {    // Can this be a struct, instead?
         self.endOmega = bubble
     }
     
-    
+    /// Find the position of a point relative to the LineSeg
+    func resolveBridge(speck: Point3D) -> (along: Double, perp: Double)   {
+        
+        var unitAlong = Vector3D.built(self.endAlpha, towards: self.endOmega)
+        unitAlong.normalize()
+        
+        let bridge = Vector3D.built(self.endAlpha, towards: speck)
+        
+        let lenAlong = Vector3D.dotProduct(unitAlong, rhs: bridge)
+        
+        let componentAlong = unitAlong * lenAlong
+        
+        let componentPerp = bridge - componentAlong
+        
+        return (lenAlong, componentPerp.length())
+    }
     
     /// Plot the line segment.  This will be called by the UIView 'drawRect' function
     public func draw(context: CGContext)  {
@@ -97,23 +112,6 @@ public class LineSeg: PenCurve {    // Can this be a struct, instead?
         CGContextAddLineToPoint(context, xCG, yCG)
         
         CGContextStrokePath(context)
-    }
-    
-    /// Useful for picks  This is not part of the class that was included in SketchCurves
-    func resolveBridge(speck: Point3D) -> (along: Double, perp: Double)   {
-        
-        var unitAlong = Vector3D.built(self.endAlpha, towards: self.endOmega)
-        unitAlong.normalize()
-        
-        let bridge = Vector3D.built(self.endAlpha, towards: speck)
-        
-        let lenAlong = Vector3D.dotProduct(unitAlong, rhs: bridge)
-        
-        let componentAlong = unitAlong * lenAlong
-        
-        let componentPerp = bridge - componentAlong
-        
-        return (lenAlong, componentPerp.length())
     }
     
 }

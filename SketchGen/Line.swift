@@ -39,20 +39,121 @@ public struct Line: Equatable {
         return self.direction
     }
     
+    /// Find the position of a point relative to the line
+    func resolveRelative(yonder: Point3D) -> (along: Double, perp: Double)   {
+        
+        let bridge = Vector3D.built(self.origin, towards: yonder)
+        let along = Vector3D.dotProduct(bridge, rhs: self.direction)
+        let alongVector = self.direction * along
+        let perpVector = bridge - alongVector
+        let perp = perpVector.length()
+        
+        return (along, perp)
+    }
+    
+
+    /// Find the components of a vector relative to the line
+    func resolveRelative(arrow: Vector3D) -> (along: Vector3D, perp: Vector3D)   {
+        
+        let along = Vector3D.dotProduct(arrow, rhs: self.direction)
+        
+        let alongVector = self.direction * along
+        
+        let perpVector = arrow - alongVector
+        
+        return (alongVector, perpVector)
+    }
+    
+    
     /// Checks to see if the trial point lies on the line
     /// - SeeAlso:  Overloaded ==
-    public func isCoincident(trial: Point3D) -> Bool   {
+    public static func isCoincident(straightA: Line, trial: Point3D) -> Bool   {
         
-        var bridge = Vector3D.built(self.origin, towards: trial)
-        bridge.normalize()
+        var bridgeVector = Vector3D.built(straightA.origin, towards: trial)
+        bridgeVector.normalize()
         
-        let same = bridge == self.direction
-        let opp = Vector3D.isOpposite(self.direction, rhs: bridge)
+        let same = bridgeVector == straightA.direction
+        let opp = Vector3D.isOpposite(straightA.direction, rhs: bridgeVector)
         
         return same || opp
     }
     
 
+    /// Do two lines have the same direction, even with opposite sense?
+    /// - SeeAlso:  Overloaded ==
+    public static func isParallel(straightA: Line, straightB: Line) -> Bool   {
+        
+        let sameFlag = straightA.getDirection() == straightB.getDirection()
+        let oppFlag = Vector3D.isOpposite(straightA.getDirection(), rhs: straightB.getDirection())
+        
+        return sameFlag  || oppFlag
+    }
+    
+    
+    /// Two lines  See that the second origin lies on the first line, and
+    /// that they have the same direction, even with the opposite sense
+    /// - SeeAlso:  Overloaded ==
+    public static func isCoincident(straightA: Line, straightB: Line) -> Bool   {
+        
+        if !Line.isCoincident(straightA, trial: straightB.getOrigin())   { return false }
+        
+        if !Line.isParallel(straightA, straightB: straightB)   { return false }
+        
+        return true
+    }
+    
+    /// Verify that lines are on the same plane
+    /// isCoincident should be run first
+    /// - SeeAlso:  Overloaded ==
+    /// - SeeAlso:  Line.isParallel()
+    public static func isCoPlanar(straightA: Line, straightB: Line) -> Bool   {
+        
+        var bridgeVector = Vector3D.built(straightA.getOrigin(), towards: straightB.getOrigin())
+        bridgeVector.normalize()
+        
+        var perp1 = Vector3D.crossProduct(straightA.getDirection(), rhs: bridgeVector)
+        perp1.normalize()
+        
+        var perp2 = Vector3D.crossProduct(bridgeVector, rhs: straightA.getDirection())
+        perp2.normalize()
+        
+        let sameFlag = perp1 == perp2
+        let oppFlag = Vector3D.isOpposite(perp1, rhs: perp2)
+        
+        return sameFlag  || oppFlag
+    }
+    
+    
+    /// Generate a point by intersecting two lines
+    public static func intersectTwo (straightA: Line, straightB: Line) throws -> Point3D  {
+        
+        guard !Line.isCoincident(straightA, straightB: straightB) else { throw CoincidentLinesError(enil: straightA) }
+        
+        guard !Line.isParallel(straightA, straightB: straightB)  else { throw ParallelLinesError(enil: straightA)}
+        
+        guard Line.isCoPlanar(straightA, straightB: straightB)  else { throw NonCoPlanarLinesError(enilA: straightA, enilB: straightB)}
+        
+        if Line.isCoincident(straightA, trial: straightB.getOrigin())   { return straightB.getOrigin() }
+        if Line.isCoincident(straightB, trial: straightA.getOrigin())   { return straightA.getOrigin() }
+        
+        
+        
+        let bridgeVector = Vector3D.built(straightA.getOrigin(), towards: straightB.getOrigin())
+        
+        let comps = straightA.resolveRelative(bridgeVector)
+        
+        let propor = Vector3D.dotProduct(comps.perp, rhs: straightB.getDirection());
+        
+        let perpLen = comps.perp.length()
+        
+        let lengthB =  -1.0 * perpLen / propor;
+        
+        let alongB = straightB.getDirection() * lengthB;
+        
+        return straightB.getOrigin().offset(alongB);
+    }
+    
+    
     /// Construct a line by intersecting two planes
     /// - Throws: ParallelPlanesError if the inputs are parallel
     /// - Throws: CoincidentPlanesError if the inputs are coincident
@@ -91,7 +192,7 @@ public struct Line: Equatable {
 /// - SeeAlso:  isCoincident
 public func == (lhs: Line, rhs: Line) -> Bool   {
     
-    let flag1 = lhs.isCoincident(rhs.origin)
+    let flag1 = Line.isCoincident(lhs, trial: rhs.origin)
     
     let flag2 = lhs.direction == rhs.direction
     

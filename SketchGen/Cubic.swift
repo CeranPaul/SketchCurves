@@ -29,7 +29,7 @@ public class Cubic   {
     
     
     
-    /// Record 12 parameters
+    /// Build from 12 individual parameters
     init (ax: Double, bx: Double, cx: Double, dx: Double, ay: Double, by: Double, cy: Double, dy: Double, az: Double, bz: Double, cz: Double, dz: Double)   {
         
         self.ax = ax
@@ -61,6 +61,30 @@ public class Cubic   {
         let myZ = az * u3 + bz * u2 + cz * u + dz
         
         return Point3D(x: myX, y: myY, z: myZ)
+    }
+    
+    /// Differentiate to find the tangent vector for the input parameter
+    func tangentAt(u: Double) -> Vector3D   {
+        
+        let u2 = u * u
+
+        let myI = 3.0 * ax * u2 + 2.0 * bx * u + cx
+        let myJ = 3.0 * ay * u2 + 2.0 * by * u + cy
+        let myK = 3.0 * az * u2 + 2.0 * bz * u + cz
+        
+        return Vector3D(i: myI, j: myJ, k: myK)    // Notice that this is not normalized!
+    }
+    
+    
+    /// Cross the tangent with a Z vector to get the normal
+    func normalAt(u: Double) -> Vector3D   {
+        
+        let ZVec = Vector3D(i: 0.0, j: 0.0, k: 1.0)
+        
+        var tanHere = tangentAt(u)
+        tanHere.normalize()
+        
+        return Vector3D.crossProduct(ZVec, rhs: tanHere)   // Not normalized
     }
     
     /// Plot the curve segment.  This will be called by the UIView 'drawRect' function

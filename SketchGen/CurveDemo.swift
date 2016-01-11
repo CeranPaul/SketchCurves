@@ -56,27 +56,38 @@ class Roundy  {
     /// Uses the default value of 'extent'
     func firstCubic()   {
         
-        let ax = 0.0;
-        let bx = 0.0;
-        let cx = 1.5;
-        let dx = -0.75;
+        extent = OrthoVol(minX: -62.5, maxX: 62.5, minY: -62.5, maxY: 62.5, minZ: -62.5, maxZ: 62.5)   // Fixed value
         
-        let ay = 0.4;
-        let by = -0.25;
-        let cy = -0.2;
-        let dy = -0.3;
+        let ax = 0.0;
+        let bx = 25.0;
+        var cx = 60.0;
+        var dx = -45.0;
+        
+        let ay = 0.0;
+        let by = -30.0;
+        let cy = 30.0;
+        var dy = 12.5;
         
         let az = 0.0;
         let bz = 0.0;
         let cz = 0.0;
         let dz = 0.0;
         
-        let swoop = Cubic(ax: ax, bx: bx, cx: cx, dx: dx, ay: ay, by: by, cy: cy, dy: dy, az: az, bz: bz, cz: cz, dz: dz)
+        let swoop1 = Cubic(ax: ax, bx: bx, cx: cx, dx: dx, ay: ay, by: by, cy: cy, dy: dy, az: az, bz: bz, cz: cz, dz: dz)
+
+        var priorPt1 = Point3D(x: dx, y: dy, z: dz)   // Starting coordinates for a line segment
+        
+        cx = 45.0
+        dx = -37.5
+        
+        dy = 5.0
+        
+        let swoop2 = Cubic(ax: ax, bx: bx, cx: cx, dx: dx, ay: ay, by: by, cy: cy, dy: dy, az: az, bz: bz, cz: cz, dz: dz)
         
         
          // Disregarding the 'draw' function
         
-        var priorPT = Point3D(x: dx, y: dy, z: dz)   // Starting coordinates for a line segment
+        var priorPt2 = Point3D(x: dx, y: dy, z: dz)
         
         let segs = 15
         let stepSize = 1.0 / Double(segs)
@@ -84,23 +95,34 @@ class Roundy  {
         for var g = 1; g <= segs; g++   {
             
             let stepU = Double(g) * stepSize
-            let stepPoint = swoop.pointAt(stepU)
+            
+            let stepPoint1 = swoop1.pointAt(stepU)
+            let stepPoint2 = swoop2.pointAt(stepU)
 
             /// LineSeg to be added to the display list
             var stroke: PenCurve
             
             do   {
                 
-                stroke = try LineSeg(end1: priorPT, end2: stepPoint)
+                stroke = try LineSeg(end1: priorPt1, end2: stepPoint1)
                 displayLines.append(stroke)
                 
-                priorPT = stepPoint   // Shuffle values in preparation for the next segment
+                priorPt1 = stepPoint1   // Shuffle values in preparation for the next segment
+                
+                stroke = try LineSeg(end1: priorPt2, end2: stepPoint2)
+                displayLines.append(stroke)
+                
+                priorPt2 = stepPoint2   // Shuffle values in preparation for the next segment
+                
+//                var porcu = swoop1.normalAt(stepU)
+//                porcu.normalize()
+//                print(porcu)
                 
             }  catch let error as CoincidentPointsError  {
                 let gnirts = error.description
                 print(gnirts)
             }  catch  {
-                print("Some other error while adding a line")
+                print("Some other error while adding a segment of cubic curve")
             }
             
 

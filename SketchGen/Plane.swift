@@ -80,7 +80,7 @@ public struct Plane   {
         return Plane.isCoincident(lhs, pip: rhs.location) && Plane.isParallel(lhs, rhs: rhs)
     }
     
-    
+    /// Construct a parallel plane offset some distance
     public static func buildParallel(base: Plane, offset: Double, reverse: Bool) throws -> Plane  {
     
         let jump = base.normal * offset    // offset can be a negative number
