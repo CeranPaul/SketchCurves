@@ -1,8 +1,9 @@
 //
 //  LineSeg.swift
+//  SketchCurves
 //
 //  Created by Paul on 10/28/15.
-//  Copyright © 2015 Ceran Digital Media. All rights reserved.  See LICENSE.md
+//  Copyright © 2016 Ceran Digital Media. All rights reserved.  See LICENSE.md
 //
 
 import Foundation
@@ -64,11 +65,13 @@ public class LineSeg: PenCurve {    // Can this be a struct, instead?
     }
     
     /// Fetch the location of an end
+    /// - See: 'getOtherEnd()'
     public func getOneEnd() -> Point3D   {
         return endAlpha
     }
     
     /// Fetch the location of the opposite end
+    /// - See: 'getOneEnd()'
     public func getOtherEnd() -> Point3D   {
         return endOmega
     }
@@ -79,6 +82,15 @@ public class LineSeg: PenCurve {    // Can this be a struct, instead?
         let bubble = self.endAlpha
         self.endAlpha = self.endOmega
         self.endOmega = bubble
+    }
+    
+    /// Create a unit vector showing direction
+    public func getDirection() -> Vector3D   {
+        
+        var along = Vector3D.built(self.endAlpha, towards: self.endOmega)
+        along.normalize()
+        
+        return along   // I think it's weird that this has to be a separate line
     }
     
     /// Find the position of a point relative to the LineSeg
@@ -97,6 +109,8 @@ public class LineSeg: PenCurve {    // Can this be a struct, instead?
         
         return (lenAlong, componentPerp.length())
     }
+    
+    
     
     /// Plot the line segment.  This will be called by the UIView 'drawRect' function
     public func draw(context: CGContext)  {

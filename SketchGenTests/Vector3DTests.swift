@@ -156,11 +156,24 @@ class Vector3DTests: XCTestCase {
         
     }
     
+    
+    // Check 'reverse' function
+    func testReverse()   {
+        
+        let target = Vector3D(i: 3.0, j: -7.0, k: 2.1)
+        
+        let forward = Vector3D(i: -3.0, j: 7.0, k: -2.1)
+        
+        let backwards = forward.reverse()
+        
+        XCTAssert(backwards == target)
+    }
+    
+    
     // TODO: Add tests for dot product
     // TODO: Add tests for cross product
     // TODO: Add tests for addition
     // TODO: Add tests for subtraction
-    // TODO: Add tests for scaling
     
     
 }

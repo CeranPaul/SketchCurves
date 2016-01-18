@@ -1,8 +1,9 @@
 //
 //  Vector3D.swift
-//  CornerTri
+//  SketchCurves
 //
 //  Created by Paul on 8/11/15.
+//  Copyright © 2016 Ceran Digital Media. All rights reserved.  See LICENSE.md
 //
 
 import Foundation
@@ -14,7 +15,8 @@ public struct Vector3D: Equatable {
     var k: Double
     
     
-    public static let EpsilonV: Double = 0.001    // Used as a difference between components in equality checks
+    public static let EpsilonV: Double = 0.001    // Used as a difference limit between components in equality checks
+    
     
     
     /// Check to see if the vector has zero length
@@ -37,7 +39,7 @@ public struct Vector3D: Equatable {
     
     /// Destructively change the vector length to 1.0
     /// - See: 'testNormalize' under Vector3DTests
-    public mutating func normalize()   {
+    public mutating func normalize()  {
         
         let denom = self.length()
         
@@ -50,11 +52,12 @@ public struct Vector3D: Equatable {
     /// - See: 'testIsUnit' under Vector3DTests
     public func isUnit() -> Bool   {
         
-        return self.length() - 1.0 < Vector3D.EpsilonV
+        return abs(self.length() - 1.0) < Vector3D.EpsilonV
     }
     
 
     /// Construct a vector with the opposite direction
+    /// - See: 'testReverse' under Vector3DTests
     public func reverse() -> Vector3D   {
         
         let ricochet = Vector3D(i: self.i * -1.0, j: self.j * -1.0, k: self.k * -1.0)
@@ -63,13 +66,45 @@ public struct Vector3D: Equatable {
     
     
     /// Construct a vector re-directed one quarter turn away in the counterclockwise direction in the XY plane
-    /// - See: Use crossProduct to do this for a more general case
+    /// Use crossProduct to do this for a more general case
     public func perp() -> Vector3D   {
         
         let rightAngle = Vector3D(i: -self.j, j: self.i, k: 0.0)   // Perpendicular in a CCW direction
         
         return rightAngle
     }
+    
+    
+    /// Construct vector from first input point towards the second    Consider using "normalize" above on the result
+    public static func built(from: Point3D, towards: Point3D) -> Vector3D {
+        
+        return Vector3D(i: towards.x - from.x, j: towards.y - from.y, k: towards.z - from.z)
+    }
+    
+    /// Check for vectors with the same direction but a different sense
+    /// - See: 'testIsOpposite' under Vector3DTests
+    public static func isOpposite(lhs: Vector3D, rhs: Vector3D) -> Bool   {
+        
+        let tempVec = lhs * -1.0
+        return rhs == tempVec
+    }
+    
+    /// Standard definition of dot product
+    public static func dotProduct(lhs: Vector3D, rhs: Vector3D) -> Double   {
+        
+        return lhs.i * rhs.i + lhs.j * rhs.j + lhs.k * rhs.k
+    }
+    
+    /// Standard definition of cross product
+    public static func  crossProduct(lhs: Vector3D, rhs: Vector3D) -> Vector3D   {
+        
+        let freshI = lhs.j * rhs.k - lhs.k * rhs.j
+        let freshJ = lhs.k * rhs.i - lhs.i * rhs.k   // Notice the different ordering
+        let freshK = lhs.i * rhs.j - lhs.j * rhs.i
+        
+        return Vector3D(i: freshI, j: freshJ, k: freshK)
+    }
+    
     
 
     /// Construct a vector that has been rotated from self about the axis specified by the first argument
@@ -102,37 +137,6 @@ public struct Vector3D: Equatable {
         return direction
     }
     
-    /// Construct one from first input point towards the second    See "normalize" above
-    public static func built(from: Point3D, towards: Point3D) -> Vector3D {
-        
-        return Vector3D(i: towards.x - from.x, j: towards.y - from.y, k: towards.z - from.z)
-    }
-    
-    /// Check for vectors with the same direction but a different sense
-    /// - See: 'testIsOpposite' under Vector3DTests
-    static func isOpposite(lhs: Vector3D, rhs: Vector3D) -> Bool   {
-        
-        let tempVec = lhs * -1.0
-        return rhs == tempVec
-    }
-    
-    
-    /// Standard definition of dot product
-    public static func dotProduct(lhs: Vector3D, rhs: Vector3D) -> Double   {
-        
-        return lhs.i * rhs.i + lhs.j * rhs.j + lhs.k * rhs.k
-    }
-
-    /// Standard definition of cross product
-    public static func  crossProduct(lhs: Vector3D, rhs: Vector3D) -> Vector3D   {
-        
-        let freshI = lhs.j * rhs.k - lhs.k * rhs.j
-        let freshJ = lhs.k * rhs.i - lhs.i * rhs.k   // Notice the different ordering
-        let freshK = lhs.i * rhs.j - lhs.j * rhs.i
-
-        return Vector3D(i: freshI, j: freshJ, k: freshK)
-    }
-    
 }    // End of struct Vector3D definition
 
 
@@ -160,6 +164,7 @@ public func - (lhs: Vector3D, rhs: Vector3D) -> Vector3D   {
 }
 
 /// Construct a vector by scaling the Vector3D argument by the Double
+/// - See: 'testScaling' under Vector3DTests
 public func * (lhs: Vector3D, rhs: Double) -> Vector3D   {
     
     let scaledI = lhs.i * rhs

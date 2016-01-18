@@ -1,12 +1,14 @@
 //
 //  Line.swift
+//  SketchCurves
 //
 //  Created by Paul on 8/12/15.
+//  Copyright © 2016 Ceran Digital Media. All rights reserved.  See LICENSE.md
 //
 
 import Foundation
 
-/// Unbounded
+/// Unbounded and straight
 public struct Line: Equatable {
     
     /// A point to locate the line
@@ -39,8 +41,10 @@ public struct Line: Equatable {
         return self.direction
     }
     
-    /// Find the position of a point relative to the line
-    func resolveRelative(yonder: Point3D) -> (along: Double, perp: Double)   {
+    
+    
+    /// Find the position of a point relative to the line and its origin
+    public func resolveRelative(yonder: Point3D) -> (along: Double, perp: Double)   {
         
         let bridge = Vector3D.built(self.origin, towards: yonder)
         let along = Vector3D.dotProduct(bridge, rhs: self.direction)
@@ -53,7 +57,7 @@ public struct Line: Equatable {
     
 
     /// Find the components of a vector relative to the line
-    func resolveRelative(arrow: Vector3D) -> (along: Vector3D, perp: Vector3D)   {
+    public func resolveRelative(arrow: Vector3D) -> (along: Vector3D, perp: Vector3D)   {
         
         let along = Vector3D.dotProduct(arrow, rhs: self.direction)
         
@@ -124,7 +128,10 @@ public struct Line: Equatable {
     }
     
     
-    /// Generate a point by intersecting two lines
+    /// Generate a point by intersecting two Lines
+    /// - Throws: CoincidentLinesError if the inputs are the same
+    /// - Throws: ParallelLinesError if the inputs are parallel
+    /// - Throws: NonCoPlanarLinesError if the inputs don't lie in the same plane
     public static func intersectTwo (straightA: Line, straightB: Line) throws -> Point3D  {
         
         guard !Line.isCoincident(straightA, straightB: straightB) else { throw CoincidentLinesError(enil: straightA) }
@@ -140,12 +147,14 @@ public struct Line: Equatable {
         
         let bridgeVector = Vector3D.built(straightA.getOrigin(), towards: straightB.getOrigin())
         
+        /// Components (tuple) of the full-length bridge vector relative to Line straightA
         let comps = straightA.resolveRelative(bridgeVector)
         
         let propor = Vector3D.dotProduct(comps.perp, rhs: straightB.getDirection());
         
         let perpLen = comps.perp.length()
         
+        /// Length along B to the intersection
         let lengthB =  -1.0 * perpLen / propor;
         
         let alongB = straightB.getDirection() * lengthB;

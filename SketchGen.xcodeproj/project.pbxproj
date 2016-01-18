@@ -62,6 +62,8 @@
 		81FEAAA91C4359B1000F0E2A /* ParallelLinesError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81FEAAA71C4359B1000F0E2A /* ParallelLinesError.swift */; };
 		81FEAAAB1C435AF0000F0E2A /* NonCoPlanarLinesError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81FEAAAA1C435AF0000F0E2A /* NonCoPlanarLinesError.swift */; };
 		81FEAAAC1C435AF0000F0E2A /* NonCoPlanarLinesError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81FEAAAA1C435AF0000F0E2A /* NonCoPlanarLinesError.swift */; };
+		81FEAACC1C4C7AE9000F0E2A /* Transform.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81FEAACB1C4C7AE9000F0E2A /* Transform.swift */; };
+		81FEAACD1C4C7AE9000F0E2A /* Transform.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81FEAACB1C4C7AE9000F0E2A /* Transform.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -114,6 +116,7 @@
 		81FEAAA41C4348EE000F0E2A /* CoincidentLinesError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoincidentLinesError.swift; sourceTree = "<group>"; };
 		81FEAAA71C4359B1000F0E2A /* ParallelLinesError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ParallelLinesError.swift; sourceTree = "<group>"; };
 		81FEAAAA1C435AF0000F0E2A /* NonCoPlanarLinesError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NonCoPlanarLinesError.swift; sourceTree = "<group>"; };
+		81FEAACB1C4C7AE9000F0E2A /* Transform.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Transform.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -183,6 +186,7 @@
 				8183F2671C1A0872009CAF6B /* NonUnitDirectionError.swift */,
 				8183F26A1C1A0A16009CAF6B /* ZeroVectorError.swift */,
 				8106F0021C1FA12C00C74FE6 /* Cubic.swift */,
+				81FEAACB1C4C7AE9000F0E2A /* Transform.swift */,
 			);
 			path = SketchGen;
 			sourceTree = "<group>";
@@ -312,6 +316,7 @@
 				81414B301C08CF2B00A9DE83 /* Easel2D.swift in Sources */,
 				8183F2681C1A0872009CAF6B /* NonUnitDirectionError.swift in Sources */,
 				81FEAAAB1C435AF0000F0E2A /* NonCoPlanarLinesError.swift in Sources */,
+				81FEAACC1C4C7AE9000F0E2A /* Transform.swift in Sources */,
 				81414B3C1C090F2500A9DE83 /* CurveDemo.swift in Sources */,
 				81CDCC211C17E41400060C8D /* ParallelError.swift in Sources */,
 				81414B321C08CF5E00A9DE83 /* Vector3D.swift in Sources */,
@@ -347,6 +352,7 @@
 				8183F26C1C1A0A16009CAF6B /* ZeroVectorError.swift in Sources */,
 				8183F2631C18E308009CAF6B /* ParallelError.swift in Sources */,
 				81FEAAAC1C435AF0000F0E2A /* NonCoPlanarLinesError.swift in Sources */,
+				81FEAACD1C4C7AE9000F0E2A /* Transform.swift in Sources */,
 				814F133D1C153ED7004AB22B /* Arc.swift in Sources */,
 				814F133E1C153EDD004AB22B /* Vector3D.swift in Sources */,
 				8183F2701C1A675A009CAF6B /* PlaneTests.swift in Sources */,
