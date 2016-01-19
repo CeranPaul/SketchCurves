@@ -1,9 +1,9 @@
 //
 //  Point3DTests.swift
-//  CurveLab
+//  SketchCurves
 //
 //  Created by Paul Hollingshead on 11/5/15.
-//  Copyright © 2015 Ceran Digital Media. All rights reserved.
+//  Copyright © 2016 Ceran Digital Media. All rights reserved.  See LICENSE.md
 //
 
 import XCTest

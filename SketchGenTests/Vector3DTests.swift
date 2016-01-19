@@ -1,8 +1,9 @@
 //
 //  Vector3DTests.swift
-//  CurveLab
+//  SketchCurves
 //
 //  Created by Paul on 10/30/15.
+//  Copyright © 2016 Ceran Digital Media. All rights reserved.  See LICENSE.md
 //
 
 import XCTest
@@ -73,6 +74,11 @@ class Vector3DTests: XCTestCase {
         
         trial = Vector3D(i: 1.0, j: 1.0, k: 2.0)
         XCTAssertFalse(trial.isUnit())
+        
+        trial = Vector3D(i: -3.0, j: -4.0, k: -12.0)
+        trial.normalize()
+        
+        XCTAssert(trial.isUnit())
     }
     
     // Confirm that a zero vector is recognized
@@ -85,7 +91,10 @@ class Vector3DTests: XCTestCase {
         XCTAssertFalse(trial.isZero())
         
         trial = Vector3D(i: 0.0, j: 0.0, k: 0.0)
-        XCTAssert(trial.isZero())        
+        XCTAssert(trial.isZero())
+        
+        trial = Vector3D(i: -3.0, j: -4.0, k: -12.0)
+        XCTAssertFalse(trial.isZero())
     }
     
     // Be certain that the func for normalizing does its job
@@ -114,6 +123,9 @@ class Vector3DTests: XCTestCase {
         XCTAssertFalse(ping == pong2)
         
         pong2 = Vector3D(i: 1.0, j: 6.5, k: 3.0)
+        XCTAssertFalse(ping == pong2)
+
+        pong2 = Vector3D(i: -1.0, j: -2.0, k: -3.0)
         XCTAssertFalse(ping == pong2)
     }
     

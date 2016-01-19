@@ -64,6 +64,7 @@
 		81FEAAAC1C435AF0000F0E2A /* NonCoPlanarLinesError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81FEAAAA1C435AF0000F0E2A /* NonCoPlanarLinesError.swift */; };
 		81FEAACC1C4C7AE9000F0E2A /* Transform.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81FEAACB1C4C7AE9000F0E2A /* Transform.swift */; };
 		81FEAACD1C4C7AE9000F0E2A /* Transform.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81FEAACB1C4C7AE9000F0E2A /* Transform.swift */; };
+		81FEAACF1C4D8DDF000F0E2A /* TransformTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81FEAACE1C4D8DDF000F0E2A /* TransformTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -117,6 +118,7 @@
 		81FEAAA71C4359B1000F0E2A /* ParallelLinesError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ParallelLinesError.swift; sourceTree = "<group>"; };
 		81FEAAAA1C435AF0000F0E2A /* NonCoPlanarLinesError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NonCoPlanarLinesError.swift; sourceTree = "<group>"; };
 		81FEAACB1C4C7AE9000F0E2A /* Transform.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Transform.swift; sourceTree = "<group>"; };
+		81FEAACE1C4D8DDF000F0E2A /* TransformTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TransformTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -203,6 +205,7 @@
 				81414B161C08CE5E00A9DE83 /* Info.plist */,
 				8183F26D1C1A672B009CAF6B /* LineTests.swift */,
 				8183F26F1C1A675A009CAF6B /* PlaneTests.swift */,
+				81FEAACE1C4D8DDF000F0E2A /* TransformTests.swift */,
 			);
 			path = SketchGenTests;
 			sourceTree = "<group>";
@@ -359,6 +362,7 @@
 				814F133F1C153EEA004AB22B /* OrthoVol.swift in Sources */,
 				8183F2661C18E319009CAF6B /* ParallelPlanesError.swift in Sources */,
 				81414B361C08CF8C00A9DE83 /* LineSegTests.swift in Sources */,
+				81FEAACF1C4D8DDF000F0E2A /* TransformTests.swift in Sources */,
 				8183F2621C18E2FF009CAF6B /* Line.swift in Sources */,
 				814F13431C153F1E004AB22B /* ArcPointsError.swift in Sources */,
 				8106F0011C1A7F6B00C74FE6 /* Point3DTests.swift in Sources */,

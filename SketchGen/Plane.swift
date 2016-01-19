@@ -1,7 +1,9 @@
 //
 //  Plane.swift
+//  SketchCurves
 //
 //  Created by Paul on 8/11/15.
+//  Copyright © 2016 Ceran Digital Media. All rights reserved.  See LICENSE.md
 //
 
 import Foundation
@@ -17,10 +19,12 @@ public struct Plane   {
     
     
     /// Records parameters and checks to see that the normal is a legitimate vector
+    /// - See: 'testFidelity' under PlaneTests
     init(spot: Point3D, arrow: Vector3D) throws  {
         
         self.location = spot
-        self.normal = arrow
+        self.normal = arrow        // TODO:  Include a test to verify that the errors get thrown correctly
+
         
         // In an 'init', this cannot be done at the top
         guard (!self.normal.isZero()) else  {throw ZeroVectorError(dir: self.normal)}
@@ -28,18 +32,22 @@ public struct Plane   {
     }
     
     /// A getter for the point defining the plane
+    /// - See: 'testLocationGetter' under PlaneTests
     public func getLocation() -> Point3D   {
         
         return self.location
     }
     
     /// A getter for the vector defining the plane
+    /// - See: 'testNormalGetter' under PlaneTests
     public func getNormal() -> Vector3D   {
         
         return self.normal
     }
     
+    
     /// Does the argument point lie on the plane?
+    /// - See: 'testIsCoincident' under PlaneTests
     public static func isCoincident(flat: Plane, pip:  Point3D) -> Bool  {
         
         let bridge = Vector3D.built(flat.location, towards: pip)
@@ -49,6 +57,7 @@ public struct Plane   {
         
         return  abs(distanceOffPlane) < Point3D.Epsilon
     }
+    
     
     /// Check to see that the line direction is perpendicular to the normal
     func isParallel(enil: Line) -> Bool   {
@@ -115,6 +124,7 @@ public struct Plane   {
 
 /// Check for them being identical
 /// - SeeAlso:  isParallel and isCoincident
+/// - See: 'testEquals' under PlaneTests
 public func == (lhs: Plane, rhs: Plane) -> Bool   {
     
     let flag1 = lhs.normal == rhs.normal    // Do they have the same direction?

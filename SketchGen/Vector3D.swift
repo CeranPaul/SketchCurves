@@ -23,9 +23,9 @@ public struct Vector3D: Equatable {
     /// - See: 'testIsZero' under Vector3DTests
     public func isZero() -> Bool   {
         
-        let flagI = self.i  < Vector3D.EpsilonV
-        let flagJ = self.j  < Vector3D.EpsilonV
-        let flagK = self.k  < Vector3D.EpsilonV
+        let flagI = abs(self.i)  < Vector3D.EpsilonV
+        let flagJ = abs(self.j)  < Vector3D.EpsilonV
+        let flagK = abs(self.k)  < Vector3D.EpsilonV
         
         return flagI && flagJ && flagK
     }
@@ -143,7 +143,7 @@ public struct Vector3D: Equatable {
 /// Compare each component of the vector for equality
 /// - See: 'testEquals' under Vector3DTests
 public func == (lhs: Vector3D, rhs: Vector3D) -> Bool   {
-    
+        
     let flagI = abs(rhs.i - lhs.i) < Vector3D.EpsilonV
     let flagJ = abs(rhs.j - lhs.j) < Vector3D.EpsilonV
     let flagK = abs(rhs.k - lhs.k) < Vector3D.EpsilonV
