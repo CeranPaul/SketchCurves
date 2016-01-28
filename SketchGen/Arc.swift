@@ -39,10 +39,10 @@ public class Arc: PenCurve {
     var isClockwise:  Bool
     
     /// The enum that hints at the meaning of the curve
-    var usage: PenTypes
+    public var usage: PenTypes
     
     /// The box that contains the curve
-    var extent: OrthoVol
+    public var extent: OrthoVol
     
     
     
@@ -100,10 +100,12 @@ public class Arc: PenCurve {
     /// - Warning:  No checks are made for the value of t being inside some range
     public func pointAt(t: Double) -> Point3D  {
         
-        let deltaAngle = t * self.range    // Implies that 0 < t < 1
+        var deltaAngle = t * self.range    // Implies that 0 < t < 1
+        
+        if(isClockwise) { deltaAngle = -1.0 * t * self.range }
         
         let spot = pointAtAngle(self.startAngle + deltaAngle)
-     
+        
         return spot
     }
     
@@ -255,8 +257,16 @@ public class Arc: PenCurve {
         return thumbsUp
     }
     
+    /// Change the traversal direction of the curve so it can be aligned with other members of Perimeter
+    public func reverse() {
+        
+        // TODO: Make this something besides a cop-out
+
+    }
+    
+    
     /// Figure how far the point is off the curve, and how far along the curve it is.  Useful for picks
-    func resolveBridge(speck: Point3D) -> (along: Double, perp: Double)   {
+    public func resolveBridge(speck: Point3D) -> (along: Double, perp: Double)   {
         
         // TODO: Make this return something besides dummy values
         return (1.0, 0.0)

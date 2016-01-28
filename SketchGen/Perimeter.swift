@@ -14,30 +14,64 @@ public class Perimeter {
     /// The display list
     var pieces: [PenCurve]
     
-    /// Whether or not this has no gaps
-    var isClosed: Bool
+    /// Whether or not the perimeter has any gaps
+    var closed: Bool
     
     init () {
         
         pieces = [PenCurve]()
         
-        isClosed = false
+        closed = false
     }
     
     
     
     /// Pile on another curve
-    /// It is a possibility to do this by overloading +=
+    /// There are a whole bunch of checks that should be done as part of this process
     func add(noob: PenCurve) -> Void   {
         
         if self.pieces.isEmpty  {
             
             pieces.append(noob)   // Use this to start the list
             
-        }  else  {   // Find the correct spot, and add this to the array
+        }  else  {   // Look for a connecting spot, and add this to the array
+            
+              // Look for an end point that is the same as the current beginning point
+            
+            /// Whether or not the input curve could be connected
+            var didConnect = false
+            for (index, edge) in pieces.enumerate()   {
+                
+                let head = edge.getOneEnd()
+                let tail = edge.getOtherEnd()
+                
+                if  noob.getOneEnd() == tail  {
+                    pieces.insert(noob, atIndex: index + 1)
+                    didConnect = true
+                    break
+                }  else if noob.getOtherEnd() == tail   {
+                    noob.reverse()
+                    pieces.insert(noob, atIndex: index + 1)
+                    didConnect = true
+                    break
+                }  else if noob.getOneEnd() == head  {
+                    noob.reverse()
+                    pieces.insert(noob, atIndex: index)
+                    didConnect = true
+                    break
+                }  else if noob.getOtherEnd() == head   {
+                    pieces.insert(noob, atIndex: index)
+                    didConnect = true
+                    break
+                }
+            }   // End of for loop
+            
+            if !didConnect   { pieces.append(noob) }   // Add to the array at an arbitrary location
             
             
-        }
+            
+            
+        }   // End of 'else' clause
         
     }
     

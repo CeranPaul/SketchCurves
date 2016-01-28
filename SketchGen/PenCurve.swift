@@ -1,14 +1,15 @@
 //
 //  PenCurve.swift
-//  CurveLab
+//  SketchCurves
 //
 //  Created by Paul on 10/30/15.
+//  Copyright © 2016 Ceran Digital Media. All rights reserved.  See LICENSE.md
 //
 
 import Foundation
 import UIKit
 
-protocol PenCurve   {
+public protocol PenCurve   {
     
     /// The enum that hints at the meaning of the curve
     var usage: PenTypes   { get set }
@@ -25,6 +26,9 @@ protocol PenCurve   {
     
     /// Retrieve the finishing end
     func getOtherEnd() -> Point3D
+    
+    /// Change the direction if traversing this curve
+    func reverse() -> Void
     
     /// Plot the curve.  Your classic example of polymorphism
     func draw(context: CGContext)

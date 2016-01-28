@@ -147,11 +147,13 @@ public struct Line: Equatable {
         
         let bridgeVector = Vector3D.built(straightA.getOrigin(), towards: straightB.getOrigin())
         
-        /// Components (tuple) of the full-length bridge vector relative to Line straightA
+        /// Components (vectors) of the full-length bridge vector relative to Line straightA
         let comps = straightA.resolveRelative(bridgeVector)
         
-        let propor = Vector3D.dotProduct(comps.perp, rhs: straightB.getDirection());
+        var perpDir = comps.perp
+        perpDir.normalize()
         
+        let propor = Vector3D.dotProduct(perpDir, rhs: straightB.getDirection())
         let perpLen = comps.perp.length()
         
         /// Length along B to the intersection

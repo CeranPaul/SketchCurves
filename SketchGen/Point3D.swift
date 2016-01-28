@@ -19,6 +19,7 @@ public struct  Point3D: Equatable {
     
     
     /// Create a new point by offsetting
+    /// - SeeAlso:  transform
     public func offset (jump: Vector3D) -> Point3D   {
         
         let totalX = self.x + jump.i
@@ -26,6 +27,17 @@ public struct  Point3D: Equatable {
         let totalZ = self.z + jump.k
     
         return Point3D(x: totalX, y: totalY, z: totalZ)
+    }
+    
+    /// Move and scale by a matrix
+    /// - SeeAlso:  offset
+    public func transform(xirtam: Transform) -> Point3D {
+        
+        let pip4 = double4(self.x, self.y, self.z, 1.0)
+        let tniop4 = pip4 * xirtam.mtx
+        
+        let transformed = Point3D(x: tniop4[0], y: tniop4[1], z: tniop4[2])
+        return transformed
     }
     
     /// Calculate the distance between two of 'em
@@ -38,16 +50,6 @@ public struct  Point3D: Equatable {
         let sum = deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ
         
         return sqrt(sum)
-    }
-    
-    /// Move and scale by a matrix
-    public static func transform(sourcePt: Point3D, xirtam: double4x4) -> Point3D {
-        
-        let pip4 = double4(sourcePt.x, sourcePt.y, sourcePt.z, 1.0)
-        let tniop4 = pip4 * xirtam
-        
-        let transformed = Point3D(x: tniop4[0], y: tniop4[1], z: tniop4[2])
-        return transformed
     }
     
     /// Drop the point in the direction of the normal

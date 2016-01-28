@@ -18,10 +18,10 @@ public class LineSeg: PenCurve {    // Can this be a struct, instead?
     
     
     /// The enum that hints at the meaning of the curve
-    var usage: PenTypes
+    public var usage: PenTypes
     
     /// The box that contains the curve
-    var extent: OrthoVol
+    public var extent: OrthoVol
     
     
     
@@ -94,7 +94,7 @@ public class LineSeg: PenCurve {    // Can this be a struct, instead?
     }
     
     /// Find the position of a point relative to the LineSeg
-    func resolveBridge(speck: Point3D) -> (along: Double, perp: Double)   {
+    public func resolveBridge(speck: Point3D) -> (along: Double, perp: Double)   {
         
         var unitAlong = Vector3D.built(self.endAlpha, towards: self.endOmega)
         unitAlong.normalize()

@@ -10,6 +10,8 @@
 		8106F0011C1A7F6B00C74FE6 /* Point3DTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8106F0001C1A7F6B00C74FE6 /* Point3DTests.swift */; };
 		8106F0031C1FA12C00C74FE6 /* Cubic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8106F0021C1FA12C00C74FE6 /* Cubic.swift */; };
 		8106F0041C1FA12C00C74FE6 /* Cubic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8106F0021C1FA12C00C74FE6 /* Cubic.swift */; };
+		81078A751C587848001C21CD /* Ellipse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81078A741C587848001C21CD /* Ellipse.swift */; };
+		81078A761C587848001C21CD /* Ellipse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81078A741C587848001C21CD /* Ellipse.swift */; };
 		81414B001C08CE5E00A9DE83 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81414AFF1C08CE5E00A9DE83 /* AppDelegate.swift */; };
 		81414B021C08CE5E00A9DE83 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81414B011C08CE5E00A9DE83 /* ViewController.swift */; };
 		81414B051C08CE5E00A9DE83 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81414B031C08CE5E00A9DE83 /* Main.storyboard */; };
@@ -56,6 +58,7 @@
 		81CDCC231C17E44B00060C8D /* Plane.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81CDCC221C17E44B00060C8D /* Plane.swift */; };
 		81CDCC251C17E4D200060C8D /* CoincidentPlanesError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81CDCC241C17E4D200060C8D /* CoincidentPlanesError.swift */; };
 		81CDCC271C17E4F000060C8D /* ParallelPlanesError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81CDCC261C17E4F000060C8D /* ParallelPlanesError.swift */; };
+		81F8D6CC1C51F65100A369CF /* PerimeterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81F8D6CB1C51F65000A369CF /* PerimeterTests.swift */; };
 		81FEAAA51C4348EE000F0E2A /* CoincidentLinesError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81FEAAA41C4348EE000F0E2A /* CoincidentLinesError.swift */; };
 		81FEAAA61C4348EE000F0E2A /* CoincidentLinesError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81FEAAA41C4348EE000F0E2A /* CoincidentLinesError.swift */; };
 		81FEAAA81C4359B1000F0E2A /* ParallelLinesError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81FEAAA71C4359B1000F0E2A /* ParallelLinesError.swift */; };
@@ -82,6 +85,7 @@
 /* Begin PBXFileReference section */
 		8106F0001C1A7F6B00C74FE6 /* Point3DTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Point3DTests.swift; sourceTree = "<group>"; };
 		8106F0021C1FA12C00C74FE6 /* Cubic.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Cubic.swift; sourceTree = "<group>"; };
+		81078A741C587848001C21CD /* Ellipse.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Ellipse.swift; sourceTree = "<group>"; };
 		81414AFC1C08CE5E00A9DE83 /* SketchGen.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SketchGen.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		81414AFF1C08CE5E00A9DE83 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		81414B011C08CE5E00A9DE83 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -116,6 +120,7 @@
 		81CDCC221C17E44B00060C8D /* Plane.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Plane.swift; sourceTree = "<group>"; };
 		81CDCC241C17E4D200060C8D /* CoincidentPlanesError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoincidentPlanesError.swift; sourceTree = "<group>"; };
 		81CDCC261C17E4F000060C8D /* ParallelPlanesError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ParallelPlanesError.swift; sourceTree = "<group>"; };
+		81F8D6CB1C51F65000A369CF /* PerimeterTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PerimeterTests.swift; sourceTree = "<group>"; };
 		81FEAAA41C4348EE000F0E2A /* CoincidentLinesError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoincidentLinesError.swift; sourceTree = "<group>"; };
 		81FEAAA71C4359B1000F0E2A /* ParallelLinesError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ParallelLinesError.swift; sourceTree = "<group>"; };
 		81FEAAAA1C435AF0000F0E2A /* NonCoPlanarLinesError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NonCoPlanarLinesError.swift; sourceTree = "<group>"; };
@@ -171,6 +176,7 @@
 				81CDCC1E1C17E3FD00060C8D /* Line.swift */,
 				81414B1F1C08CEE200A9DE83 /* LineSeg.swift */,
 				81414B291C08CF0500A9DE83 /* Arc.swift */,
+				81078A741C587848001C21CD /* Ellipse.swift */,
 				8106F0021C1FA12C00C74FE6 /* Cubic.swift */,
 				81FEAACB1C4C7AE9000F0E2A /* Transform.swift */,
 				81FEAAD11C4E9716000F0E2A /* Perimeter.swift */,
@@ -201,6 +207,7 @@
 				8183F26D1C1A672B009CAF6B /* LineTests.swift */,
 				8183F26F1C1A675A009CAF6B /* PlaneTests.swift */,
 				81FEAACE1C4D8DDF000F0E2A /* TransformTests.swift */,
+				81F8D6CB1C51F65000A369CF /* PerimeterTests.swift */,
 			);
 			path = SketchGenTests;
 			sourceTree = "<group>";
@@ -330,6 +337,7 @@
 				81414B261C08CEE200A9DE83 /* PenCurve.swift in Sources */,
 				81414B301C08CF2B00A9DE83 /* Easel2D.swift in Sources */,
 				81FEAAD21C4E9716000F0E2A /* Perimeter.swift in Sources */,
+				81078A751C587848001C21CD /* Ellipse.swift in Sources */,
 				8183F2681C1A0872009CAF6B /* NonUnitDirectionError.swift in Sources */,
 				81FEAAAB1C435AF0000F0E2A /* NonCoPlanarLinesError.swift in Sources */,
 				81FEAACC1C4C7AE9000F0E2A /* Transform.swift in Sources */,
@@ -372,6 +380,7 @@
 				814F133D1C153ED7004AB22B /* Arc.swift in Sources */,
 				814F133E1C153EDD004AB22B /* Vector3D.swift in Sources */,
 				8183F2701C1A675A009CAF6B /* PlaneTests.swift in Sources */,
+				81F8D6CC1C51F65100A369CF /* PerimeterTests.swift in Sources */,
 				814F133F1C153EEA004AB22B /* OrthoVol.swift in Sources */,
 				81FEAAD31C4E9716000F0E2A /* Perimeter.swift in Sources */,
 				8183F2661C18E319009CAF6B /* ParallelPlanesError.swift in Sources */,
@@ -386,6 +395,7 @@
 				8183F2651C18E313009CAF6B /* CoincidentPlanesError.swift in Sources */,
 				81414B371C08CF8C00A9DE83 /* OrthoVolTests.swift in Sources */,
 				8106F0041C1FA12C00C74FE6 /* Cubic.swift in Sources */,
+				81078A761C587848001C21CD /* Ellipse.swift in Sources */,
 				81FEAAA61C4348EE000F0E2A /* CoincidentLinesError.swift in Sources */,
 				81414B381C08CF8C00A9DE83 /* Vector3DTests.swift in Sources */,
 			);
