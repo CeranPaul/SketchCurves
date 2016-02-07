@@ -34,6 +34,6 @@ public protocol PenCurve   {
     func draw(context: CGContext)
     
     /// Figure how far the point is off the curve, and how far along the curve it is.  Useful for picks  
-    func resolveBridge(speck: Point3D) -> (along: Double, perp: Double)
+    func resolveNeighbor(speck: Point3D) -> (along: Double, perp: Double)
     
 }

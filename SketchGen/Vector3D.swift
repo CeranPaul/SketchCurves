@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import simd
 
 public struct Vector3D: Equatable {
     
@@ -34,7 +35,7 @@ public struct Vector3D: Equatable {
     /// - See: 'testLength' under Vector3DTests
     public func length() -> Double {
         
-        return sqrt(i * i + j * j + k * k)
+        return sqrt(self.i * self.i + self.j * self.j + self.k * self.k)
     }
     
     /// Destructively change the vector length to 1.0
@@ -62,6 +63,17 @@ public struct Vector3D: Equatable {
         
         let ricochet = Vector3D(i: self.i * -1.0, j: self.j * -1.0, k: self.k * -1.0)
         return ricochet
+    }
+    
+    
+    /// Rotate by a matrix
+    public func transform(xirtam: Transform) -> Vector3D {
+        
+        let dir4 = double4(self.i, self.j, self.k, 0.0)
+        let vec4 = dir4 * xirtam.mtx
+        
+        let transformed = Vector3D(i: vec4[0], j: vec4[1], k: vec4[2])
+        return transformed
     }
     
     

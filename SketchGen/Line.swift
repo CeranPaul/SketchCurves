@@ -19,6 +19,7 @@ public struct Line: Equatable {
     
     
     // Force the direction vector to have unit length
+    /// - Throws: ZeroVectorError if the input Vector3D has no length
     init (spot: Point3D, arrow: Vector3D) throws  {
         
         self.origin = spot

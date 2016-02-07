@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import simd
 import UIKit
 
 /// A wire between two points
@@ -93,8 +94,21 @@ public class LineSeg: PenCurve {    // Can this be a struct, instead?
         return along   // I think it's weird that this has to be a separate line
     }
     
+    /// Move, rotate, and scale by a matrix
+    /// - Throws: CoincidentPointsError if it was scaled to be very small
+    public func transform(xirtam: Transform) throws -> LineSeg {
+        
+        let tAlpha = endAlpha.transform(xirtam)
+        let tOmega = endOmega.transform(xirtam)
+        
+        let transformed = try LineSeg(end1: tAlpha, end2: tOmega)   // Will generate a new extent
+        transformed.setIntent(self.usage)   // Copy setting instead of having the default
+        return transformed
+    }
+    
+    
     /// Find the position of a point relative to the LineSeg
-    public func resolveBridge(speck: Point3D) -> (along: Double, perp: Double)   {
+    public func resolveNeighbor(speck: Point3D) -> (along: Double, perp: Double)   {
         
         var unitAlong = Vector3D.built(self.endAlpha, towards: self.endOmega)
         unitAlong.normalize()

@@ -1,7 +1,10 @@
 //
 //  Point3D.swift
+//  SketchCurves
 //
 //  Created by Paul on 8/11/15.
+//  Copyright © 2016 Ceran Digital Media. All rights reserved.  See LICENSE.md
+//
 //
 
 import Foundation
@@ -14,11 +17,12 @@ public struct  Point3D: Equatable {
     var z: Double
 
     
-    static let Epsilon: Double = 0.0001    // Used as a distance in equality checks
+    static let Epsilon: Double = 0.0001    // Used as a maximum distance in equality checks
     
     
     
     /// Create a new point by offsetting
+    /// - See: 'testOffset' under Point3DTests
     /// - SeeAlso:  transform
     public func offset (jump: Vector3D) -> Point3D   {
         
@@ -40,7 +44,10 @@ public struct  Point3D: Equatable {
         return transformed
     }
     
+    
+    
     /// Calculate the distance between two of 'em
+    /// - See: 'testDist' under Point3DTests
     public static func dist(pt1: Point3D, pt2: Point3D) -> Double   {
         
         let deltaX = pt2.x - pt1.x
@@ -56,10 +63,6 @@ public struct  Point3D: Equatable {
     public static func projectToPlane(pip: Point3D, enalp: Plane) -> Point3D  {
         
         if Plane.isCoincident(enalp, pip: pip) {return pip }    // Shortcut!
-
-        // TODO:  Generate an exception if it is not a unit vector
-//        let flag1 = enalp.normal.isUnit()
-        
         
         
         let planeCenter = enalp.getLocation()   // Referred to multiple times

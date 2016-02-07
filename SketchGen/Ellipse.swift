@@ -9,19 +9,30 @@
 import Foundation
 import UIKit
 
-/// An elliptical arc, either whole, or a portion.  As opposed to the path of an orbiting body
+/// An elliptical arc, either whole, or a portion. More of a distorted circle rather than the path of an orbiting body
 public class Ellipse: PenCurve {
     
-    /// Point around which the arc is swept
+    /// Point around which the ellipse is swept
+    /// As contrasted with focii for an orbital ellipse
     private var ctr: Point3D
     
-    /// Beginning point
+    /// Length of the larger axis
+    private var a: Double
+    
+    /// Length of the smaller axis
+    private var b: Double
+    
+    /// Orientation of the long axis
+    private var azimuth: Double
+    
+    
+    /// Beginning point as angle in radians
     var start: Point3D
     
-    /// End point
+    /// End point as angle in radians
     var finish: Point3D
     
-    /// Whether or not this is a complete circle
+    /// Whether or not this is closed
     var isFull: Bool
     
     /// Which direction should be swept?
@@ -31,19 +42,25 @@ public class Ellipse: PenCurve {
     public var usage: PenTypes
     
     /// The box that contains the curve
+    /// - Warning:  The class currently has no way to figure a correct and useful value    
     public var extent: OrthoVol
     
     
-    init()   {
+    public init(retnec: Point3D, a: Double, b: Double, azimuth: Double, start: Point3D, finish: Point3D)   {
         
-        ctr = Point3D(x: 0.0, y: 0.0, z: 0.0)
-        start = Point3D(x: -0.5, y: 0.0, z: 0.0)
-        finish = Point3D(x: 0.5, y: 0.0, z: 0.0)
-        isFull = true
-        isClockwise = true
-        usage = PenTypes.Default
-        extent = OrthoVol(minX: -0.5, maxX: 0.5, minY: -1.0, maxY: 1.0, minZ: -0.2, maxZ: 0.2)
+        self.ctr = retnec
+        self.a = a
+        self.b = b
+        self.azimuth = azimuth
+        self.start = start
+        self.finish = finish
+        
+        self.isFull = true
+        self.isClockwise = true
+        self.usage = PenTypes.Default
+        self.extent = OrthoVol(minX: -0.5, maxX: 0.5, minY: -1.0, maxY: 1.0, minZ: -0.2, maxZ: 0.2)
     }
+    
     
     /// Attach new meaning to the curve
     public func setIntent(purpose: PenTypes)   {
@@ -58,12 +75,14 @@ public class Ellipse: PenCurve {
     
     /// Simple getter for the beginning point
     public func getOneEnd() -> Point3D {   // This may not give the correct answer, depend on 'isClockwise'
-        return start
+        
+        return self.start
     }
     
     /// Simple getter for the ending point
     public func getOtherEnd() -> Point3D {   // This may not give the correct answer, depend on 'isClockwise'
-        return finish
+        
+        return self.finish
     }
     
     /// Find the point along this line segment specified by the parameter 't'
@@ -78,21 +97,31 @@ public class Ellipse: PenCurve {
         return spot
     }
     
+    /// Determine an X value from a given angle (in radians)
+    public func findX(ang: Double) -> Double   {
+        
+        let base = cos(ang)
+        let alongX = base * self.a
+        
+        return alongX
+    }
+    
+    
+    /// Determine a Y value from a given X
+    public func findY(x: Double) -> Double  {
+        
+        let y = sqrt(b * b * (1 - (x * x) / (a * a)))
+        return y
+    }
     
     /// Plot the elliptical segment.  This will be called by the UIView 'drawRect' function
     public func draw(context: CGContext)  {
         
         // TODO: Make this draw an ellipse, not a circle
         
-        let xCG: CGFloat = CGFloat(self.ctr.x)    // Convert to "CGFloat", and throw out Z coordinate
-        let yCG: CGFloat = CGFloat(self.ctr.y)
         
-        var dirFlag: Int32 = 1
-        if !self.isClockwise  { dirFlag = 0 }
         
-        CGContextAddArc(context, xCG, yCG, CGFloat(0.5), CGFloat(-M_PI), CGFloat(0.0), dirFlag)
-        
-        CGContextStrokePath(context)
+//        CGContextStrokePath(context)
         
     }
     
@@ -106,13 +135,13 @@ public class Ellipse: PenCurve {
     
     
     /// Figure how far the point is off the curve, and how far along the curve it is.  Useful for picks
-    public func resolveBridge(speck: Point3D) -> (along: Double, perp: Double)   {
+    public func resolveNeighbor(speck: Point3D) -> (along: Double, perp: Double)   {
         
         // TODO: Make this return something besides dummy values
         return (1.0, 0.0)
     }
     
     
-}    // End of definition for struct Arc
+}    // End of definition for class Ellipse
 
 

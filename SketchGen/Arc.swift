@@ -1,5 +1,6 @@
 //
 //  Arc.swift
+//  SketchCurves
 //
 //  Created by Paul Hollingshead on 11/7/15.
 //  Copyright © 2015 Ceran Digital Media. All rights reserved.  See LICENSE.md
@@ -8,20 +9,20 @@
 import Foundation
 import UIKit
 
-/// A circular arc, either whole, or a portion
+/// A circular arc - either whole, or a portion
 public class Arc: PenCurve {
     
     /// Point around which the arc is swept
     private var ctr: Point3D
     
+    /// Derived radius of the Arc
+    private var rad: Double
+    
     /// Beginning point
-    var start: Point3D
+    private var start: Point3D
     
     /// End point
-    var finish: Point3D
-    
-    /// Derived radius of the Arc
-    var rad: Double
+    private var finish: Point3D
     
     /// Whether or not this is a complete circle
     var isFull: Bool
@@ -46,7 +47,7 @@ public class Arc: PenCurve {
     
     
     
-    /// Build an arc from three points
+    /// Build an arc from a center and two boundary points
     /// - Throws: CoincidentPointsError, ArcPointsError
     public init(center: Point3D, end1: Point3D, end2: Point3D, isCW: Bool) throws {
         
@@ -56,6 +57,11 @@ public class Arc: PenCurve {
         
         self.rad = Point3D.dist(self.ctr, pt2: self.start)
         
+        self.isClockwise = isCW
+        
+        self.usage = PenTypes.Default   // Use 'setIntent' to attach the desired value
+        
+
         self.isFull = false
         if self.start == self.finish   { self.isFull = true }
         
@@ -69,17 +75,14 @@ public class Arc: PenCurve {
         
         self.range = 2.0 * M_PI   // This can get modified below
         
-        self.isClockwise = isCW
-        
-        self.usage = PenTypes.Default   // Use 'setIntent' to attach the desired value
-        
         // Dummy assignment because of the peculiarities of being an init
         self.extent = OrthoVol(minX: -0.5, maxX: 0.5, minY: -0.5, maxY: 0.5, minZ: -0.5, maxZ: 0.5)
         
         
         
             // Because this is an 'init', a guard statement cannot be used at the top
-        if end1 == center || end2 == center { throw CoincidentPointsError(dupePt: center) }
+        if end1 == center || end2 == center  { throw CoincidentPointsError(dupePt: center) }
+        if end1 == end2  { throw CoincidentPointsError(dupePt: end1) }
         
            // See if an arc can actually be made from the three given inputs
         if !Arc.isArcable(center, end1: start, end2: finish)   { throw ArcPointsError(badPtA: center, badPtB: start, badPtC: finish)  }
@@ -95,6 +98,24 @@ public class Arc: PenCurve {
     public func getCenter() -> Point3D   {
         return self.ctr
     }
+    
+    /// Attach new meaning to the curve
+    public func setIntent(purpose: PenTypes)   {
+        self.usage = purpose
+    }
+    
+    public func getOneEnd() -> Point3D {   // This may not give the correct answer, depend on 'isClockwise'
+        return start
+    }
+    
+    public func getOtherEnd() -> Point3D {   // This may not give the correct answer, depend on 'isClockwise'
+        return finish
+    }
+    
+    public func getRadius() -> Double   {
+        return rad
+    }
+    
     
     /// Find the point along this line segment specified by the parameter 't'
     /// - Warning:  No checks are made for the value of t being inside some range
@@ -117,24 +138,6 @@ public class Arc: PenCurve {
         let deltaY = self.rad * sin(theta)
         
         return Point3D(x: self.ctr.x + deltaX, y: self.ctr.y + deltaY, z: self.ctr.z)
-    }
-    
-    /// Attach new meaning to the curve
-    public func setIntent(purpose: PenTypes)   {
-        
-        self.usage = purpose
-    }
-    
-    public func getOneEnd() -> Point3D {   // This may not give the correct answer, depend on 'isClockwise'
-        return start
-    }
-    
-    public func getOtherEnd() -> Point3D {   // This may not give the correct answer, depend on 'isClockwise'
-        return finish
-    }
-    
-    public func getRadius() -> Double   {
-        return rad
     }
     
     
@@ -258,6 +261,7 @@ public class Arc: PenCurve {
     }
     
     /// Change the traversal direction of the curve so it can be aligned with other members of Perimeter
+    /// Not implemented
     public func reverse() {
         
         // TODO: Make this something besides a cop-out
@@ -266,17 +270,29 @@ public class Arc: PenCurve {
     
     
     /// Figure how far the point is off the curve, and how far along the curve it is.  Useful for picks
-    public func resolveBridge(speck: Point3D) -> (along: Double, perp: Double)   {
+    /// Not implemented
+    public func resolveNeighbor(speck: Point3D) -> (along: Double, perp: Double)   {
         
         // TODO: Make this return something besides dummy values
         return (1.0, 0.0)
     }
     
+    /// See if two have the same center
+    /// - Parameter: lhs: One Arc
+    /// - Parameter: rhs: Another Arc
+    /// - SeeAlso:  Overloaded ==
+    public static func isConcentric(lhs: Arc, rhs: Arc) -> Bool  {
+        
+        // TODO: Make this return something besides dummy values
+        return false
+    }
     
-}    // End of definition for struct Arc
+    
+}    // End of definition for class Arc
 
 
 /// Check to see that both are built from the same points
+/// - SeeAlso:  Arc.isConcentric
 public func == (lhs: Arc, rhs: Arc) -> Bool   {
     
     let ctrFlag = lhs.ctr == rhs.ctr

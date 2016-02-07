@@ -14,7 +14,7 @@ public class Transform   {
     var mtx: double4x4
     
     /// Construct an identity matrix
-    init()   {
+    public init()   {
         mtx = double4x4(diagonal: [1.0, 1.0, 1.0, 1.0])
     }
     
@@ -30,7 +30,7 @@ public class Transform   {
     
     /// Construct a matrix to do scaling
     /// scaleY should perhaps be negated for screen display
-    init (scaleX: Double, scaleY: Double, scaleZ: Double)   {
+    public init (scaleX: Double, scaleY: Double, scaleZ: Double)   {
         
         mtx = double4x4([[scaleX, 0.0, 0.0, 0.0],
                          [0.0, scaleY, 0.0, 0.0],
@@ -41,8 +41,9 @@ public class Transform   {
     
     
     /// Construct a matrix for rotation around a single axis
-    /// Angle should be in radians
-    init(rotationAxis: Axis, angleRad: Double)   {
+    /// - Parameter rotationAxis Center for rotation.  Should be a member of enum Axis
+    /// - Parameter angleRad Desired rotation in radians
+    public init(rotationAxis: Axis, angleRad: Double)   {
         
         let trigCos = cos(angleRad)
         let trigSin = sin(angleRad)
@@ -67,9 +68,15 @@ public class Transform   {
         }
     }
     
+    /// Return the inverse of the 4 x 4
+    public func getInverse() -> double4x4  {
+        return self.mtx.inverse
+    }
     
 }
 
+
+/// Simple parameter to indicate axis of rotation
 public enum Axis {
     
     case X

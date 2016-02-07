@@ -30,8 +30,8 @@ class ArcTests: XCTestCase {
             let orbit = try Arc(center: sun, end1: earth, end2: atlantis, isCW: false)
             
             XCTAssert(orbit.getCenter() == sun)
-            XCTAssert(orbit.start == earth)
-            XCTAssert(orbit.finish == atlantis)
+            XCTAssert(orbit.getOneEnd() == earth)
+            XCTAssert(orbit.getOtherEnd() == atlantis)
             
         }  catch  {
             print("Screwed up while testing a circle 1")

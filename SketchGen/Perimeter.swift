@@ -81,7 +81,7 @@ public class Perimeter {
         for var g = 0; g < pieces.count; g++  {
             
             let wire = pieces[g]
-            let sep = wire.resolveBridge(speck)
+            let sep = wire.resolveNeighbor(speck)
             
             var distance = sqrt(sep.along * sep.along + sep.perp * sep.perp)
             

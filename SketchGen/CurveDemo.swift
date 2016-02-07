@@ -1,15 +1,16 @@
 //
 //  Roundy.swift
-//  BoxChopDemo
+//  SketchCurves
 //
-//  Created by Paul Hollingshead on 11/8/15.
-//  Copyright © 2015 Ceran Digital Media. All rights reserved.
+//  Created by Paul on 11/8/15.
+//  Copyright © 2015 Ceran Digital Media. All rights reserved.  See LICENSE.md
 //
 
 import Foundation
 
 var modelGeo = Roundy()
 
+/// A class to run demonstrations of various curve types.  Use 'demoString' to drive the switch statement
 class Roundy  {
     
     /// The display list, since this program uses only line segments
@@ -31,7 +32,7 @@ class Roundy  {
         
         extent = OrthoVol(minX: -1.25, maxX: 1.25, minY: -1.25, maxY: 1.25, minZ: -1.25, maxZ: 1.25)   // A dummy value
         
-        let demoString = "cubic"
+        let demoString = "egg"
         
         switch demoString   {
             
@@ -47,7 +48,59 @@ class Roundy  {
             
             case "cubic": firstCubic()
             
-        default:  showBox()   // Demonstrate the boundary box for an Arc
+            case "egg": wholeEllipse()
+            
+       default:  showBox()   // Demonstrate the boundary box for an Arc
+        }
+        
+    }
+    
+    
+    /// Build and plot an entire ellipse
+    func wholeEllipse()   {
+        
+        extent = OrthoVol(minX: -62.5, maxX: 62.5, minY: -62.5, maxY: 62.5, minZ: -62.5, maxZ: 62.5)   // Fixed value
+        
+        let a = 50.0
+        let b = 30.0
+        let ctr = Point3D(x: 0.0, y: 0.0, z: 0.0)
+        let sf = Point3D(x: 50.0, y: 0.0, z: 0.0)
+        
+        let oval = Ellipse(retnec: ctr, a: a, b: b, azimuth: 0.0, start: sf, finish: sf)
+        
+        
+        /// Generate line segments to represent the curve
+        
+            let divs = 50
+            let step = a / Double(divs)
+            
+            let home = oval.getCenter()
+        
+            var greenFlag = Point3D(x: home.x, y: home.y + b, z: home.z)
+        
+        var g = 1
+        
+        do   {
+            
+            repeat   {
+                
+                let newX = Double(g) * step
+                let newY = oval.findY(newX)
+                let checkeredFlag = Point3D(x: home.x + newX, y: home.y + newY, z: home.z)
+                
+                let stroke = try LineSeg(end1: greenFlag, end2: checkeredFlag)
+                displayLines.append(stroke)
+        
+                greenFlag = checkeredFlag
+                g += 1
+        
+            } while g <= divs
+        
+        }  catch let error as CoincidentPointsError  {
+            let gnirts = error.description
+            print(gnirts)
+        } catch  {
+            print("Some other error while adding a segment of an ellipse")
         }
         
     }
@@ -309,7 +362,7 @@ class Roundy  {
             
             let maxCrown = 0.05
             
-            let arg = (roundEdge.rad - maxCrown) / roundEdge.rad
+            let arg = (roundEdge.getRadius() - maxCrown) / roundEdge.getRadius()
             let theta = 2.0 * acos(arg)
             
             
