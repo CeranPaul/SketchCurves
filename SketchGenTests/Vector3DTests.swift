@@ -182,6 +182,15 @@ class Vector3DTests: XCTestCase {
     }
     
     
+    func testTransform()  {
+        
+        let orig = Vector3D(i: 0.866, j: 0.0, k: 0.5)
+        
+        let t = Transform(rotationAxis: Axis.Z, angleRad: M_PI / 4.0)
+        
+        let swung = orig.transform(t)
+    }
+    
     // TODO: Add tests for dot product
     // TODO: Add tests for cross product
     // TODO: Add tests for addition

@@ -9,14 +9,15 @@
 import Foundation
 import simd
 
+/// A direction built from three orthogonal components
 public struct Vector3D: Equatable {
     
     var i: Double
     var j: Double
     var k: Double
     
-    
-    public static let EpsilonV: Double = 0.001    // Used as a difference limit between components in equality checks
+    /// Difference limit between components in equality checks
+    public static let EpsilonV: Double = 0.001
     
     
     
@@ -37,6 +38,7 @@ public struct Vector3D: Equatable {
         
         return sqrt(self.i * self.i + self.j * self.j + self.k * self.k)
     }
+    
     
     /// Destructively change the vector length to 1.0
     /// - See: 'testNormalize' under Vector3DTests

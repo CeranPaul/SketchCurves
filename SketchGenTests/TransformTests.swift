@@ -74,20 +74,23 @@ class TransformTests: XCTestCase {
         
         let Squirt2 = sqrt(2.0)   // Used in several comparisons
         
-        let originalPt = Point3D(x: 3.0, y: 3.0, z: 3.0)
         
-        let pip = double4(originalPt.x, originalPt.y, originalPt.z, 1.0)
+        var originalPt = Point3D(x: 3.0, y: 3.0, z: 3.0)
         
-        var tform = Transform(rotationAxis: Axis.Y, angleRad: M_PI / 4)
+        var pip = double4(originalPt.x, originalPt.y, originalPt.z, 1.0)
+        
+        var tform = Transform(rotationAxis: Axis.Y, angleRad: M_PI / 2)
         
         var mtxProduct = pip * tform.mtx
         
         var transformed = Point3D(x: mtxProduct[0], y: mtxProduct[1], z: mtxProduct[2])        
         
-        let target = Point3D(x: 3.0 * Squirt2, y: 3.0, z: 0.0)
+        let target = Point3D(x: 3.0, y: 3.0, z: -3.0)
         
         XCTAssert(transformed == target)
         
+        
+
         
         tform = Transform(rotationAxis: Axis.X, angleRad: M_PI / 4)
         
@@ -95,7 +98,7 @@ class TransformTests: XCTestCase {
         
         transformed = Point3D(x: mtxProduct[0], y: mtxProduct[1], z: mtxProduct[2])
         
-        let target2 = Point3D(x: 3.0, y: 3.0 * Squirt2, z: 0.0)
+        let target2 = Point3D(x: 3.0, y: 0.0, z: 3.0 * Squirt2)
         
         XCTAssert(transformed == target2)
         
@@ -106,11 +109,25 @@ class TransformTests: XCTestCase {
         mtxProduct = pip * tform.mtx
         
         transformed = Point3D(x: mtxProduct[0], y: mtxProduct[1], z: mtxProduct[2])
-        print(transformed)
         
-        let target3 = Point3D(x: 3.0 * Squirt2, y: 0.0, z: 3.0)
+        let target3 = Point3D(x: 0.0, y: 3.0 * Squirt2, z: 3.0)
         
         XCTAssert(transformed == target3)
+        
+        
+        tform = Transform(rotationAxis: Axis.Z, angleRad: M_PI / 2)
+        
+        originalPt = Point3D(x: 3.0, y: 0.0, z: 3.0)
+        
+        pip = double4(originalPt.x, originalPt.y, originalPt.z, 1.0)
+        
+        let target4 = Point3D(x: 0.0, y: 3.0, z: 3.0)
+        
+        mtxProduct = pip * tform.mtx
+        
+        transformed = Point3D(x: mtxProduct[0], y: mtxProduct[1], z: mtxProduct[2])
+        
+        XCTAssert(transformed == target4)
         
     }
     

@@ -10,14 +10,15 @@
 import Foundation
 import simd
 
+/// Simple representation of a position in space by the use of three orthogonal axes
 public struct  Point3D: Equatable {
     
     var x: Double    // Eventually these should be set as private
     var y: Double
     var z: Double
 
-    
-    static let Epsilon: Double = 0.0001    // Used as a maximum distance in equality checks
+    /// Maximum distance for use in equality checks
+    static let Epsilon: Double = 0.0001
     
     
     

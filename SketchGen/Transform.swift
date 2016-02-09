@@ -19,6 +19,7 @@ public class Transform   {
     }
     
     /// Construct a matrix for pure translation
+    /// - Warning:  This looks to be the transpose of how this is normally taught
     init (deltaX: Double, deltaY: Double, deltaZ: Double)   {
         
         mtx = double4x4([[1.0, 0.0, 0.0, deltaX],
@@ -43,6 +44,7 @@ public class Transform   {
     /// Construct a matrix for rotation around a single axis
     /// - Parameter rotationAxis Center for rotation.  Should be a member of enum Axis
     /// - Parameter angleRad Desired rotation in radians
+    /// - Warning:  These each look to be the transpose of how this is normally taught
     public init(rotationAxis: Axis, angleRad: Double)   {
         
         let trigCos = cos(angleRad)
@@ -51,8 +53,8 @@ public class Transform   {
         switch rotationAxis   {
             
         case .X:   mtx = double4x4([[1.0, 0.0, 0.0, 0.0],
-                                    [0.0, trigCos, trigSin, 0.0],
-                                    [0.0, -trigSin, trigCos, 0.0],
+                                    [0.0, trigCos, -trigSin, 0.0],
+                                    [0.0, trigSin, trigCos, 0.0],
                                     [0.0, 0.0, 0.0, 1.0]])
         
         case .Y:   mtx = double4x4([[trigCos, 0.0, trigSin, 0.0],
@@ -60,8 +62,8 @@ public class Transform   {
                                     [-trigSin, 0.0, trigCos, 0.0],
                                     [0.0, 0.0, 0.0, 1.0]])
 
-        case .Z:   mtx = double4x4([[trigCos, trigSin, 0.0, 0.0],
-                                    [-trigSin, trigCos, 0.0, 0.0],
+        case .Z:   mtx = double4x4([[trigCos, -trigSin, 0.0, 0.0],
+                                    [trigSin, trigCos, 0.0, 0.0],
                                     [0.0, 0.0, 1.0, 0.0],
                                     [0.0, 0.0, 0.0, 1.0]])
             
