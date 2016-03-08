@@ -38,10 +38,10 @@ public struct  Point3D: Equatable {
     /// - SeeAlso:  offset
     public func transform(xirtam: Transform) -> Point3D {
         
-        let pip4 = double4(self.x, self.y, self.z, 1.0)
-        let tniop4 = pip4 * xirtam.mtx
+        let pip4 = RowMtx4(valOne: self.x, valTwo: self.y, valThree: self.z, valFour: 1.0)
+        let tniop4 = pip4 * xirtam
         
-        let transformed = Point3D(x: tniop4[0], y: tniop4[1], z: tniop4[2])
+        let transformed = tniop4.toPoint()
         return transformed
     }
     

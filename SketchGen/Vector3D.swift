@@ -71,10 +71,10 @@ public struct Vector3D: Equatable {
     /// Rotate by a matrix
     public func transform(xirtam: Transform) -> Vector3D {
         
-        let dir4 = double4(self.i, self.j, self.k, 0.0)
-        let vec4 = dir4 * xirtam.mtx
+        let dir4 = RowMtx4(valOne: self.i, valTwo: self.j, valThree: self.k, valFour: 0.0)
+        let vec4 = dir4 * xirtam
         
-        let transformed = Vector3D(i: vec4[0], j: vec4[1], k: vec4[2])
+        let transformed = vec4.toVector()
         return transformed
     }
     
@@ -117,6 +117,22 @@ public struct Vector3D: Equatable {
         let freshK = lhs.i * rhs.j - lhs.j * rhs.i
         
         return Vector3D(i: freshI, j: freshJ, k: freshK)
+    }
+    
+    /// Check to see that these three vectors are mutually orthogonal
+    /// Useful when setting up a new coordinate system from three vectors
+    public static func isMutOrtho(uno: Vector3D, dos: Vector3D, tres: Vector3D) -> Bool   {
+        
+        let dot12 = Vector3D.dotProduct(uno, rhs: dos)
+        let flag1 = dot12 == 0.0
+        
+        let dot23 = Vector3D.dotProduct(dos, rhs: tres)
+        let flag2 = dot23 == 0.0
+        
+        let dot31 = Vector3D.dotProduct(tres, rhs: uno)
+        let flag3 = dot31 == 0.0
+        
+        return flag1 && flag2 && flag3
     }
     
     

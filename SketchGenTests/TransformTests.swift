@@ -1,15 +1,14 @@
 //
-//  TransformTests.swift
+//  TransformPlusTests.swift
 //  SketchCurves
 //
-//  Created by Paul Hollingshead on 1/18/16.
+//  Created by Paul on 2/14/16.
 //  Copyright © 2016 Ceran Digital Media. All rights reserved.  See LICENSE.md
 //
 
 import XCTest
-import simd
 
-class TransformTests: XCTestCase {
+class TransformPlusTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
@@ -21,115 +20,76 @@ class TransformTests: XCTestCase {
         super.tearDown()
     }
 
-    func testTranslate() {
-        
-        let originalPt = Point3D(x: 2.5, y: -5.0, z: 1.25)
-        
-        let pip = double4(originalPt.x, originalPt.y, originalPt.z, 1.0)
+    func testSingleRotations() {
 
-        let tform = Transform(deltaX: -1.0, deltaY: 3.0, deltaZ: 0.375)
+        let fodder = Point3D(x: 2.0, y: 0.0, z: 0.0)
+        let rowA = RowMtx4(ptIn: fodder)
         
-        let mtxProduct = pip * tform.mtx
+        var simpleRot = Transform(rotationAxis: Axis.X, angleRad: M_PI_4)
         
-        let transformed = Point3D(x: mtxProduct[0], y: mtxProduct[1], z: mtxProduct[2])
+        var multRes = rowA * simpleRot
         
-        let target = Point3D(x: 1.5, y: -2.0, z: 1.625)
-        
-        XCTAssert(transformed == target)
-    }
-    
-
-    func testScale()   {
-        
-        let originalPt = Point3D(x: -3.0, y: -5.0, z: 1.75)
-        
-        let pip = double4(originalPt.x, originalPt.y, originalPt.z, 1.0)
-        
-        var tform = Transform(scaleX: 1.0, scaleY: -1.0, scaleZ: 1.0)
-        
-        var mtxProduct = pip * tform.mtx
-        
-        var transformed = Point3D(x: mtxProduct[0], y: mtxProduct[1], z: mtxProduct[2])
+        var transformed = multRes.toPoint()
         
         
-        let target = Point3D(x: -3.0, y: 5.0, z: 1.75)
+        /// A handy factor in order to get precise comparisons
+        let sq2rt = sqrt(2.0)
         
-        XCTAssert(transformed == target)
+        let target1 = Point3D(x: 2.0, y: 0.0, z: 0.0)
         
-        
-        tform = Transform(scaleX: 4.0, scaleY: 4.0, scaleZ: 4.0)
-        
-        mtxProduct = pip * tform.mtx
-        
-        transformed = Point3D(x: mtxProduct[0], y: mtxProduct[1], z: mtxProduct[2])
-        
-        let target2 = Point3D(x: -12.0, y: -20.0, z: 7.0)
-        
-        XCTAssert(transformed == target2)
-        
-    }
-    
-    
-    func testRotate()   {
-        
-        let Squirt2 = sqrt(2.0)   // Used in several comparisons
+        XCTAssert(transformed == target1)
         
         
-        var originalPt = Point3D(x: 3.0, y: 3.0, z: 3.0)
+        simpleRot = Transform(rotationAxis: Axis.Y, angleRad: M_PI_4)
         
-        var pip = double4(originalPt.x, originalPt.y, originalPt.z, 1.0)
+        multRes = rowA * simpleRot
         
-        var tform = Transform(rotationAxis: Axis.Y, angleRad: M_PI / 2)
+        transformed = multRes.toPoint()
         
-        var mtxProduct = pip * tform.mtx
-        
-        var transformed = Point3D(x: mtxProduct[0], y: mtxProduct[1], z: mtxProduct[2])        
-        
-        let target = Point3D(x: 3.0, y: 3.0, z: -3.0)
-        
-        XCTAssert(transformed == target)
-        
-        
-
-        
-        tform = Transform(rotationAxis: Axis.X, angleRad: M_PI / 4)
-        
-        mtxProduct = pip * tform.mtx
-        
-        transformed = Point3D(x: mtxProduct[0], y: mtxProduct[1], z: mtxProduct[2])
-        
-        let target2 = Point3D(x: 3.0, y: 0.0, z: 3.0 * Squirt2)
+        let target2 = Point3D(x: sq2rt, y: 0.0, z: -sq2rt)
         
         XCTAssert(transformed == target2)
         
         
         
-        tform = Transform(rotationAxis: Axis.Z, angleRad: M_PI / 4)
+        simpleRot = Transform(rotationAxis: Axis.Z, angleRad: M_PI_4)
         
-        mtxProduct = pip * tform.mtx
+        multRes = rowA * simpleRot
         
-        transformed = Point3D(x: mtxProduct[0], y: mtxProduct[1], z: mtxProduct[2])
+        transformed = multRes.toPoint()
         
-        let target3 = Point3D(x: 0.0, y: 3.0 * Squirt2, z: 3.0)
+        let target3 = Point3D(x: sq2rt, y: sq2rt, z: 0.0)
+       
+        XCTAssert(transformed == target3)
+        
+    }
+
+    func testRollYourOwn() {
+        
+        let fodder = Point3D(x: 2.0, y: 0.0, z: 0.0)
+        let rowA = RowMtx4(ptIn: fodder)
+        
+        /// A handy factor in order to get precise comparisons
+        let sq2rt = sqrt(2.0)
+        let halfSq2rt = sq2rt / 2.0
+        
+           // Generate an equivalent to a rotation around the Z axis
+        var freshXAxis = Vector3D(i: halfSq2rt, j: halfSq2rt, k: 0.0)
+        var freshYAxis = Vector3D(i: -halfSq2rt, j: halfSq2rt, k: 0.0)
+        var freshZAxis = Vector3D(i: 0.0, j: 0.0, k: 1.0)
+        
+        var hardRot = Transform(localX: freshXAxis, localY: freshYAxis, localZ: freshZAxis)
+        
+        var multRes = rowA * hardRot
+        
+        var transformed = multRes.toPoint()
+        
+        let target3 = Point3D(x: sq2rt, y: sq2rt, z: 0.0)
         
         XCTAssert(transformed == target3)
         
         
-        tform = Transform(rotationAxis: Axis.Z, angleRad: M_PI / 2)
-        
-        originalPt = Point3D(x: 3.0, y: 0.0, z: 3.0)
-        
-        pip = double4(originalPt.x, originalPt.y, originalPt.z, 1.0)
-        
-        let target4 = Point3D(x: 0.0, y: 3.0, z: 3.0)
-        
-        mtxProduct = pip * tform.mtx
-        
-        transformed = Point3D(x: mtxProduct[0], y: mtxProduct[1], z: mtxProduct[2])
-        
-        XCTAssert(transformed == target4)
         
     }
     
-
 }

@@ -44,5 +44,55 @@ class LineTests: XCTestCase {
         }
     }
     
+    func testIntersectTwo()   {
+        
+        let flatOrig = Point3D(x: 1.0, y: 0.0, z: 0.0)
+        let flatDir = Vector3D(i: 0.0, j: 1.0, k: 0.0)
+        
+        let P51Orig = Point3D(x: 3.0, y: 1.0, z: 0.0)
+        var P51Dir = Vector3D(i: -0.707, j: 0.707, k: 0.0)
+        P51Dir.normalize()
+        
+        let target = Point3D(x: 1.0, y: 3.0, z: 0.0)
+        
+        do   {
+            
+            var flat = try Line(spot: flatOrig, arrow: flatDir)
+            var pursuit = try Line(spot: P51Orig, arrow: P51Dir)
+            
+            var crossroads = try Line.intersectTwo(flat, straightB: pursuit)
+            
+            XCTAssert(crossroads == target)
+            
+        }   catch   {
+            print("Did you really throw an error in a test case?  Line Intersect Two A")
+        }
+        
+        let roofOrig = Point3D(x: 0.0, y: 0.0, z: 3.85)
+        let roofDir = Vector3D(i: 1.0, j: 0.0, k: 0.0)
+        
+        let evelOrig = Point3D(x: -1.5, y: 0.0, z: 1.5)
+        var evelDir = Vector3D(i: -0.707, j: 0.0, k: 0.707)
+        evelDir.normalize()
+        
+        let target2 = Point3D(x: -3.85, y: 0.0, z: 3.85)
+        
+        do   {
+            
+            var flat = try Line(spot: roofOrig, arrow: roofDir)
+            var pursuit = try Line(spot: evelOrig, arrow: evelDir)
+            
+            var crossroads = try Line.intersectTwo(flat, straightB: pursuit)
+            
+            print(crossroads)
+            
+            XCTAssert(crossroads == target2)
+            
+        }   catch   {
+            print("Did you really throw an error in a test case?  Line Intersect Two B")
+        }
+        
+        
+    }
 
 }
