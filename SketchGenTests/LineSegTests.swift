@@ -20,6 +20,7 @@ class LineSegTests: XCTestCase {
         super.tearDown()
     }
 
+    /// Test a point at some proportion along the line segment
     func testPointAt() {
         
         let pt1 = Point3D(x: 1.0, y: 1.0, z: 1.0)
@@ -29,9 +30,9 @@ class LineSegTests: XCTestCase {
             
             let slash = try LineSeg(end1: pt1, end2: pt2)
         
-            let home = Point3D(x: 3.4, y: 3.4, z: 3.4)
-            
             let ladybug = slash.pointAt(0.6)
+            
+            let home = Point3D(x: 3.4, y: 3.4, z: 3.4)
             
             XCTAssert(ladybug == home)
             

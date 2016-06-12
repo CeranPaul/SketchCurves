@@ -95,4 +95,21 @@ class LineTests: XCTestCase {
         
     }
 
+    func testResolvePoint()   {
+        
+        let orig = Point3D(x: 2.0, y: 1.5, z: 0.0)
+        let thataway = Vector3D(i: 1.0, j: 0.0, k: 0.0)
+        let refLine = try! Line(spot: orig, arrow: thataway)
+        
+        let targetA = -2.0
+        let targetP = 1.0
+        
+        let target = (targetA, targetP)
+        
+        let trial = Point3D(x: 0.0, y: 0.5, z: 0.0)
+        let comps = refLine.resolveRelative(trial)
+        
+        XCTAssert(comps == target)
+    }
+    
 }

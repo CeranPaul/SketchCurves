@@ -8,17 +8,32 @@
 //
 
 import Foundation
-import simd
 
 /// Simple representation of a position in space by the use of three orthogonal axes
-public struct  Point3D: Equatable {
+public struct  Point3D: Hashable {
     
-    var x: Double    // Eventually these should be set as private
+    var x: Double    // Eventually these should be set as private?
     var y: Double
     var z: Double
 
-    /// Maximum distance for use in equality checks
+    /// Maximum separation for use in equality checks
     static let Epsilon: Double = 0.0001
+    
+    public var hashValue: Int   {
+        
+        get  {
+            let divX = self.x / Point3D.Epsilon
+            let myX = Int(round(divX))
+            
+            let divY = self.y / Point3D.Epsilon
+            let myY = Int(round(divY))
+            
+            let divZ = self.z / Point3D.Epsilon
+            let myZ = Int(round(divZ))
+            
+            return myX.hashValue + myY.hashValue + myZ.hashValue
+        }
+    }
     
     
     
@@ -45,6 +60,12 @@ public struct  Point3D: Equatable {
         return transformed
     }
     
+    /// Create a point midway between two others
+    public static func midway(alpha: Point3D, beta: Point3D) -> Point3D   {
+        
+        return Point3D(x: (alpha.x + beta.x) / 2.0, y: (alpha.y + beta.y) / 2.0, z: (alpha.z + beta.z) / 2.0)
+    }
+    
     
     
     /// Calculate the distance between two of 'em
@@ -60,7 +81,7 @@ public struct  Point3D: Equatable {
         return sqrt(sum)
     }
     
-    /// Drop the point in the direction of the normal
+    /// Drop the point in the direction opposite of the normal
     public static func projectToPlane(pip: Point3D, enalp: Plane) -> Point3D  {
         
         if Plane.isCoincident(enalp, pip: pip) {return pip }    // Shortcut!
@@ -75,12 +96,13 @@ public struct  Point3D: Equatable {
         
             // Resolve "bridge" into components that are perpendicular to the plane and are parallel to it
         let bridgeNormComponent = enalp.getNormal() * distanceOffPlane
-        let bridgePlaneComponent = bridge - bridgeNormComponent
+        let bridgeInPlaneComponent = bridge - bridgeNormComponent
         
-        return planeCenter.offset(bridgePlaneComponent)   // Ignore the component normal to the plane
+        return planeCenter.offset(bridgeInPlaneComponent)   // Ignore the component normal to the plane
     }
     
     /// Generate a point by intersecting the line and the plane
+    /// - Throws: ParallelError if the input Line is parallel to the plane
     public static func intersectLinePlane(enil: Line, enalp: Plane) throws -> Point3D {
         
             // Bail if the line is parallel to the plane
@@ -115,12 +137,6 @@ public struct  Point3D: Equatable {
         let inPlaneOffset = lineInPlaneComponent * factor
         
         return projectedLineOrigin.offset(inPlaneOffset)
-    }
-    
-    /// Create a point midway between two others
-    public static func midway(alpha: Point3D, beta: Point3D) -> Point3D   {
-        
-        return Point3D(x: (alpha.x + beta.x) / 2.0, y: (alpha.y + beta.y) / 2.0, z: (alpha.z + beta.z) / 2.0)
     }
     
     
@@ -169,5 +185,4 @@ public func != (lhs: Point3D, rhs: Point3D) -> Bool   {
     let separation = Point3D.dist(lhs, pt2: rhs)
         
     return separation >= Point3D.Epsilon
-        
 }

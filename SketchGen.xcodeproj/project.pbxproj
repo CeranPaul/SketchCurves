@@ -15,6 +15,8 @@
 		8106F0041C1FA12C00C74FE6 /* Cubic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8106F0021C1FA12C00C74FE6 /* Cubic.swift */; };
 		81078A751C587848001C21CD /* Ellipse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81078A741C587848001C21CD /* Ellipse.swift */; };
 		81078A761C587848001C21CD /* Ellipse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81078A741C587848001C21CD /* Ellipse.swift */; };
+		812496901D0E0D8C0023A256 /* CoordinateSystem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8124968F1D0E0D8C0023A256 /* CoordinateSystem.swift */; };
+		812496921D0E0DFC0023A256 /* NonOrthogonalCSYSError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 812496911D0E0DFC0023A256 /* NonOrthogonalCSYSError.swift */; };
 		81414B001C08CE5E00A9DE83 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81414AFF1C08CE5E00A9DE83 /* AppDelegate.swift */; };
 		81414B021C08CE5E00A9DE83 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81414B011C08CE5E00A9DE83 /* ViewController.swift */; };
 		81414B051C08CE5E00A9DE83 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81414B031C08CE5E00A9DE83 /* Main.storyboard */; };
@@ -88,6 +90,8 @@
 		8106F0001C1A7F6B00C74FE6 /* Point3DTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Point3DTests.swift; sourceTree = "<group>"; };
 		8106F0021C1FA12C00C74FE6 /* Cubic.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Cubic.swift; sourceTree = "<group>"; };
 		81078A741C587848001C21CD /* Ellipse.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Ellipse.swift; sourceTree = "<group>"; };
+		8124968F1D0E0D8C0023A256 /* CoordinateSystem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoordinateSystem.swift; sourceTree = "<group>"; };
+		812496911D0E0DFC0023A256 /* NonOrthogonalCSYSError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NonOrthogonalCSYSError.swift; sourceTree = "<group>"; };
 		81414AFC1C08CE5E00A9DE83 /* SketchGen.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SketchGen.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		81414AFF1C08CE5E00A9DE83 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		81414B011C08CE5E00A9DE83 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -178,6 +182,7 @@
 				81414B291C08CF0500A9DE83 /* Arc.swift */,
 				81078A741C587848001C21CD /* Ellipse.swift */,
 				8106F0021C1FA12C00C74FE6 /* Cubic.swift */,
+				8124968F1D0E0D8C0023A256 /* CoordinateSystem.swift */,
 				810328901C718F7A00E6FA21 /* Transform.swift */,
 				81FEAAD11C4E9716000F0E2A /* Perimeter.swift */,
 				81414B201C08CEE200A9DE83 /* OrthoVol.swift */,
@@ -215,6 +220,7 @@
 		81FEAAD01C4E9411000F0E2A /* Errors */ = {
 			isa = PBXGroup;
 			children = (
+				812496911D0E0DFC0023A256 /* NonOrthogonalCSYSError.swift */,
 				8183F2671C1A0872009CAF6B /* NonUnitDirectionError.swift */,
 				8183F26A1C1A0A16009CAF6B /* ZeroVectorError.swift */,
 				81414B2A1C08CF0500A9DE83 /* ArcPointsError.swift */,
@@ -343,6 +349,7 @@
 				81414B3C1C090F2500A9DE83 /* CurveDemo.swift in Sources */,
 				81CDCC211C17E41400060C8D /* ParallelError.swift in Sources */,
 				81414B321C08CF5E00A9DE83 /* Vector3D.swift in Sources */,
+				812496921D0E0DFC0023A256 /* NonOrthogonalCSYSError.swift in Sources */,
 				81CDCC231C17E44B00060C8D /* Plane.swift in Sources */,
 				81CDCC1F1C17E3FD00060C8D /* Line.swift in Sources */,
 				81414B2B1C08CF0500A9DE83 /* Arc.swift in Sources */,
@@ -357,6 +364,7 @@
 				81CDCC251C17E4D200060C8D /* CoincidentPlanesError.swift in Sources */,
 				8106F0031C1FA12C00C74FE6 /* Cubic.swift in Sources */,
 				810328911C718F7A00E6FA21 /* Transform.swift in Sources */,
+				812496901D0E0D8C0023A256 /* CoordinateSystem.swift in Sources */,
 				81414B2C1C08CF0500A9DE83 /* ArcPointsError.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

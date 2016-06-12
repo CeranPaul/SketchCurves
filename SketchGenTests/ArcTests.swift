@@ -136,4 +136,15 @@ class ArcTests: XCTestCase {
         
     }
     
+    func testErrorThrow()  {
+        
+        let ctr = Point3D(x: 2.0, y: 1.0, z: 5.0)
+        let e1 = Point3D(x: 3.0, y: 1.0, z: 5.0)
+        let e2 = Point3D(x: 2.0, y: 2.0, z: 5.0)
+        
+        XCTAssertThrowsError(try Arc(center: ctr, end1: e2, end2: ctr, isCW: true))
+
+        
+    }
+    
 }
