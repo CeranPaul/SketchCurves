@@ -3,13 +3,14 @@
 //  SketchCurves
 //
 //  Created by Paul Hollingshead on 11/7/15.
-//  Copyright © 2015 Ceran Digital Media. All rights reserved.  See LICENSE.md
+//  Copyright © 2016 Ceran Digital Media. All rights reserved.  See LICENSE.md
 //
 
 import Foundation
 import UIKit
 
 /// A circular arc - either whole, or a portion
+/// - SeeAlso:  Ellipse
 public class Arc: PenCurve {
     
     /// Point around which the arc is swept
@@ -27,6 +28,8 @@ public class Arc: PenCurve {
     /// Whether or not this is a complete circle
     var isFull: Bool
     
+    
+       // Should these become computed member variables?
     /// Angle (in radians) of the start point
     var startAngle: Double
     
@@ -81,8 +84,8 @@ public class Arc: PenCurve {
         
         
             // Because this is an 'init', a guard statement cannot be used at the top
-        if end1 == center || end2 == center  { throw CoincidentPointsError(dupePt: center) }
-        if end1 == end2  { throw CoincidentPointsError(dupePt: end1) }
+        guard (end1 != center && end2 != center) else { throw CoincidentPointsError(dupePt: center) }
+        guard (end1 != end2) else { throw CoincidentPointsError(dupePt: end1) }
         
            // See if an arc can actually be made from the three given inputs
         if !Arc.isArcable(center, end1: start, end2: finish)   { throw ArcPointsError(badPtA: center, badPtB: start, badPtC: finish)  }
@@ -277,15 +280,18 @@ public class Arc: PenCurve {
         return (1.0, 0.0)
     }
     
-    /// See if two have the same center
+    /// Check for two having the same center point
     /// - Parameter: lhs: One Arc
     /// - Parameter: rhs: Another Arc
     /// - SeeAlso:  Overloaded ==
     public static func isConcentric(lhs: Arc, rhs: Arc) -> Bool  {
         
-        // TODO: Make this return something besides dummy values
-        return false
+        let flag = lhs.ctr == rhs.ctr
+
+        return flag
     }
+    
+    // TODO: Write a check for two having the same centerline
     
     
 }    // End of definition for class Arc

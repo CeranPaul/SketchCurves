@@ -95,12 +95,13 @@ public struct Line: Equatable {
     }
     
     
-    /// Two lines  See that the second origin lies on the first line, and
+    /// Check two lines  See that the either origin lies on the other line, and
     /// that they have the same direction, even with the opposite sense
     /// - SeeAlso:  Overloaded ==
     public static func isCoincident(straightA: Line, straightB: Line) -> Bool   {
         
         if !Line.isCoincident(straightA, trial: straightB.getOrigin())   { return false }
+        if !Line.isCoincident(straightB, trial: straightA.getOrigin())   { return false }
         
         if !Line.isParallel(straightA, straightB: straightB)   { return false }
         

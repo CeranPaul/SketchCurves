@@ -5,7 +5,6 @@
 //  Created by Paul on 8/11/15.
 //  Copyright © 2016 Ceran Digital Media. All rights reserved.  See LICENSE.md
 //
-//
 
 import Foundation
 
@@ -16,9 +15,10 @@ public struct  Point3D: Hashable {
     var y: Double
     var z: Double
 
-    /// Maximum separation for use in equality checks
+    /// Threshhold of separation for equality checks
     static let Epsilon: Double = 0.0001
     
+    /// Necessary for making Sets
     public var hashValue: Int   {
         
         get  {
