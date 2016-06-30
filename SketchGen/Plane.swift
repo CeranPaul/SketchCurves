@@ -114,7 +114,7 @@ public struct Plane   {
     public static func buildPerpThruLine(enil:  Line, enalp: Plane) throws -> Plane   {
         
         // TODO:  Ensure that the input line is in the plane
-        let newDir = Vector3D.crossProduct(enil.getDirection(), rhs: enalp.normal)
+        let newDir = try! Vector3D.crossProduct(enil.getDirection(), rhs: enalp.normal)
         
         return try Plane(spot: enil.getOrigin(), arrow: newDir)
     }

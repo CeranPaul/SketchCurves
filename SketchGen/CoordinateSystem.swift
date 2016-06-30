@@ -56,7 +56,7 @@ public class CoordinateSystem   {
     ///   - spot: Point to serve as the origin
     init(direction1: Vector3D, direction2: Vector3D, useFirst: Bool, verticalRef: Bool, spot: Point3D)   {
         
-        var outOfPlane = Vector3D.crossProduct(direction1, rhs: direction2)
+        var outOfPlane = try! Vector3D.crossProduct(direction1, rhs: direction2)
         outOfPlane.normalize()
         
         self.axisZ = outOfPlane
@@ -65,20 +65,20 @@ public class CoordinateSystem   {
             
             if verticalRef   {
                 self.axisY = direction1
-                self.axisX = Vector3D.crossProduct(self.axisY, rhs: self.axisZ)
+                self.axisX = try! Vector3D.crossProduct(self.axisY, rhs: self.axisZ)
             }  else  {
                 self.axisX = direction1
-                self.axisY = Vector3D.crossProduct(self.axisZ, rhs: self.axisX)
+                self.axisY = try! Vector3D.crossProduct(self.axisZ, rhs: self.axisX)
             }
             
         }  else  {
             
             if verticalRef   {
                 self.axisY = direction2
-                self.axisX = Vector3D.crossProduct(self.axisY, rhs: self.axisZ)
+                self.axisX = try! Vector3D.crossProduct(self.axisY, rhs: self.axisZ)
             }  else  {
                 self.axisX = direction2
-                self.axisY = Vector3D.crossProduct(self.axisZ, rhs: self.axisX)
+                self.axisY = try! Vector3D.crossProduct(self.axisZ, rhs: self.axisX)
             }
         }
         

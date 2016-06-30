@@ -120,6 +120,46 @@ public class Arc: PenCurve {
     }
     
     
+    /// Build the center of a circle from three points on the perimeter
+    public static func findCenter(larry: Point3D, curly: Point3D, moe: Point3D) -> Point3D   {
+        
+        // TODO: Add suitability checks
+        
+        /// The desired result to be returned
+        var ctr = Point3D(x: 0.0, y: 0.0, z: 0.0)
+        
+        var vecA = Vector3D.built(larry, towards: curly)
+        vecA.normalize()
+        
+        var vecB = Vector3D.built(curly, towards: moe)
+        vecB.normalize()
+        
+        var axle = try! Vector3D.crossProduct(vecA, rhs: vecB)
+        axle.normalize()
+        
+        let midA = Point3D.midway(larry, beta: curly)
+        var perpA = try! Vector3D.crossProduct(vecA, rhs: axle)
+        perpA.normalize()
+        
+        let midB = Point3D.midway(curly, beta: moe)
+        var perpB = try! Vector3D.crossProduct(vecB, rhs: axle)
+        perpB.normalize()
+        
+        
+        do   {
+            
+            let pLineA = try Line(spot: midA, arrow: perpA)
+            let pLineB = try Line(spot: midB, arrow: perpB)
+            
+            ctr = try Line.intersectTwo(pLineA, straightB: pLineB)
+            
+        }  catch  {
+            print("Finding the circle center didn't work out.")
+        }
+        
+        return ctr
+    }
+    
     /// Find the point along this line segment specified by the parameter 't'
     /// - Warning:  No checks are made for the value of t being inside some range
     public func pointAt(t: Double) -> Point3D  {
@@ -181,7 +221,7 @@ public class Arc: PenCurve {
             
         
             let up = Vector3D(i: 0.0, j: 0.0, k: 1.0)
-            let headOffCCW = Vector3D.crossProduct(up, rhs: radStart)
+            let headOffCCW = try! Vector3D.crossProduct(up, rhs: radStart)
         
         
             /// Vector from the start point towards the finish point
@@ -219,7 +259,7 @@ public class Arc: PenCurve {
             chord.normalize()
         
             let up = Vector3D(i: 0.0, j: 0.0, k: 1.0)
-            var split = Vector3D.crossProduct(up, rhs: chord)
+            var split = try! Vector3D.crossProduct(up, rhs: chord)
             split.normalize()
         
             var discard = split

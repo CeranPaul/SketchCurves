@@ -84,7 +84,7 @@ public class Cubic   {
         var tanHere = tangentAt(u)
         tanHere.normalize()
         
-        return Vector3D.crossProduct(ZVec, rhs: tanHere)   // Not normalized
+        return try! Vector3D.crossProduct(ZVec, rhs: tanHere)   // Not normalized
     }
     
     /// Plot the curve segment.  This will be called by the UIView 'drawRect' function
@@ -96,7 +96,7 @@ public class Cubic   {
         CGContextMoveToPoint(context, xCG, yCG)
         
         
-        for var g = 1; g <= 20; g++   {   // I don't know how to do this with a different loop style
+        for var g = 1; g <= 20; g += 1   {   // I don't know how to do this with a different loop style
             
             let stepU = Double(g) * 0.05
             xCG = CGFloat(pointAt(stepU).x)

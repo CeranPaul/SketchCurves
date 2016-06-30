@@ -70,6 +70,19 @@ public struct Line: Equatable {
     }
     
     
+    /// Project a point to the Line
+    public func dropPoint(away: Point3D) -> Point3D   {
+        
+        if Line.isCoincident(self, trial: away)   {  return away  }   // Shortcut!
+        
+        let bridge = Vector3D.built(self.origin, towards: away)
+        let along = Vector3D.dotProduct(bridge, rhs: self.direction)
+        let alongVector = self.direction * along
+        let onLine = self.origin.offset(alongVector)
+        
+        return onLine
+    }
+    
     /// Checks to see if the trial point lies on the line
     /// - SeeAlso:  Overloaded ==
     public static func isCoincident(straightA: Line, trial: Point3D) -> Bool   {
@@ -117,10 +130,10 @@ public struct Line: Equatable {
         var bridgeVector = Vector3D.built(straightA.getOrigin(), towards: straightB.getOrigin())
         bridgeVector.normalize()
         
-        var perp1 = Vector3D.crossProduct(straightA.getDirection(), rhs: bridgeVector)
+        var perp1 = try! Vector3D.crossProduct(straightA.getDirection(), rhs: bridgeVector)
         perp1.normalize()
         
-        var perp2 = Vector3D.crossProduct(bridgeVector, rhs: straightA.getDirection())
+        var perp2 = try! Vector3D.crossProduct(bridgeVector, rhs: straightA.getDirection())
         perp2.normalize()
         
         let sameFlag = perp1 == perp2
@@ -178,11 +191,11 @@ public struct Line: Equatable {
         
         
         /// Direction of the intersection line
-        var lineDir = Vector3D.crossProduct(flatA.getNormal(), rhs: flatB.getNormal())
+        var lineDir = try! Vector3D.crossProduct(flatA.getNormal(), rhs: flatB.getNormal())
         lineDir.normalize()
         
         /// Vector on plane B that is perpendicular to the intersection line
-        var perpInB = Vector3D.crossProduct(lineDir, rhs: flatB.getNormal())
+        var perpInB = try! Vector3D.crossProduct(lineDir, rhs: flatB.getNormal())
         perpInB.normalize()
         
           // The ParallelPlanesError or CoincidentPlanesError should be avoided by the guard statements

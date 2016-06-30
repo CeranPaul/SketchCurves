@@ -58,6 +58,7 @@
 		8183F26C1C1A0A16009CAF6B /* ZeroVectorError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8183F26A1C1A0A16009CAF6B /* ZeroVectorError.swift */; };
 		8183F26E1C1A672B009CAF6B /* LineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8183F26D1C1A672B009CAF6B /* LineTests.swift */; };
 		8183F2701C1A675A009CAF6B /* PlaneTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8183F26F1C1A675A009CAF6B /* PlaneTests.swift */; };
+		81C1807F1D249DEB00357D0B /* IdenticalVectorError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81C1807E1D249DEB00357D0B /* IdenticalVectorError.swift */; };
 		81CDCC1F1C17E3FD00060C8D /* Line.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81CDCC1E1C17E3FD00060C8D /* Line.swift */; };
 		81CDCC211C17E41400060C8D /* ParallelError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81CDCC201C17E41400060C8D /* ParallelError.swift */; };
 		81CDCC231C17E44B00060C8D /* Plane.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81CDCC221C17E44B00060C8D /* Plane.swift */; };
@@ -121,6 +122,7 @@
 		8183F26A1C1A0A16009CAF6B /* ZeroVectorError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZeroVectorError.swift; sourceTree = "<group>"; };
 		8183F26D1C1A672B009CAF6B /* LineTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LineTests.swift; sourceTree = "<group>"; };
 		8183F26F1C1A675A009CAF6B /* PlaneTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaneTests.swift; sourceTree = "<group>"; };
+		81C1807E1D249DEB00357D0B /* IdenticalVectorError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IdenticalVectorError.swift; sourceTree = "<group>"; };
 		81CDCC1E1C17E3FD00060C8D /* Line.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Line.swift; sourceTree = "<group>"; };
 		81CDCC201C17E41400060C8D /* ParallelError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ParallelError.swift; sourceTree = "<group>"; };
 		81CDCC221C17E44B00060C8D /* Plane.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Plane.swift; sourceTree = "<group>"; };
@@ -220,17 +222,18 @@
 		81FEAAD01C4E9411000F0E2A /* Errors */ = {
 			isa = PBXGroup;
 			children = (
+				81C1807E1D249DEB00357D0B /* IdenticalVectorError.swift */,
+				81414B2A1C08CF0500A9DE83 /* ArcPointsError.swift */,
+				81FEAAA41C4348EE000F0E2A /* CoincidentLinesError.swift */,
+				81CDCC241C17E4D200060C8D /* CoincidentPlanesError.swift */,
+				81414B2D1C08CF2B00A9DE83 /* CoincidentPointsError.swift */,
+				81FEAAAA1C435AF0000F0E2A /* NonCoPlanarLinesError.swift */,
 				812496911D0E0DFC0023A256 /* NonOrthogonalCSYSError.swift */,
 				8183F2671C1A0872009CAF6B /* NonUnitDirectionError.swift */,
-				8183F26A1C1A0A16009CAF6B /* ZeroVectorError.swift */,
-				81414B2A1C08CF0500A9DE83 /* ArcPointsError.swift */,
-				81414B2D1C08CF2B00A9DE83 /* CoincidentPointsError.swift */,
-				81FEAAA71C4359B1000F0E2A /* ParallelLinesError.swift */,
-				81FEAAA41C4348EE000F0E2A /* CoincidentLinesError.swift */,
-				81FEAAAA1C435AF0000F0E2A /* NonCoPlanarLinesError.swift */,
 				81CDCC201C17E41400060C8D /* ParallelError.swift */,
+				81FEAAA71C4359B1000F0E2A /* ParallelLinesError.swift */,
 				81CDCC261C17E4F000060C8D /* ParallelPlanesError.swift */,
-				81CDCC241C17E4D200060C8D /* CoincidentPlanesError.swift */,
+				8183F26A1C1A0A16009CAF6B /* ZeroVectorError.swift */,
 			);
 			name = Errors;
 			sourceTree = "<group>";
@@ -338,6 +341,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				81FEAAA51C4348EE000F0E2A /* CoincidentLinesError.swift in Sources */,
+				81C1807F1D249DEB00357D0B /* IdenticalVectorError.swift in Sources */,
 				81414B021C08CE5E00A9DE83 /* ViewController.swift in Sources */,
 				81FEAAA81C4359B1000F0E2A /* ParallelLinesError.swift in Sources */,
 				81414B261C08CEE200A9DE83 /* PenCurve.swift in Sources */,

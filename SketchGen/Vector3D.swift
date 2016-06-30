@@ -110,7 +110,10 @@ public struct Vector3D: Equatable {
     }
     
     /// Standard definition of cross product
-    public static func  crossProduct(lhs: Vector3D, rhs: Vector3D) -> Vector3D   {
+    public static func  crossProduct(lhs: Vector3D, rhs: Vector3D) throws -> Vector3D   {
+        
+        guard(lhs != rhs) else { throw IdenticalVectorError(dir: lhs) }
+        guard(!Vector3D.isOpposite(lhs, rhs: rhs)) else { throw IdenticalVectorError(dir: lhs) }
         
         let freshI = lhs.j * rhs.k - lhs.k * rhs.j
         let freshJ = lhs.k * rhs.i - lhs.i * rhs.k   // Notice the different ordering
@@ -124,13 +127,13 @@ public struct Vector3D: Equatable {
     public static func isMutOrtho(uno: Vector3D, dos: Vector3D, tres: Vector3D) -> Bool   {
         
         let dot12 = Vector3D.dotProduct(uno, rhs: dos)
-        let flag1 = dot12 == 0.0
+        let flag1 = abs(dot12) < EpsilonV
         
         let dot23 = Vector3D.dotProduct(dos, rhs: tres)
-        let flag2 = dot23 == 0.0
+        let flag2 = abs(dot23) < EpsilonV
         
         let dot31 = Vector3D.dotProduct(tres, rhs: uno)
-        let flag3 = dot31 == 0.0
+        let flag3 = abs(dot31) < EpsilonV
         
         return flag1 && flag2 && flag3
     }
@@ -141,7 +144,7 @@ public struct Vector3D: Equatable {
     /// - Parameter  angleRad  The amount that the direction should change  Expressed in radians, not degrees!
     func twistAbout(axisDir: Vector3D, angleRad: Double) -> Vector3D  {   // Should this become a static func?
         
-        let perp = Vector3D.crossProduct(axisDir, rhs: self)
+        let perp = try! Vector3D.crossProduct(axisDir, rhs: self)
         
         let alongStep = self * cos(angleRad)
         let perpStep = perp * sin(angleRad)
