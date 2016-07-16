@@ -234,9 +234,9 @@ class Vector3DTests: XCTestCase {
         do   {
             
             let there = Vector3D(i: 0.4, j: -0.3, k: 0.9)
-            let there3 = Vector3D(i: 0.4, j: 0.3, k: -0.9)
+            let there2 = Vector3D(i: 0.4, j: 0.3, k: -0.9)
             
-            _ = try Vector3D.crossProduct(there, rhs: there3)
+            _ = try Vector3D.crossProduct(there, rhs: there2)
             
         }  catch  {
             XCTFail()
