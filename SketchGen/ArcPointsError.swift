@@ -7,6 +7,7 @@
 //
 
 import Foundation
+
 /// Exception for when the points should not have be coincident
 class ArcPointsError: ErrorType {
     

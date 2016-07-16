@@ -37,6 +37,23 @@
                BlueprintName = "SketchGenTests"
                ReferencedContainer = "container:SketchGen.xcodeproj">
             </BuildableReference>
+            <SkippedTests>
+               <Test
+                  Identifier = "Vector3DTests/testEpsilonV()">
+               </Test>
+               <Test
+                  Identifier = "Vector3DTests/testFidelity()">
+               </Test>
+               <Test
+                  Identifier = "Vector3DTests/testIsUnit()">
+               </Test>
+               <Test
+                  Identifier = "Vector3DTests/testIsZero()">
+               </Test>
+               <Test
+                  Identifier = "Vector3DTests/testLength()">
+               </Test>
+            </SkippedTests>
          </TestableReference>
       </Testables>
       <MacroExpansion>

@@ -43,7 +43,7 @@ public class CoordinateSystem   {
         guard (axisY.isUnit()) else {  throw NonUnitDirectionError(dir: self.axisY)  }
         guard (axisZ.isUnit()) else {  throw NonUnitDirectionError(dir: self.axisZ)  }
         
-        guard (Vector3D.isMutOrtho(axisX, dos: axisY, tres: axisZ)) else {  throw NonOrthogonalCSYSError() }
+        guard (CoordinateSystem.isMutOrtho(axisX, dos: axisY, tres: axisZ)) else {  throw NonOrthogonalCSYSError() }
         
     }
     
@@ -84,6 +84,23 @@ public class CoordinateSystem   {
         
         self.origin = spot
     }
+    
+    /// Check to see that these three vectors are mutually orthogonal
+    public static func isMutOrtho(uno: Vector3D, dos: Vector3D, tres: Vector3D) -> Bool   {
+        
+        let dot12 = Vector3D.dotProduct(uno, rhs: dos)
+        let flag1 = abs(dot12) < Vector3D.EpsilonV
+        
+        let dot23 = Vector3D.dotProduct(dos, rhs: tres)
+        let flag2 = abs(dot23) < Vector3D.EpsilonV
+        
+        let dot31 = Vector3D.dotProduct(tres, rhs: uno)
+        let flag3 = abs(dot31) < Vector3D.EpsilonV
+        
+        return flag1 && flag2 && flag3
+    }
+    
+    
     
     /// Generate a Transform to rotate and translate to the global coordinate system
     /// Should this become a method of Transform?

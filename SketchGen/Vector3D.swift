@@ -19,7 +19,20 @@ public struct Vector3D: Equatable {
     /// Difference limit between components in equality checks
     public static let EpsilonV: Double = 0.001
     
+    /// The simplest constructor
+    public init(i: Double, j: Double, k: Double)   {
+        
+        self.i = i
+        self.j = j
+        self.k = k
+    }
     
+    /// Copy constructor
+    public init(model: Vector3D)   {
+        self.i = model.i
+        self.j = model.j
+        self.k = model.k
+    }
     
     /// Check to see if the vector has zero length
     /// - See: 'testIsZero' under Vector3DTests
@@ -110,36 +123,41 @@ public struct Vector3D: Equatable {
     }
     
     /// Standard definition of cross product
+    /// This makes no assumptions or guarantees about normalized vectors
+    /// - See: 'testCross' under Vector3DTests
     public static func  crossProduct(lhs: Vector3D, rhs: Vector3D) throws -> Vector3D   {
         
         guard(lhs != rhs) else { throw IdenticalVectorError(dir: lhs) }
         guard(!Vector3D.isOpposite(lhs, rhs: rhs)) else { throw IdenticalVectorError(dir: lhs) }
         
+        // TODO: Add a more appropriate error type
+        guard(!Vector3D.isScaled(lhs, rhs: rhs)) else {throw IdenticalVectorError(dir: lhs) }
+        
+        
         let freshI = lhs.j * rhs.k - lhs.k * rhs.j
         let freshJ = lhs.k * rhs.i - lhs.i * rhs.k   // Notice the different ordering
         let freshK = lhs.i * rhs.j - lhs.j * rhs.i
         
+        
         return Vector3D(i: freshI, j: freshJ, k: freshK)
     }
     
-    /// Check to see that these three vectors are mutually orthogonal
-    /// Useful when setting up a new coordinate system from three vectors
-    public static func isMutOrtho(uno: Vector3D, dos: Vector3D, tres: Vector3D) -> Bool   {
+    /// Check that can be used before doing cross product
+    public static func  isScaled(lhs: Vector3D, rhs: Vector3D) -> Bool  {
         
-        let dot12 = Vector3D.dotProduct(uno, rhs: dos)
-        let flag1 = abs(dot12) < EpsilonV
+        var ln = Vector3D(model: lhs)
+        ln.normalize()
         
-        let dot23 = Vector3D.dotProduct(dos, rhs: tres)
-        let flag2 = abs(dot23) < EpsilonV
+        var rn = Vector3D(model: rhs)
+        rn.normalize()
         
-        let dot31 = Vector3D.dotProduct(tres, rhs: uno)
-        let flag3 = abs(dot31) < EpsilonV
+        let flag1 = ln == rn
+        let flag2 = Vector3D.isOpposite(ln, rhs: rn)
         
-        return flag1 && flag2 && flag3
+        return flag1 || flag2
     }
     
     
-
     /// Construct a vector that has been rotated from self about the axis specified by the first argument
     /// - Parameter  angleRad  The amount that the direction should change  Expressed in radians, not degrees!
     func twistAbout(axisDir: Vector3D, angleRad: Double) -> Vector3D  {   // Should this become a static func?
