@@ -32,7 +32,7 @@ class Roundy  {
         
         extent = OrthoVol(minX: -1.25, maxX: 1.25, minY: -1.25, maxY: 1.25, minZ: -1.25, maxZ: 1.25)   // A dummy value
         
-        let demoString = "egg"
+        let demoString = "cubic"
         
         switch demoString   {
             
@@ -145,8 +145,7 @@ class Roundy  {
         let segs = 15
         let stepSize = 1.0 / Double(segs)
         
-        for var g = 1; g <= segs; g++   {
-            
+        for g in 1..<segs  {
             let stepU = Double(g) * stepSize
             
             let stepPoint1 = swoop1.pointAt(stepU)
@@ -329,7 +328,7 @@ class Roundy  {
             // Build the extent for the figure
             
             extent = displayLines.first!.extent
-            for var g = 1; g < displayLines.count; g++  {
+            for g in 1..<displayLines.count  {
                 extent = extent + displayLines[g].extent
             }
             
@@ -378,7 +377,7 @@ class Roundy  {
             var thisEnd = roundEdge.pointAt(0.0)
             var thatEnd: Point3D
             
-            for var g = 1; g <= divs; g++   {
+            for g in 1...divs   {
                 
                 let currentT = Double(g) * tStep
                 

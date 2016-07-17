@@ -121,29 +121,30 @@ public class Arc: PenCurve {
     
     
     /// Build the center of a circle from three points on the perimeter
-    public static func findCenter(larry: Point3D, curly: Point3D, moe: Point3D) -> Point3D   {
+    public static func findCenter(larry: Point3D, curly: Point3D, moe: Point3D) throws -> Point3D   {
         
-        // TODO: Add suitability checks
+        guard(Point3D.isThreeUnique(larry, beta: curly, gamma: moe))  else  { throw ArcPointsError(badPtA: larry, badPtB: curly, badPtC: moe) }
+    
         
         /// The desired result to be returned
         var ctr = Point3D(x: 0.0, y: 0.0, z: 0.0)
         
         var vecA = Vector3D.built(larry, towards: curly)
-        vecA.normalize()
+        try! vecA.normalize()   // The guard statement above should keep this from being a zero vector
         
         var vecB = Vector3D.built(curly, towards: moe)
-        vecB.normalize()
+        try! vecB.normalize()   // The guard statement above should keep this from being a zero vector
         
-        var axle = try! Vector3D.crossProduct(vecA, rhs: vecB)
-        axle.normalize()
+        var axle = try! Vector3D.crossProduct(vecA, rhs: vecB)   // The guard statement above should keep these from being zero vectors
+        try! axle.normalize()   // The crossProduct function should keep this from being a zero vector
         
         let midA = Point3D.midway(larry, beta: curly)
         var perpA = try! Vector3D.crossProduct(vecA, rhs: axle)
-        perpA.normalize()
+        try! perpA.normalize()   // The crossProduct function should keep this from being a zero vector
         
         let midB = Point3D.midway(curly, beta: moe)
         var perpB = try! Vector3D.crossProduct(vecB, rhs: axle)
-        perpB.normalize()
+        try! perpB.normalize()   // The crossProduct function should keep this from being a zero vector
         
         
         do   {
@@ -208,10 +209,10 @@ public class Arc: PenCurve {
             
             /// Vector from the center towards the start point
             var radStart = Vector3D.built(self.ctr, towards: self.start)
-            radStart.normalize()
+            try! radStart.normalize()   // Checks in the constructor should keep this from being zero length
 
             var radFinish = Vector3D.built(self.ctr, towards: self.finish)
-            radFinish.normalize()
+            try! radFinish.normalize()   // Checks in the constructor should keep this from being zero length
             
             let projection = Vector3D.dotProduct(radStart, rhs: radFinish)
         
@@ -256,11 +257,11 @@ public class Arc: PenCurve {
         if !self.isFull   {
             
             var chord = Vector3D.built(start, towards: finish)
-            chord.normalize()
+            try! chord.normalize()   // Checks in the constructor should keep this from being a zero vector
         
-            let up = Vector3D(i: 0.0, j: 0.0, k: 1.0)
+            let up = Vector3D(i: 0.0, j: 0.0, k: 1.0)   // TODO: Make this not so brittle
             var split = try! Vector3D.crossProduct(up, rhs: chord)
-            split.normalize()
+            try! split.normalize()   // Checks in the crossProduct should keep this from being a zero vector
         
             var discard = split
             if self.isClockwise   { discard = split.reverse()  }
@@ -294,6 +295,8 @@ public class Arc: PenCurve {
     
     /// Check three points to see if they fit the pattern for defining an Arc
     public static func isArcable(center: Point3D, end1: Point3D, end2: Point3D) -> Bool  {
+        
+        if !Point3D.isThreeUnique(center, beta: end1, gamma: end2)  { return false }
         
         let dist1 = Point3D.dist(center, pt2: end1)
         let dist2 = Point3D.dist(center, pt2: end2)

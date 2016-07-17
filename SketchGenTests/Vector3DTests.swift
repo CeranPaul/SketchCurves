@@ -76,7 +76,7 @@ class Vector3DTests: XCTestCase {
         XCTAssertFalse(trial.isUnit())
         
         trial = Vector3D(i: -3.0, j: -4.0, k: -12.0)
-        trial.normalize()
+        try! trial.normalize()   // Safe by inspection
         
         XCTAssert(trial.isUnit())
     }
@@ -103,7 +103,7 @@ class Vector3DTests: XCTestCase {
         var trial = Vector3D(i: 0.1, j: 0.25, k: 0.003)
         XCTAssertFalse(trial.length() == 1.0)
         
-        trial.normalize()
+        try! trial.normalize()   // Safe by inspection
         XCTAssertEqualWithAccuracy (trial.length(), 1.0, accuracy: Vector3D.EpsilonV / 3.0, "Fred");   // I have no idea what the string does
     }
     

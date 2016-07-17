@@ -38,6 +38,8 @@ public struct  Point3D: Hashable {
     
     
     /// Create a new point by offsetting
+    /// - Parameters:
+    ///   - jump:  Vector to be used as the offset
     /// - See: 'testOffset' under Point3DTests
     /// - SeeAlso:  transform
     public func offset (jump: Vector3D) -> Point3D   {
@@ -60,7 +62,11 @@ public struct  Point3D: Hashable {
         return transformed
     }
     
+    
     /// Create a point midway between two others
+    /// - Parameters:
+    ///   - alpha:  One boundary
+    ///   - beta:  The other boundary
     public static func midway(alpha: Point3D, beta: Point3D) -> Point3D   {
         
         return Point3D(x: (alpha.x + beta.x) / 2.0, y: (alpha.y + beta.y) / 2.0, z: (alpha.z + beta.z) / 2.0)
@@ -101,7 +107,7 @@ public struct  Point3D: Hashable {
         return planeCenter.offset(bridgeInPlaneComponent)   // Ignore the component normal to the plane
     }
     
-    /// Generate a point by intersecting the line and the plane
+    /// Generate a point by intersecting a line and a plane
     /// - Throws: ParallelError if the input Line is parallel to the plane
     public static func intersectLinePlane(enil: Line, enalp: Plane) throws -> Point3D {
         
@@ -122,7 +128,7 @@ public struct  Point3D: Hashable {
         let projectedLineOrigin = Point3D.projectToPlane(enil.getOrigin(), enalp: enalp)
         
         var drop = Vector3D.built(enil.getOrigin(), towards: projectedLineOrigin)
-        drop.normalize()
+        try! drop.normalize()   // The shortcut above should keep the error from happening
         
         let closure = Vector3D.dotProduct(enil.getDirection(), rhs: drop)
         

@@ -55,7 +55,10 @@ public struct Vector3D: Equatable {
     
     /// Destructively change the vector length to 1.0
     /// - See: 'testNormalize' under Vector3DTests
-    public mutating func normalize()  {
+    /// - Throws: ZeroVectorError if the Vector has zero length
+    public mutating func normalize() throws  {
+        
+        guard(!isZero()) else {throw ZeroVectorError(dir: self)}
         
         let denom = self.length()
         
@@ -117,6 +120,8 @@ public struct Vector3D: Equatable {
     }
     
     /// Standard definition of dot product
+    /// - See: 'testDot' under Vector3DTests
+    /// Should this have guard statements for either input being zero?
     public static func dotProduct(lhs: Vector3D, rhs: Vector3D) -> Double   {
         
         return lhs.i * rhs.i + lhs.j * rhs.j + lhs.k * rhs.k
@@ -124,14 +129,18 @@ public struct Vector3D: Equatable {
     
     /// Standard definition of cross product
     /// This makes no assumptions or guarantees about normalized vectors
+    /// - Throws: IdenticalVectorError if the inputs are identical or opposite
+    /// - Throws: IdenticalVectorError if the inputs are scaled versions of each other
     /// - See: 'testCross' under Vector3DTests
+    /// Should this have guard statements for either input being zero?
     public static func  crossProduct(lhs: Vector3D, rhs: Vector3D) throws -> Vector3D   {
         
         guard(lhs != rhs) else { throw IdenticalVectorError(dir: lhs) }
         guard(!Vector3D.isOpposite(lhs, rhs: rhs)) else { throw IdenticalVectorError(dir: lhs) }
         
         // TODO: Add a more appropriate error type
-        guard(!Vector3D.isScaled(lhs, rhs: rhs)) else {throw IdenticalVectorError(dir: lhs) }
+        let flag1 = try Vector3D.isScaled(lhs, rhs: rhs)
+        guard(!flag1) else {throw IdenticalVectorError(dir: lhs) }
         
         
         let freshI = lhs.j * rhs.k - lhs.k * rhs.j
@@ -142,14 +151,19 @@ public struct Vector3D: Equatable {
         return Vector3D(i: freshI, j: freshJ, k: freshK)
     }
     
-    /// Check that can be used before doing cross product
-    public static func  isScaled(lhs: Vector3D, rhs: Vector3D) -> Bool  {
+    /// Check to see if one vector is a scaled version of the other
+    /// Could be used before doing cross product
+    /// - Throws: ZeroVectorError if either input is of zero length
+    public static func  isScaled(lhs: Vector3D, rhs: Vector3D) throws -> Bool  {
+        
+        guard(!lhs.isZero()) else {throw ZeroVectorError(dir: lhs)}
+        guard(!rhs.isZero()) else {throw ZeroVectorError(dir: rhs)}
         
         var ln = Vector3D(model: lhs)
-        ln.normalize()
+        try! ln.normalize()
         
         var rn = Vector3D(model: rhs)
-        rn.normalize()
+        try! rn.normalize()
         
         let flag1 = ln == rn
         let flag2 = Vector3D.isOpposite(ln, rhs: rn)
@@ -168,7 +182,7 @@ public struct Vector3D: Equatable {
         let perpStep = perp * sin(angleRad)
         
         var rotated = alongStep + perpStep
-        rotated.normalize()
+        try! rotated.normalize()
         
         return rotated
     }
@@ -183,7 +197,7 @@ public struct Vector3D: Equatable {
         let myK = cos(angleRad)
         
         var direction = Vector3D(i: myI, j: 0.0, k: myK)
-        direction.normalize()
+        try! direction.normalize()
         
         return direction
     }

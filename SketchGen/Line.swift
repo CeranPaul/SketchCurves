@@ -88,7 +88,10 @@ public struct Line: Equatable {
     public static func isCoincident(straightA: Line, trial: Point3D) -> Bool   {
         
         var bridgeVector = Vector3D.built(straightA.origin, towards: trial)
-        bridgeVector.normalize()
+        
+        if bridgeVector.isZero() { return true }
+        
+        try! bridgeVector.normalize()   // The zero length check above should keep this safe
         
         let same = bridgeVector == straightA.direction
         let opp = Vector3D.isOpposite(straightA.direction, rhs: bridgeVector)
@@ -128,13 +131,16 @@ public struct Line: Equatable {
     public static func isCoPlanar(straightA: Line, straightB: Line) -> Bool   {
         
         var bridgeVector = Vector3D.built(straightA.getOrigin(), towards: straightB.getOrigin())
-        bridgeVector.normalize()
+        
+        if bridgeVector.isZero() { return true }
+        
+        try! bridgeVector.normalize()   // The zero length check above should keep this safe
         
         var perp1 = try! Vector3D.crossProduct(straightA.getDirection(), rhs: bridgeVector)
-        perp1.normalize()
+        try! perp1.normalize()   // The checks in crossProduct should keep this from being a zero vector
         
         var perp2 = try! Vector3D.crossProduct(bridgeVector, rhs: straightA.getDirection())
-        perp2.normalize()
+        try! perp2.normalize()   // The checks in crossProduct should keep this from being a zero vector
         
         let sameFlag = perp1 == perp2
         let oppFlag = Vector3D.isOpposite(perp1, rhs: perp2)
@@ -157,7 +163,7 @@ public struct Line: Equatable {
         
         if Line.isCoincident(straightA, trial: straightB.getOrigin())   { return straightB.getOrigin() }
         if Line.isCoincident(straightB, trial: straightA.getOrigin())   { return straightA.getOrigin() }
-        
+        if straightA.getOrigin() == straightB.getOrigin()   { return straightA.getOrigin() }
         
         
         let bridgeVector = Vector3D.built(straightA.getOrigin(), towards: straightB.getOrigin())
@@ -166,7 +172,7 @@ public struct Line: Equatable {
         let comps = straightA.resolveRelative(bridgeVector)
         
         var perpDir = comps.perp
-        perpDir.normalize()
+        try! perpDir.normalize()  // The coincidence checks above should keep the vector from having zero length
         
         let propor = Vector3D.dotProduct(perpDir, rhs: straightB.getDirection())
         let perpLen = comps.perp.length()
@@ -192,11 +198,11 @@ public struct Line: Equatable {
         
         /// Direction of the intersection line
         var lineDir = try! Vector3D.crossProduct(flatA.getNormal(), rhs: flatB.getNormal())
-        lineDir.normalize()
+        try! lineDir.normalize()   // Checks in crossProduct should keep this from being a zero vector
         
         /// Vector on plane B that is perpendicular to the intersection line
         var perpInB = try! Vector3D.crossProduct(lineDir, rhs: flatB.getNormal())
-        perpInB.normalize()
+        try! perpInB.normalize()   // Checks in crossProduct should keep this from being a zero vector
         
           // The ParallelPlanesError or CoincidentPlanesError should be avoided by the guard statements
             

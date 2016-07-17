@@ -74,15 +74,15 @@ class TransformPlusTests: XCTestCase {
         let halfSq2rt = sq2rt / 2.0
         
            // Generate an equivalent to a rotation around the Z axis
-        var freshXAxis = Vector3D(i: halfSq2rt, j: halfSq2rt, k: 0.0)
-        var freshYAxis = Vector3D(i: -halfSq2rt, j: halfSq2rt, k: 0.0)
-        var freshZAxis = Vector3D(i: 0.0, j: 0.0, k: 1.0)
+        let freshXAxis = Vector3D(i: halfSq2rt, j: halfSq2rt, k: 0.0)
+        let freshYAxis = Vector3D(i: -halfSq2rt, j: halfSq2rt, k: 0.0)
+        let freshZAxis = Vector3D(i: 0.0, j: 0.0, k: 1.0)
         
-        var hardRot = Transform(localX: freshXAxis, localY: freshYAxis, localZ: freshZAxis)
+        let hardRot = Transform(localX: freshXAxis, localY: freshYAxis, localZ: freshZAxis)
         
-        var multRes = rowA * hardRot
+        let multRes = rowA * hardRot
         
-        var transformed = multRes.toPoint()
+        let transformed = multRes.toPoint()
         
         let target3 = Point3D(x: sq2rt, y: sq2rt, z: 0.0)
         

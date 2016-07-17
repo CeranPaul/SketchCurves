@@ -2,7 +2,7 @@
 //  Cubic.swift
 //  SketchCurves
 //
-//  Created by Paul Hollingshead on 12/14/15.
+//  Created by Paul on 12/14/15.
 //  Copyright © 2015 Ceran Digital Media. All rights reserved.  See LICENSE.md
 //
 
@@ -64,6 +64,8 @@ public class Cubic   {
     }
     
     /// Differentiate to find the tangent vector for the input parameter
+    /// - Returns:
+    ///   - tan:  Non-normalized vector
     func tangentAt(u: Double) -> Vector3D   {
         
         let u2 = u * u
@@ -77,12 +79,13 @@ public class Cubic   {
     
     
     /// Cross the tangent with a Z vector to get the normal
+    // TODO: Make this a little more general
     func normalAt(u: Double) -> Vector3D   {
         
         let ZVec = Vector3D(i: 0.0, j: 0.0, k: 1.0)
         
         var tanHere = tangentAt(u)
-        tanHere.normalize()
+        try! tanHere.normalize()   // Presumably the tangentAt function will keep the error from happening
         
         return try! Vector3D.crossProduct(ZVec, rhs: tanHere)   // Not normalized
     }
@@ -96,7 +99,7 @@ public class Cubic   {
         CGContextMoveToPoint(context, xCG, yCG)
         
         
-        for var g = 1; g <= 20; g += 1   {   // I don't know how to do this with a different loop style
+        for g in 1...20   {   // I don't know how to do this with a different loop style
             
             let stepU = Double(g) * 0.05
             xCG = CGFloat(pointAt(stepU).x)

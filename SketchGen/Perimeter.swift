@@ -78,7 +78,7 @@ public class Perimeter {
     /// See if the input screen point is near the end of any of the line segments
     func  nearEnd(speck: Point3D, enough: Double) -> Point3D?   {
         
-        for var g = 0; g < pieces.count; g++  {
+        for g in 0..<pieces.count  {
             
             let wire = pieces[g]
             let sep = wire.resolveNeighbor(speck)

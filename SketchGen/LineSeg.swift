@@ -89,7 +89,7 @@ public class LineSeg: PenCurve {    // Can this be a struct, instead?
     public func getDirection() -> Vector3D   {
         
         var along = Vector3D.built(self.endAlpha, towards: self.endOmega)
-        along.normalize()
+        try! along.normalize()   // The checks in the constructor should make this safe
         
         return along   // I think it's weird that this has to be a separate line
     }
@@ -110,8 +110,7 @@ public class LineSeg: PenCurve {    // Can this be a struct, instead?
     /// Find the position of a point relative to the LineSeg
     public func resolveNeighbor(speck: Point3D) -> (along: Double, perp: Double)   {
         
-        var unitAlong = Vector3D.built(self.endAlpha, towards: self.endOmega)
-        unitAlong.normalize()
+        let unitAlong = self.getDirection()
         
         let bridge = Vector3D.built(self.endAlpha, towards: speck)
         

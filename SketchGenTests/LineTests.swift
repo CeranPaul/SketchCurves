@@ -25,7 +25,7 @@ class LineTests: XCTestCase {
         
         let nexus = Point3D(x: -2.5, y: 1.5, z: 0.015)
         var horn = Vector3D(i: 12.0, j: 3.0, k: 4.0)
-        horn.normalize()
+        try! horn.normalize()
         
         do   {
             
@@ -51,16 +51,16 @@ class LineTests: XCTestCase {
         
         let P51Orig = Point3D(x: 3.0, y: 1.0, z: 0.0)
         var P51Dir = Vector3D(i: -0.707, j: 0.707, k: 0.0)
-        P51Dir.normalize()
+        try! P51Dir.normalize()   // Safe by inspection
         
         let target = Point3D(x: 1.0, y: 3.0, z: 0.0)
         
         do   {
             
-            var flat = try Line(spot: flatOrig, arrow: flatDir)
-            var pursuit = try Line(spot: P51Orig, arrow: P51Dir)
+            let flat = try Line(spot: flatOrig, arrow: flatDir)
+            let pursuit = try Line(spot: P51Orig, arrow: P51Dir)
             
-            var crossroads = try Line.intersectTwo(flat, straightB: pursuit)
+            let crossroads = try Line.intersectTwo(flat, straightB: pursuit)
             
             XCTAssert(crossroads == target)
             
@@ -73,16 +73,16 @@ class LineTests: XCTestCase {
         
         let evelOrig = Point3D(x: -1.5, y: 0.0, z: 1.5)
         var evelDir = Vector3D(i: -0.707, j: 0.0, k: 0.707)
-        evelDir.normalize()
+        try! evelDir.normalize()   // Safe by inspection
         
         let target2 = Point3D(x: -3.85, y: 0.0, z: 3.85)
         
         do   {
             
-            var flat = try Line(spot: roofOrig, arrow: roofDir)
-            var pursuit = try Line(spot: evelOrig, arrow: evelDir)
+            let flat = try Line(spot: roofOrig, arrow: roofDir)
+            let pursuit = try Line(spot: evelOrig, arrow: evelDir)
             
-            var crossroads = try Line.intersectTwo(flat, straightB: pursuit)
+            let crossroads = try Line.intersectTwo(flat, straightB: pursuit)
             
             print(crossroads)
             

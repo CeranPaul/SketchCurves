@@ -25,7 +25,7 @@ class PlaneTests: XCTestCase {
         
         let nexus = Point3D(x: 2.0, y: 3.0, z: 4.0)
         var horn = Vector3D(i: 3.0, j: 4.0, k: 12.0)
-        horn.normalize()
+        try! horn.normalize()   // Safe by inspection
         
         do   {
             
@@ -51,7 +51,7 @@ class PlaneTests: XCTestCase {
         
         var nexus = Point3D(x: 2.0, y: 3.0, z: 4.0)
         var horn = Vector3D(i: 3.0, j: 4.0, k: 12.0)
-        horn.normalize()
+        try! horn.normalize()   // Safe by inspection
         
         do   {
             
@@ -80,11 +80,11 @@ class PlaneTests: XCTestCase {
     func testNormalGetter()   {
         
         var target = Vector3D(i: 3.0, j: 4.0, k: 12.0)
-        target.normalize()
+        try! target.normalize()   // Safe by inspection
         
         let nexus = Point3D(x: 2.0, y: 3.0, z: 4.0)
         var horn = Vector3D(i: 3.0, j: 4.0, k: 12.0)
-        horn.normalize()
+        try! horn.normalize()   // Safe by inspection
         
         do   {
             
@@ -95,7 +95,7 @@ class PlaneTests: XCTestCase {
             XCTAssert(finger == target)
             
             var horn = Vector3D(i: 3.0, j: 3.0, k: 12.0)
-            horn.normalize()
+            try! horn.normalize()   // Safe by inspection
             
             llanoEstacado = try Plane(spot: nexus, arrow: horn)
             
@@ -114,7 +114,7 @@ class PlaneTests: XCTestCase {
         
         let nexus = Point3D(x: 2.0, y: 3.0, z: 4.0)
         var horn = Vector3D(i: 3.0, j: 4.0, k: 12.0)
-        horn.normalize()
+        try! horn.normalize()   // Safe by inspection
             
         do   {
             
@@ -128,7 +128,7 @@ class PlaneTests: XCTestCase {
             
             var spot = Point3D(x: 2.0, y: 3.0, z: 4.5)
             var thataway = Vector3D(i: 3.0, j: 4.0, k: 12.0)
-            thataway.normalize()
+            try! thataway.normalize()   // Safe by inspection
             
             let billiardTable = try Plane(spot: spot, arrow: thataway)
             
@@ -137,7 +137,7 @@ class PlaneTests: XCTestCase {
             
             spot = Point3D(x: 2.0, y: 3.0, z: 4.0)
             thataway = Vector3D(i: 2.0, j: 4.0, k: 12.0)
-            thataway.normalize()
+            try! thataway.normalize()   // Safe by inspection
             
             let kansas = try Plane(spot: spot, arrow: thataway)
             
@@ -146,7 +146,7 @@ class PlaneTests: XCTestCase {
             
             spot = Point3D(x: 2.0, y: 3.0, z: 4.0)
             thataway = Vector3D(i: -3.0, j: -4.0, k: -12.0)
-            thataway.normalize()
+            try! thataway.normalize()   // Safe by inspection
             
             let runway = try Plane(spot: spot, arrow: thataway)
             
@@ -168,7 +168,7 @@ class PlaneTests: XCTestCase {
     func testIsCoincident()   {
         
         let nexus = Point3D(x: 2.0, y: 3.0, z: 4.0)
-        var horn = Vector3D(i: 1.0, j: 0.0, k: 0.0)
+        let horn = Vector3D(i: 1.0, j: 0.0, k: 0.0)
         
         do   {
             
