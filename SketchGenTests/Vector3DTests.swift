@@ -104,8 +104,22 @@ class Vector3DTests: XCTestCase {
         XCTAssertFalse(trial.length() == 1.0)
         
         try! trial.normalize()   // Safe by inspection
-        XCTAssertEqualWithAccuracy (trial.length(), 1.0, accuracy: Vector3D.EpsilonV / 3.0, "Fred");   // I have no idea what the string does
+        XCTAssertEqualWithAccuracy (trial.length(), 1.0, accuracy: Vector3D.EpsilonV / 3.0, "")
+
+        // Verify that the new guard statement works
+        var zeroTrial = Vector3D(i: 0.0, j: 0.0, k: 0.0)
+        XCTAssertThrowsError(try zeroTrial.normalize())
+        
+        // Verify that the new guard statement doesn't throw false errors
+        trial = Vector3D(i: 0.866, j: 0.0, k: -0.5)
+        
+        do   {
+           try trial.normalize()
+        } catch  {
+            XCTFail()
+        }
     }
+    
     
     
     // Check the overloaded equality function

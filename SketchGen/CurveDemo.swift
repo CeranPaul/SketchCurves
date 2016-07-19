@@ -32,7 +32,7 @@ class Roundy  {
         
         extent = OrthoVol(minX: -1.25, maxX: 1.25, minY: -1.25, maxY: 1.25, minZ: -1.25, maxZ: 1.25)   // A dummy value
         
-        let demoString = "cubic"
+        let demoString = "Herm"
         
         switch demoString   {
             
@@ -49,6 +49,8 @@ class Roundy  {
             case "cubic": firstCubic()
             
             case "egg": wholeEllipse()
+            
+        case "Herm": firstHermite()
             
        default:  showBox()   // Demonstrate the boundary box for an Arc
         }
@@ -180,6 +182,53 @@ class Roundy  {
 
         }
         
+    }
+    
+    
+    /// Build and plot a trial cubic curve
+    func firstHermite()   {
+        
+        extent = OrthoVol(minX: 1.75, maxX: 3.5, minY: 1.0, maxY: 3.0, minZ: -1.0, maxZ: 1.0)   // Fixed value
+        
+        let alpha = Point3D(x: 2.3, y: 1.5, z: 0.7)
+        let alSlope = Vector3D(i: 0.866, j: -0.5, k: 0.0)
+        
+        let beta = Point3D(x: 3.1, y: 1.6, z: 0.7)
+        let betSlope = Vector3D(i: 0.866, j: 0.5, k: 0.0)
+        
+        let bump = Cubic(ptA: alpha, slopeA: alSlope, ptB: beta, slopeB: betSlope)
+        
+        
+        // Disregarding the 'draw' function
+        
+        var priorPt1 = alpha
+        
+        let segs = 15
+        let stepSize = 1.0 / Double(segs)
+        
+        for g in 1..<segs  {
+            let stepU = Double(g) * stepSize
+            
+            let stepPoint1 = bump.pointAt(stepU)
+            
+            /// LineSeg to be added to the display list
+            var stroke: PenCurve
+            
+            do   {
+                
+                stroke = try LineSeg(end1: priorPt1, end2: stepPoint1)
+                displayLines.append(stroke)
+                
+                priorPt1 = stepPoint1   // Shuffle values in preparation for the next segment
+                
+            }  catch let error as CoincidentPointsError  {
+                let gnirts = error.description
+                print(gnirts)
+            }  catch  {
+                print("Some other error while adding a segment of a Hermite cubic curve")
+            }
+    
+        }
     }
     
     

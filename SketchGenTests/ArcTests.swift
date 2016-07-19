@@ -3,7 +3,7 @@
 //  BoxChopDemo
 //
 //  Created by Paul on 11/12/15.
-//  Copyright © 2015 Paul Hollingshead. All rights reserved.
+//  Copyright © 2015 Paul Hollingshead. All rights reserved.  See LICENSE.md
 //
 
 import XCTest

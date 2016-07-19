@@ -22,7 +22,7 @@ public class Cubic   {
     var cy: Double
     var dy: Double
     
-    var az: Double   // For a lengthy period, these will be ignored, or set to zero
+    var az: Double   // For a curve in the XY plane, these can be ignored, or set to zero
     var bz: Double
     var cz: Double
     var dz: Double
@@ -49,12 +49,38 @@ public class Cubic   {
         
     }
     
+    /// Build from two points and two slopes
+    /// The assignment statements come from an algebraic manipulation of the equations
+    /// in the Wikipedia article on Cubic Hermite spline
+    init(ptA: Point3D, slopeA: Vector3D, ptB: Point3D, slopeB: Vector3D)   {
+        
+        
+        self.ax = 2.0 * ptA.x + slopeA.i - 2.0 * ptB.x + slopeB.i
+        self.bx = -3.0 * ptA.x - 2.0 * slopeA.i + 3.0 * ptB.x - slopeB.i
+        self.cx = slopeA.i
+        self.dx = ptA.x
+        
+        self.ay = 2.0 * ptA.y + slopeA.j - 2.0 * ptB.y + slopeB.j
+        self.by = -3.0 * ptA.y - 2.0 * slopeA.j + 3.0 * ptB.y - slopeB.j
+        self.cy = slopeA.j
+        self.dy = ptA.y
+        
+        self.az = 2.0 * ptA.z + slopeA.k - 2.0 * ptB.z + slopeB.k
+        self.bz = -3.0 * ptA.z - 2.0 * slopeA.k + 3.0 * ptB.z - slopeB.k
+        self.cz = slopeA.k
+        self.dz = ptA.z
+        
+    }
+    
+    
     /// Supply the point on the curve for the input parameter value
+    /// Some notations show "t" as the parameter, instead of "u"
     func pointAt(u: Double) -> Point3D   {
         
         let u2 = u * u
         let u3 = u2 * u
         
+           // This notation came from "Fundamentals of Interactive Computer Graphics" by Foley and Van Dam
            // Warning!  The relationship of coefficients and powers of u might be unexpected, as notations vary
         let myX = ax * u3 + bx * u2 + cx * u + dx
         let myY = ay * u3 + by * u2 + cy * u + dy
@@ -64,6 +90,7 @@ public class Cubic   {
     }
     
     /// Differentiate to find the tangent vector for the input parameter
+    /// Some notations show "t" as the parameter, instead of "u"
     /// - Returns:
     ///   - tan:  Non-normalized vector
     func tangentAt(u: Double) -> Vector3D   {
@@ -78,17 +105,6 @@ public class Cubic   {
     }
     
     
-    /// Cross the tangent with a Z vector to get the normal
-    // TODO: Make this a little more general
-    func normalAt(u: Double) -> Vector3D   {
-        
-        let ZVec = Vector3D(i: 0.0, j: 0.0, k: 1.0)
-        
-        var tanHere = tangentAt(u)
-        try! tanHere.normalize()   // Presumably the tangentAt function will keep the error from happening
-        
-        return try! Vector3D.crossProduct(ZVec, rhs: tanHere)   // Not normalized
-    }
     
     /// Plot the curve segment.  This will be called by the UIView 'drawRect' function
     public func draw(context: CGContext)  {
@@ -99,9 +115,9 @@ public class Cubic   {
         CGContextMoveToPoint(context, xCG, yCG)
         
         
-        for g in 1...20   {   // I don't know how to do this with a different loop style
+        for g in 1...20   {
             
-            let stepU = Double(g) * 0.05
+            let stepU = Double(g) * 0.05   // Gee, this is brittle!
             xCG = CGFloat(pointAt(stepU).x)
             yCG = CGFloat(pointAt(stepU).y)
             CGContextAddLineToPoint(context, xCG, yCG)
@@ -110,5 +126,9 @@ public class Cubic   {
         CGContextStrokePath(context)
         
     }
+    
+    // What's the right way to check for equivalence?
+    
+    // TODO: Figure a way to do an offset curve
     
 }
