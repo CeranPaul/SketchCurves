@@ -39,6 +39,24 @@
             </BuildableReference>
             <SkippedTests>
                <Test
+                  Identifier = "ArcTests">
+               </Test>
+               <Test
+                  Identifier = "LineTests">
+               </Test>
+               <Test
+                  Identifier = "OrthoVolTests">
+               </Test>
+               <Test
+                  Identifier = "PlaneTests">
+               </Test>
+               <Test
+                  Identifier = "TransformPlusTests">
+               </Test>
+               <Test
+                  Identifier = "Vector3DTests">
+               </Test>
+               <Test
                   Identifier = "Vector3DTests/testEpsilonV()">
                </Test>
                <Test

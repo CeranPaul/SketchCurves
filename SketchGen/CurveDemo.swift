@@ -32,7 +32,7 @@ class Roundy  {
         
         extent = OrthoVol(minX: -1.25, maxX: 1.25, minY: -1.25, maxY: 1.25, minZ: -1.25, maxZ: 1.25)   // A dummy value
         
-        let demoString = "Herm"
+        let demoString = "spline"
         
         switch demoString   {
             
@@ -50,7 +50,9 @@ class Roundy  {
             
             case "egg": wholeEllipse()
             
-        case "Herm": firstHermite()
+        case "herm": firstHermite()
+            
+        case "spline": firstSpline()
             
        default:  showBox()   // Demonstrate the boundary box for an Arc
         }
@@ -231,6 +233,62 @@ class Roundy  {
         }
     }
     
+    /// Build and plot a trial cubic curve
+    func firstSpline()   {
+        
+        extent = OrthoVol(minX: -1.00, maxX: 1.5, minY: -1.5, maxY: 1.5, minZ: 3.0, maxZ: 5.0)   // Fixed value
+        
+        var lilyPads = [Point3D]()
+        
+        let a = Point3D(x: 0.25, y: -1.5, z: 4.2)
+        lilyPads.append(a)
+        
+        let b = Point3D(x: 0.60, y: -0.75, z: 4.2)
+        lilyPads.append(b)
+        
+        let c = Point3D(x: 0.80, y: -0.15, z: 4.2)
+        lilyPads.append(c)
+        
+        let d = Point3D(x: 0.40, y: 0.25, z: 4.2)
+        lilyPads.append(d)
+        
+        let e = Point3D(x: -0.10, y: 0.65, z: 4.2)
+        lilyPads.append(e)
+        
+        let swing = Spline(pts: lilyPads)
+        
+        for piece in swing.pieces   {
+            
+            var priorPt1 = piece.pointAt(0.0)
+            
+            let segs = 10
+            let stepSize = 1.0 / Double(segs)
+            
+            for g in 1...segs  {
+                let stepU = Double(g) * stepSize
+                
+                let stepPoint1 = piece.pointAt(stepU)
+                
+                /// LineSeg to be added to the display list
+                var stroke: PenCurve
+                
+                do   {
+                    
+                    stroke = try LineSeg(end1: priorPt1, end2: stepPoint1)
+                    displayLines.append(stroke)
+                    
+                    priorPt1 = stepPoint1   // Shuffle values in preparation for the next segment
+                    
+                }  catch let error as CoincidentPointsError  {
+                    let gnirts = error.description
+                    print(gnirts)
+                }  catch  {
+                    print("Some other error while adding a segment of a Hermite cubic curve")
+                }
+                
+            }
+        }
+    }
     
     /// Build an Arc, then illustrate its surrounding extent
     /// - Returns:  Void, but modifies 'displayLines' and 'displayPoints'
