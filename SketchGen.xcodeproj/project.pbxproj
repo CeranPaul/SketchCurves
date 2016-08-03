@@ -213,8 +213,9 @@
 		81414B131C08CE5E00A9DE83 /* SketchGenTests */ = {
 			isa = PBXGroup;
 			children = (
-				814E0F561D39F35000200289 /* Vector3DTests.swift */,
+				81F8D6CB1C51F65000A369CF /* PerimeterTests.swift */,
 				8106F0001C1A7F6B00C74FE6 /* Point3DTests.swift */,
+				814E0F561D39F35000200289 /* Vector3DTests.swift */,
 				81414B391C08CFAB00A9DE83 /* ArcTests.swift */,
 				81414B331C08CF8C00A9DE83 /* LineSegTests.swift */,
 				81414B341C08CF8C00A9DE83 /* OrthoVolTests.swift */,
@@ -222,7 +223,6 @@
 				81414B161C08CE5E00A9DE83 /* Info.plist */,
 				8183F26D1C1A672B009CAF6B /* LineTests.swift */,
 				8183F26F1C1A675A009CAF6B /* PlaneTests.swift */,
-				81F8D6CB1C51F65000A369CF /* PerimeterTests.swift */,
 				810328931C71A04400E6FA21 /* TransformTests.swift */,
 				814E0F5A1D3B359000200289 /* CubicTests.swift */,
 				814E0F5F1D3D65C900200289 /* SplineTests.swift */,

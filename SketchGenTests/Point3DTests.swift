@@ -30,6 +30,29 @@ class Point3DTests: XCTestCase {
         XCTAssert(sample.z == 4.0)
     }
 
+    func testEquals()   {
+        
+        let trial = Point3D(x: -3.1, y: 6.8 + 0.75 * Point3D.Epsilon, z: -1.4)
+        
+        let target = Point3D(x: -3.1, y: 6.8, z: -1.4)
+        
+        XCTAssert(trial == target)
+        
+        let trial2 = Point3D(x: -3.1 - 1.5 * Point3D.Epsilon, y: 6.8 + 0.75 * Point3D.Epsilon, z: -1.4)
+        
+        XCTAssertFalse(trial2 == target)
+        
+    }
+    
+    func testNotEquals()   {
+        
+        let trial = Point3D(x: -3.7, y: 6.1, z: 10.4)
+        
+        let target = Point3D(x: -3.7, y: 6.1, z: 9.4)
+        
+        XCTAssert(trial != target)
+    }
+    
     func testOffset()   {
         
         let local = Point3D(x: -1.0, y: 2.0, z: -3.0)
@@ -53,4 +76,19 @@ class Point3DTests: XCTestCase {
         
         XCTAssert(sep == 13.0)
     }
+    
+    func testMidway()   {
+        
+        let here = Point3D(x: -5.0, y: -10.0, z: -23.0)
+        let there = Point3D(x: -9.0, y: -7.0, z: -11.0)
+        
+        let pbj = Point3D.midway(here, beta: there)
+        
+        let target = Point3D(x: -7.0, y: -8.5, z: -17.0)
+        
+        XCTAssertEqual(pbj, target)
+    }
+    
+    // TODO: Add tests for transform, and project
+    
 }

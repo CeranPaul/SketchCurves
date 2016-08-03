@@ -81,5 +81,16 @@ class LineSegTests: XCTestCase {
         
     }
 
-
+    func testReverse()   {
+        
+        let alpha = Point3D(x: 2.5, y: 2.5, z: 2.5)
+        let beta = Point3D(x: 4.5, y: 4.5, z: 4.5)
+        
+        let stroke = try! LineSeg(end1: alpha, end2: beta)
+        
+        stroke.reverse()
+        
+        XCTAssertEqual(alpha, stroke.getOtherEnd())
+        XCTAssertEqual(beta, stroke.getOneEnd())
+    }
 }
