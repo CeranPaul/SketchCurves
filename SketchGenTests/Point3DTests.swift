@@ -89,6 +89,25 @@ class Point3DTests: XCTestCase {
         XCTAssertEqual(pbj, target)
     }
     
-    // TODO: Add tests for transform, and project
+    func testIsThreeLinear()   {
+        
+        let here = Point3D(x: -5.0, y: 5.0, z: 5.0)
+        let there = Point3D(x: -9.0, y: 9.0, z: 9.0)
+        let pastThere = Point3D(x: -15.0, y: 15.0, z: 15.0)
+        
+        XCTAssert(Point3D.isThreeUnique(here, beta: there, gamma: pastThere))
+        
+        XCTAssert(Point3D.isThreeLinear(here, beta: there, gamma: pastThere))
+        
+        
+        let missed = Point3D(x: -9.0, y: -9.0, z: 9.0)
+        
+        XCTAssert(Point3D.isThreeUnique(here, beta: missed, gamma: pastThere))
+        
+        XCTAssertFalse(Point3D.isThreeLinear(here, beta: missed, gamma: pastThere))
+        
+    }
+    
+    // TODO: Add tests for transform, isThreeCoincident, isThreeLinear, and project
     
 }

@@ -164,7 +164,7 @@ public struct  Point3D: Hashable {
         return ang
     }
     
-    /// See if three points could be made into a triangle
+    /// See if three points are not duplicate
     public static func  isThreeUnique(alpha: Point3D, beta: Point3D, gamma: Point3D) -> Bool   {
         
         let flag1 = alpha != beta
@@ -172,6 +172,19 @@ public struct  Point3D: Hashable {
         let flag3 = beta != gamma
         
         return flag1 && flag2 && flag3
+    }
+    
+    /// See if three points are all in a line
+    /// 'isThreeUnique' should be run and have a true result before running this
+    /// - See: 'testIsThreeLinear' under Point3DTests
+    public static func isThreeLinear(alpha: Point3D, beta: Point3D, gamma: Point3D) -> Bool   {
+        
+        let thisWay = Vector3D.built(alpha, towards: beta)
+        let thatWay = Vector3D.built(alpha, towards: gamma)
+
+        let flag1 = try! Vector3D.isScaled(thisWay, rhs: thatWay)
+        
+        return flag1
     }
     
 }

@@ -39,10 +39,31 @@
             </BuildableReference>
             <SkippedTests>
                <Test
-                  Identifier = "ArcTests">
+                  Identifier = "ArcTests/testEquals()">
+               </Test>
+               <Test
+                  Identifier = "ArcTests/testErrorThrow()">
+               </Test>
+               <Test
+                  Identifier = "ArcTests/testFidelity()">
+               </Test>
+               <Test
+                  Identifier = "ArcTests/testFindAxis()">
+               </Test>
+               <Test
+                  Identifier = "ArcTests/testPointAtAngle()">
+               </Test>
+               <Test
+                  Identifier = "ArcTests/testPointAtT()">
+               </Test>
+               <Test
+                  Identifier = "ArcTests/testReverse()">
                </Test>
                <Test
                   Identifier = "CubicTests">
+               </Test>
+               <Test
+                  Identifier = "LineSegTests">
                </Test>
                <Test
                   Identifier = "LineTests">
@@ -51,7 +72,13 @@
                   Identifier = "OrthoVolTests">
                </Test>
                <Test
+                  Identifier = "PerimeterTests">
+               </Test>
+               <Test
                   Identifier = "PlaneTests">
+               </Test>
+               <Test
+                  Identifier = "Point3DTests">
                </Test>
                <Test
                   Identifier = "SketchGenTests">

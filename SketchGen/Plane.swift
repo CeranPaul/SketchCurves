@@ -31,6 +31,28 @@ public struct Plane   {
         guard (self.normal.isUnit()) else  {throw NonUnitDirectionError(dir: self.normal)}
     }
     
+    /// Generate a vector from differences between the inputs
+    /// Normal could be the opposite of what you hoped for
+    /// - Throws: CoincidentPointsError for duplicate or linear inputs
+    init(alpha: Point3D, beta: Point3D, gamma: Point3D) throws   {
+        
+        self.location = alpha
+        self.normal = Vector3D(i: 0.6, j: 0.6, k: 0.6)
+        
+        guard (Point3D.isThreeUnique(alpha, beta: beta, gamma: gamma)) else { throw CoincidentPointsError(dupePt: alpha)  }
+        
+        // TODO: Come up with a better error type
+        guard (!Point3D.isThreeLinear(alpha, beta: beta, gamma: gamma))  else  {  throw CoincidentPointsError(dupePt: alpha)  }
+            
+        let thisWay = Vector3D.built(alpha, towards: beta)
+        let thatWay = Vector3D.built(alpha, towards: gamma)
+        
+        var perpTo = try! Vector3D.crossProduct(thisWay, rhs: thatWay)
+        try! perpTo.normalize()
+        
+        self.normal = perpTo
+    }
+    
     /// A getter for the point defining the plane
     /// - See: 'testLocationGetter' under PlaneTests
     public func getLocation() -> Point3D   {
@@ -50,10 +72,12 @@ public struct Plane   {
     /// - See: 'testIsCoincident' under PlaneTests
     public static func isCoincident(flat: Plane, pip:  Point3D) -> Bool  {
         
+        if pip == flat.getLocation()   {  return true  }   // Shortcut!
+        
         let bridge = Vector3D.built(flat.location, towards: pip)
         
         // This can be positive, negative, or zero
-        let distanceOffPlane = Vector3D.dotProduct(bridge, rhs: flat.normal)  // FIXME:  Deal with coincident points
+        let distanceOffPlane = Vector3D.dotProduct(bridge, rhs: flat.normal)  
         
         return  abs(distanceOffPlane) < Point3D.Epsilon
     }

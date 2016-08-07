@@ -32,7 +32,7 @@ class Roundy  {
         
         extent = OrthoVol(minX: -1.25, maxX: 1.25, minY: -1.25, maxY: 1.25, minZ: -1.25, maxZ: 1.25)   // A dummy value
         
-        let demoString = "spline"
+        let demoString = "arcWoes"
         
         switch demoString   {
             
@@ -54,11 +54,46 @@ class Roundy  {
             
         case "spline": firstSpline()
             
+        case "arcWoes": ArcDebug()
+            
        default:  showBox()   // Demonstrate the boundary box for an Arc
         }
         
     }
     
+    /// Print unobscured by test results and multiple calls to target function
+    func ArcDebug() -> Void   {
+        
+        let ctr = Point3D(x: 10.5, y: 6.0, z: -1.2)
+        
+        let green = Point3D(x: 11.8, y: 6.0, z: -1.2)
+        let checker = Point3D(x: 10.5, y: 7.3, z: -1.2)
+        
+        let sunSetting = try! Arc.buildFromCenterStartFinish(ctr, end1: checker, end2: green, useSmallAngle: true)
+
+        
+        let sqrt32 = sqrt(3.0) / 2.0
+        
+        var clock = Vector3D(i: 0.5, j: sqrt32, k: 0.0)
+        try! clock.normalize()
+        
+        var ray = try! Line(spot: ctr, arrow: clock)
+        
+        var plop = sunSetting.pointAt(0.333333)
+        let flag1 = Line.isCoincident(ray, trial: plop)
+        
+        
+        let countdown = try! Arc.buildFromCenterStartFinish(ctr, end1: checker, end2: green, useSmallAngle: false)
+        
+        clock = Vector3D(i: -1.0, j: 0.0, k: 0.0)
+        ray = try! Line(spot: ctr, arrow: clock)
+        
+        plop = countdown.pointAt(0.333333)
+        
+        let flag2 = Line.isCoincident(ray, trial: plop)
+        
+        let fred = 3.0
+    }
     
     /// Build and plot an entire ellipse
     func wholeEllipse()   {
@@ -301,7 +336,7 @@ class Roundy  {
         
         do   {
             
-            let bow = try Arc(center: ctr, end1: start, end2: finish, isCW: true)
+            let bow = try Arc.buildFromCenterStartFinish(ctr, end1: start, end2: finish, useSmallAngle: true)
             bow.setIntent(PenTypes.Arc)
             displayLines.append(bow)
             
@@ -395,7 +430,7 @@ class Roundy  {
             stroke = try LineSeg(end1: ptE, end2: ptF)
             displayLines.append(stroke)
             
-            stroke = try Arc(center: ptG, end1: ptF, end2: ptH, isCW: true)
+            stroke = try Arc.buildFromCenterStartFinish(ptG, end1: ptF, end2: ptH, useSmallAngle: true)
             displayLines.append(stroke)
             
             stroke = try LineSeg(end1: ptH, end2: ptJ)
@@ -407,7 +442,7 @@ class Roundy  {
             stroke = try LineSeg(end1: ptK, end2: ptL)
             displayLines.append(stroke)
             
-            stroke = try Arc(center: ptG, end1: ptL, end2: ptM, isCW: false)
+            stroke = try Arc.buildFromCenterStartFinish(ptG, end1: ptL, end2: ptM, useSmallAngle: false)
             displayLines.append(stroke)
             
             stroke = try LineSeg(end1: ptM, end2: ptN)
@@ -459,7 +494,7 @@ class Roundy  {
         
         do   {
             
-            let roundEdge = try Arc(center: ctr, end1: start, end2: finish, isCW: false)
+            let roundEdge = try Arc.buildFromCenterStartFinish(ctr, end1: start, end2: finish, useSmallAngle: false)
             roundEdge.setIntent(PenTypes.Ideal)
             displayLines.append(roundEdge)
             
@@ -472,7 +507,7 @@ class Roundy  {
             let theta = 2.0 * acos(arg)
             
             
-            let divisions = ceil(roundEdge.range / theta)
+            let divisions = ceil(roundEdge.getSweepAngle() / theta)
             let divs = Int(divisions)
             
             
@@ -607,7 +642,7 @@ class Roundy  {
         
             var stroke: PenCurve    // Used to hold arcs and line segments
             
-            stroke = try Arc(center: ptA, end1: ptK, end2: ptC, isCW: true)
+            stroke = try Arc.buildFromCenterStartFinish(ptA, end1: ptK, end2: ptC, useSmallAngle: true)
             displayLines.append(stroke)
             
             self.extent = stroke.extent
@@ -625,7 +660,7 @@ class Roundy  {
             stroke = try LineSeg(end1: ptE, end2: ptF)
             displayLines.append(stroke)
             
-            stroke = try Arc(center: ptB, end1: ptF, end2: ptG, isCW: true)
+            stroke = try Arc.buildFromCenterStartFinish(ptB, end1: ptF, end2: ptG, useSmallAngle: true)
             displayLines.append(stroke)
             
             self.extent = self.extent + stroke.extent

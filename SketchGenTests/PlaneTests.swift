@@ -44,6 +44,23 @@ class PlaneTests: XCTestCase {
         }
     }
     
+    func testInitPts()   {
+        
+        let huey = Point3D(x: 2.0, y: 3.0, z: 8.0)
+        let dewey = Point3D(x: 0.0, y: 3.0, z: -1.0)
+        let louie = Point3D(x: 4.0, y: 3.0, z: -1.25)
+        
+        let constY = try! Plane(alpha: huey, beta: dewey, gamma: louie)
+        
+        let targetNorm = Vector3D(i: 0.0, j: 1.0, k: 0.0)
+        
+        let flag1 = constY.getNormal() == targetNorm || Vector3D.isOpposite(constY.getNormal(), rhs: targetNorm)
+        
+        XCTAssert(flag1)
+        
+           // Bad referencing should cause an error
+        XCTAssertThrowsError(try Plane(alpha: huey, beta: huey, gamma: louie))
+    }
     
     func testLocationGetter()   {
         
@@ -170,26 +187,22 @@ class PlaneTests: XCTestCase {
         let nexus = Point3D(x: 2.0, y: 3.0, z: 4.0)
         let horn = Vector3D(i: 1.0, j: 0.0, k: 0.0)
         
-        do   {
-            
-            let playingField = try Plane(spot: nexus, arrow: horn)
-            
-            var trial = Point3D(x: 2.0, y: 5.0, z: 3.5)
-            
-            XCTAssert(Plane.isCoincident(playingField, pip: trial))
-            
-            
-            trial = Point3D(x: 1.9, y: 3.0, z: 4.0)
-            
-            XCTAssertFalse(Plane.isCoincident(playingField, pip: trial))
-            
-            
-            trial = Point3D(x: 2.0, y: 3.0, z: 4.0)
-            
-            XCTAssert(Plane.isCoincident(playingField, pip: trial))
-            
-       }   catch   {
-            print("Did you really throw an error in a test case?  Plane Equals")
-        }
+        let playingField = try! Plane(spot: nexus, arrow: horn)
+        
+        
+        var trial = Point3D(x: 2.0, y: 5.0, z: 3.5)
+        
+        XCTAssert(Plane.isCoincident(playingField, pip: trial))
+        
+        
+        trial = Point3D(x: 1.9, y: 3.0, z: 4.0)
+        
+        XCTAssertFalse(Plane.isCoincident(playingField, pip: trial))
+        
+        
+        trial = Point3D(x: 2.0, y: 3.0, z: 4.0)
+        
+        XCTAssert(Plane.isCoincident(playingField, pip: trial))
+        
     }
 }
