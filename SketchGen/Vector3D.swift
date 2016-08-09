@@ -95,33 +95,15 @@ public struct Vector3D: Equatable {
     }
     
     
-    /// Construct a vector re-directed one quarter turn away in the counterclockwise direction in the XY plane
-    /// Use crossProduct to do this for a more general case
-    public func perp() -> Vector3D   {
-        
-        let rightAngle = Vector3D(i: -self.j, j: self.i, k: 0.0)   // Perpendicular in a CCW direction
-        
-        return rightAngle
-    }
-    
-    
-    /// Construct vector from first input point towards the second    Consider using "normalize" above on the result
+    /// Construct vector from first input point towards the second
+    /// Consider using "normalize" on the returned value
     public static func built(from: Point3D, towards: Point3D) -> Vector3D {
         
         return Vector3D(i: towards.x - from.x, j: towards.y - from.y, k: towards.z - from.z)
     }
     
-    /// Check for vectors with the same direction but a different sense
-    /// - See: 'testIsOpposite' under Vector3DTests
-    public static func isOpposite(lhs: Vector3D, rhs: Vector3D) -> Bool   {
-        
-        let tempVec = lhs * -1.0
-        return rhs == tempVec
-    }
-    
     /// Standard definition of dot product
     /// - See: 'testDot' under Vector3DTests
-    /// Should this have guard statements for either input being zero?
     public static func dotProduct(lhs: Vector3D, rhs: Vector3D) -> Double   {
         
         return lhs.i * rhs.i + lhs.j * rhs.j + lhs.k * rhs.k
@@ -132,7 +114,6 @@ public struct Vector3D: Equatable {
     /// - Throws: IdenticalVectorError if the inputs are identical or opposite
     /// - Throws: IdenticalVectorError if the inputs are scaled versions of each other
     /// - See: 'testCross' under Vector3DTests
-    /// Should this have guard statements for either input being zero?
     public static func  crossProduct(lhs: Vector3D, rhs: Vector3D) throws -> Vector3D   {
         
         guard(lhs != rhs) else { throw IdenticalVectorError(dir: lhs) }
@@ -151,29 +132,66 @@ public struct Vector3D: Equatable {
         return Vector3D(i: freshI, j: freshJ, k: freshK)
     }
     
+    /// Check for vectors with the same direction but a different sense
+    /// - See: 'testIsOpposite' under Vector3DTests
+    /// - SeeAlso:  isScaled()
+    public static func isOpposite(lhs: Vector3D, rhs: Vector3D) -> Bool   {
+        
+        let tempVec = lhs * -1.0
+        return rhs == tempVec
+    }
+    
     /// Check to see if one vector is a scaled version of the other
     /// Could be used before doing cross product
     /// - Throws: ZeroVectorError if either input is of zero length
+    /// - SeeAlso:  isOpposite()
     public static func  isScaled(lhs: Vector3D, rhs: Vector3D) throws -> Bool  {
         
-        guard(!lhs.isZero()) else {throw ZeroVectorError(dir: lhs)}
-        guard(!rhs.isZero()) else {throw ZeroVectorError(dir: rhs)}
+        guard(!lhs.isZero()) else {  throw ZeroVectorError(dir: lhs)  }
+        guard(!rhs.isZero()) else {  throw ZeroVectorError(dir: rhs)  }
         
-        var ln = Vector3D(model: lhs)
-        try! ln.normalize()
+        var leftNormalized = Vector3D(model: lhs)
+        try! leftNormalized.normalize()
         
-        var rn = Vector3D(model: rhs)
-        try! rn.normalize()
+        var rightNormalized = Vector3D(model: rhs)
+        try! rightNormalized.normalize()
         
-        let flag1 = ln == rn
-        let flag2 = Vector3D.isOpposite(ln, rhs: rn)
+        let flag1 = leftNormalized == rightNormalized
+        let flag2 = Vector3D.isOpposite(leftNormalized, rhs: rightNormalized)
         
         return flag1 || flag2
     }
     
     
+    /// Find a positive or negative angle between two unit vectors
+    /// - Parameter: baselineVec: Direction to be measured from
+    /// - Parameter: measureTo: Direction of interest
+    /// - Parameter: perp: Normal vector used to determine positive and negative
+    /// - Throws: ZeroVectorError if any of the inputs are of zero length
+    /// - Returns: Angle in radians between -M_PI and M_PI
+    public static func findAngle(baselineVec: Vector3D, measureTo: Vector3D, perp: Vector3D) throws -> Double   {
+        
+        guard !baselineVec.isZero()  else  {  throw ZeroVectorError(dir: baselineVec)  }
+        guard !measureTo.isZero()  else  {  throw ZeroVectorError(dir: measureTo)  }
+        guard !perp.isZero()  else  {  throw ZeroVectorError(dir: perp)  }
+        
+        let projection = Vector3D.dotProduct(baselineVec, rhs: measureTo)
+        var angle = acos(projection)   // Default case
+        
+        var positiveVert = try! Vector3D.crossProduct(perp, rhs: baselineVec)
+        try! positiveVert.normalize()
+        
+        let side = Vector3D.dotProduct(measureTo, rhs: positiveVert)
+        
+        if side < 0.0   { angle = 2.0 * M_PI - angle  }
+        
+        return angle
+    }
+    
+    
+    
     /// Construct a vector that has been rotated from self about the axis specified by the first argument
-    /// - Parameter  angleRad  The amount that the direction should change  Expressed in radians, not degrees!
+    /// - Parameter:  angleRad  The amount that the direction should change  Expressed in radians, not degrees!
     func twistAbout(axisDir: Vector3D, angleRad: Double) -> Vector3D  {   // Should this become a static func?
         
         let perp = try! Vector3D.crossProduct(axisDir, rhs: self)
@@ -185,6 +203,16 @@ public struct Vector3D: Equatable {
         try! rotated.normalize()
         
         return rotated
+    }
+    
+    
+    /// Construct a vector re-directed one quarter turn away in the counterclockwise direction in the XY plane
+    /// Use crossProduct to do this for a more general case
+    public func perp() -> Vector3D   {
+        
+        let rightAngle = Vector3D(i: -self.j, j: self.i, k: 0.0)   // Perpendicular in a CCW direction
+        
+        return rightAngle
     }
     
     
@@ -228,13 +256,15 @@ public func - (lhs: Vector3D, rhs: Vector3D) -> Vector3D   {
     return Vector3D(i: lhs.i - rhs.i, j: lhs.j - rhs.j, k: lhs.k - rhs.k)
 }
 
-/// Construct a vector by scaling the Vector3D argument by the Double
+/// Construct a vector by scaling the Vector3D by the Double argument
+/// - SeeAlso:  crossProduct()
+/// - SeeAlso:  dotProduct()
 /// - See: 'testScaling' under Vector3DTests
-public func * (lhs: Vector3D, rhs: Double) -> Vector3D   {
+public func * (lhs: Vector3D, scalar: Double) -> Vector3D   {
     
-    let scaledI = lhs.i * rhs
-    let scaledJ = lhs.j * rhs
-    let scaledK = lhs.k * rhs
+    let scaledI = lhs.i * scalar
+    let scaledJ = lhs.j * scalar
+    let scaledK = lhs.k * scalar
     
     return Vector3D(i: scaledI, j: scaledJ, k: scaledK)
 }

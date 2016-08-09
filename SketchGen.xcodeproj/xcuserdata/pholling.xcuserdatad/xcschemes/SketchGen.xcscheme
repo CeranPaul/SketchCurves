@@ -39,73 +39,7 @@
             </BuildableReference>
             <SkippedTests>
                <Test
-                  Identifier = "ArcTests/testEquals()">
-               </Test>
-               <Test
-                  Identifier = "ArcTests/testErrorThrow()">
-               </Test>
-               <Test
-                  Identifier = "ArcTests/testFidelity()">
-               </Test>
-               <Test
-                  Identifier = "ArcTests/testFindAxis()">
-               </Test>
-               <Test
-                  Identifier = "ArcTests/testPointAtAngle()">
-               </Test>
-               <Test
-                  Identifier = "ArcTests/testPointAtT()">
-               </Test>
-               <Test
-                  Identifier = "ArcTests/testReverse()">
-               </Test>
-               <Test
-                  Identifier = "CubicTests">
-               </Test>
-               <Test
-                  Identifier = "LineSegTests">
-               </Test>
-               <Test
-                  Identifier = "LineTests">
-               </Test>
-               <Test
-                  Identifier = "OrthoVolTests">
-               </Test>
-               <Test
-                  Identifier = "PerimeterTests">
-               </Test>
-               <Test
-                  Identifier = "PlaneTests">
-               </Test>
-               <Test
-                  Identifier = "Point3DTests">
-               </Test>
-               <Test
                   Identifier = "SketchGenTests">
-               </Test>
-               <Test
-                  Identifier = "SplineTests">
-               </Test>
-               <Test
-                  Identifier = "TransformPlusTests">
-               </Test>
-               <Test
-                  Identifier = "Vector3DTests">
-               </Test>
-               <Test
-                  Identifier = "Vector3DTests/testEpsilonV()">
-               </Test>
-               <Test
-                  Identifier = "Vector3DTests/testFidelity()">
-               </Test>
-               <Test
-                  Identifier = "Vector3DTests/testIsUnit()">
-               </Test>
-               <Test
-                  Identifier = "Vector3DTests/testIsZero()">
-               </Test>
-               <Test
-                  Identifier = "Vector3DTests/testLength()">
                </Test>
             </SkippedTests>
          </TestableReference>

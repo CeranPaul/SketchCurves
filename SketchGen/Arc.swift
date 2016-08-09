@@ -55,6 +55,7 @@ public class Arc: PenCurve {
         self.isFull = false
         if self.sweepAngle == 2.0 * M_PI   { self.isFull = true }
         
+        
         self.usage = PenTypes.Default   // Use 'setIntent' to attach the desired value
         
         // Dummy assignment. Postpone the expensive calculation until after the guard statements
@@ -104,6 +105,10 @@ public class Arc: PenCurve {
         return rad
     }
     
+    public func getAxisDir() -> Vector3D   {
+        return axisDir
+    }
+    
     public func getSweepAngle() -> Double   {
         return sweepAngle
     }
@@ -121,7 +126,7 @@ public class Arc: PenCurve {
         
         // TODO: Add guard statements for half and full circles
         
-        // Check that input points are unique
+        // Check that input points are unique  Can these be replaced by a call to 'isThreeUnique'?
         guard (end1 != center && end2 != center) else { throw CoincidentPointsError(dupePt: center) }
         guard (end1 != end2) else { throw CoincidentPointsError(dupePt: end1) }
         
@@ -138,7 +143,10 @@ public class Arc: PenCurve {
         var spin = try! Vector3D.crossProduct(vecStart, rhs: vecFinish)
         try! spin.normalize()
         
-        let sweepAngle = Arc.findAngle(vecStart, rhs: vecFinish, perp: spin)
+        let rawAngle = try! Vector3D.findAngle(vecStart, measureTo: vecFinish, perp: spin)
+        
+        var sweepAngle = rawAngle
+        if !useSmallAngle   { sweepAngle = rawAngle - 2.0 * M_PI  }
         
         let bow = try Arc(center: center, axis: spin, end1: end1, sweep: sweepAngle)
         
@@ -146,81 +154,9 @@ public class Arc: PenCurve {
     }
     
     
-    /// This should become a static function in class Vector3D
-    public static func findAngle(lhs: Vector3D, rhs: Vector3D, perp: Vector3D) -> Double   {
-        
-        let projection = Vector3D.dotProduct(lhs, rhs: rhs)
-        var angleRaw = acos(projection)
-        
-        var vert = try! Vector3D.crossProduct(perp, rhs: lhs)
-        try! vert.normalize()
-        
-        let side = Vector3D.dotProduct(rhs, rhs: vert)
-        
-        var angle = angleRaw
-        
-        if side < 0.0   { angle = 2.0 * M_PI - angleRaw  }
-        
-        
-        return angle
-    }
-    
-    /// Determine the range of angles covered by the arc
-    /// See the first illustration in the wiki article "Arc Configuration".
-    ///  - Warning:  Will blow up with a half circle
-    func findRange() -> Double   {
-        
-        if self.isFull   {  return 2.0 * M_PI  }   // This case should have been avoided by logic in the constructor
-            
-        else  {
-            
-            /// Vector from the center towards the start point
-            var vecStart = Vector3D.built(self.ctr, towards: self.start)
-            try! vecStart.normalize()   // Checks in the constructor should keep this from being zero length
-            
-            var vecFinish = Vector3D.built(self.ctr, towards: self.finish)
-            try! vecFinish.normalize()   // Checks in the constructor should keep this from being zero length
-            
-            var perp = try! Vector3D.crossProduct(vecStart, rhs: vecFinish)
-            try! perp.normalize()
-            
-               // For Case A in the illustration, perp will be going into the page
-
-            
-            let perpToVecStart = try! Vector3D.crossProduct(perp, rhs: vecStart)
-            
-            
-            /// Vector from the start point towards the finish point
-            let startFinish = Vector3D.built(self.start, towards: self.finish)
-            
-            
-            // Can range from -1.0 to 1.0, with a void at 0.0
-            let sense = Vector3D.dotProduct(perpToVecStart, rhs: startFinish)
-            
-            var side = true
-            side = sense > 0.0
-            
-            
-            let projection = Vector3D.dotProduct(vecStart, rhs: vecFinish)
-            
-            /// The raw material for determining the range
-            let angleRaw = acos(projection)
-            
-            
-            
-            /// Value to be returned.  The initial value will be overwritten 50% of the time
-            var angle = angleRaw
-            
-            
-            return angle
-        }
-    }
-    
-    
-    /// Angle should be in radians
     /// Angle is relative to a line between the center and the start point independent of direction of the arc
+    /// - Parameter: theta: Angle in radians
     /// See the illustration in the wiki "Arc PointAtAngle" article
-    /// I'm not sure that this is still needed
     public func pointAtAngle(theta: Double) -> Point3D  {
         
         var horiz = Vector3D.built(self.ctr, towards: self.start)
@@ -245,7 +181,7 @@ public class Arc: PenCurve {
     /// - Warning:  No checks are made for the value of t being inside some range
     public func pointAt(t: Double) -> Point3D  {
         
-        var deltaAngle = t * self.sweepAngle    // Implies that 0 < t < 1
+        let deltaAngle = t * self.sweepAngle    // Implies that 0 < t < 1
         
         let spot = pointAtAngle(deltaAngle)
         
@@ -255,6 +191,40 @@ public class Arc: PenCurve {
     
     // TODO:  Add a length function
     
+    
+    /// Change the traversal direction of the curve so it can be aligned with other members of Perimeter
+    public func reverse() {
+        
+        let bubble = self.start
+        self.start = self.finish
+        self.finish = bubble
+        self.sweepAngle = -1.0 * self.sweepAngle
+    }
+    
+    
+    /// Check three points to see if they fit the pattern for defining an Arc
+    /// - Parameter: center: Point3D used for pivoting
+    /// - Parameter: end1: Point3D on the perimeter
+    /// - Parameter: end2: Point3D on the perimeter
+    public static func isArcable(center: Point3D, end1: Point3D, end2: Point3D) -> Bool  {
+        
+        if !Point3D.isThreeUnique(center, beta: end1, gamma: end2)  { return false }
+        
+        let dist1 = Point3D.dist(center, pt2: end1)
+        let dist2 = Point3D.dist(center, pt2: end2)
+        
+        let thumbsUp = abs(dist1 - dist2) < Point3D.Epsilon
+        
+        return thumbsUp
+    }
+    
+    /// Figure how far the point is off the curve, and how far along the curve it is.  Useful for picks
+    /// Not implemented
+    public func resolveNeighbor(speck: Point3D) -> (along: Double, perp: Double)   {
+        
+        // TODO: Make this return something besides dummy values
+        return (1.0, 0.0)
+    }
     
     /// Plot the arc segment.  This will be called by the UIView 'drawRect' function
     /// Disabled because it only works in the XY plane
@@ -322,7 +292,62 @@ public class Arc: PenCurve {
         return OrthoVol(minX: leastX, maxX: mostX, minY: leastY, maxY: mostY, minZ: -1 * rad / 10.0, maxZ: rad / 10.0)
     }
     
+    
+    
+    /// Determine the range of angles covered by the arc
+    /// See the first illustration in the wiki article "Arc Configuration".
+    ///  - Warning:  Will blow up with a half circle
+    func findRange() -> Double   {
+        
+        if self.isFull   {  return 2.0 * M_PI  }   // This case should have been avoided by logic in the constructor
+            
+        else  {
+            
+            /// Vector from the center towards the start point
+            var vecStart = Vector3D.built(self.ctr, towards: self.start)
+            try! vecStart.normalize()   // Checks in the constructor should keep this from being zero length
+            
+            var vecFinish = Vector3D.built(self.ctr, towards: self.finish)
+            try! vecFinish.normalize()   // Checks in the constructor should keep this from being zero length
+            
+            var perp = try! Vector3D.crossProduct(vecStart, rhs: vecFinish)
+            try! perp.normalize()
+            
+            // For Case A in the illustration, perp will be going into the page
+            
+            
+            let perpToVecStart = try! Vector3D.crossProduct(perp, rhs: vecStart)
+            
+            
+            /// Vector from the start point towards the finish point
+            let startFinish = Vector3D.built(self.start, towards: self.finish)
+            
+            
+            // Can range from -1.0 to 1.0, with a void at 0.0
+            let sense = Vector3D.dotProduct(perpToVecStart, rhs: startFinish)
+            
+            var side = true
+            side = sense > 0.0
+            
+            
+            let projection = Vector3D.dotProduct(vecStart, rhs: vecFinish)
+            
+            /// The raw material for determining the range
+            let angleRaw = acos(projection)
+            
+            
+            
+            /// Value to be returned.  The initial value will be overwritten 50% of the time
+            var angle = angleRaw
+            
+            
+            return angle
+        }
+    }
+    
+    
     /// Build the center of a circle from three points on the perimeter
+    /// - Throws: ArcPointsError if there any coincident points in the inputs
     public static func findCenter(larry: Point3D, curly: Point3D, moe: Point3D) throws -> Point3D   {
         
         guard(Point3D.isThreeUnique(larry, beta: curly, gamma: moe))  else  { throw ArcPointsError(badPtA: larry, badPtB: curly, badPtC: moe) }
@@ -363,50 +388,21 @@ public class Arc: PenCurve {
         return ctr
     }
     
-    /// Check three points to see if they fit the pattern for defining an Arc
-    public static func isArcable(center: Point3D, end1: Point3D, end2: Point3D) -> Bool  {
-        
-        if !Point3D.isThreeUnique(center, beta: end1, gamma: end2)  { return false }
-        
-        let dist1 = Point3D.dist(center, pt2: end1)
-        let dist2 = Point3D.dist(center, pt2: end2)
-        
-        let thumbsUp = abs(dist1 - dist2) < Point3D.Epsilon
-        
-        return thumbsUp
-    }
-    
-    /// Change the traversal direction of the curve so it can be aligned with other members of Perimeter
-    public func reverse() {
-        
-        let bubble = self.start
-        self.start = self.finish
-        self.finish = bubble
-        self.sweepAngle = -1.0 * self.sweepAngle
-        
-    }
-    
-    
-    /// Figure how far the point is off the curve, and how far along the curve it is.  Useful for picks
-    /// Not implemented
-    public func resolveNeighbor(speck: Point3D) -> (along: Double, perp: Double)   {
-        
-        // TODO: Make this return something besides dummy values
-        return (1.0, 0.0)
-    }
-    
-    /// Check for two having the same center point
+    /// Check for two having the same center point and axis
     /// - Parameter: lhs: One Arc
     /// - Parameter: rhs: Another Arc
     /// - SeeAlso:  Overloaded ==
     public static func isConcentric(lhs: Arc, rhs: Arc) -> Bool  {
         
-        let flag = lhs.ctr == rhs.ctr
-
-        return flag
+        let ctrFlag = lhs.ctr == rhs.ctr
+        
+        let axisFlag1 = lhs.getAxisDir() == rhs.getAxisDir()
+        let axisFlag2 = Vector3D.isOpposite(lhs.getAxisDir(), rhs: rhs.getAxisDir())
+        let axisFlag = axisFlag1 || axisFlag2
+        
+        return ctrFlag && axisFlag
     }
     
-    // TODO: Write a check for two having the same centerline.  Or does that go with a cylinder?
     
     
 }    // End of definition for class Arc

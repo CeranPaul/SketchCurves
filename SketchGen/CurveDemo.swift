@@ -32,7 +32,7 @@ class Roundy  {
         
         extent = OrthoVol(minX: -1.25, maxX: 1.25, minY: -1.25, maxY: 1.25, minZ: -1.25, maxZ: 1.25)   // A dummy value
         
-        let demoString = "arcWoes"
+        let demoString = "spline"
         
         switch demoString   {
             
@@ -54,7 +54,6 @@ class Roundy  {
             
         case "spline": firstSpline()
             
-        case "arcWoes": ArcDebug()
             
        default:  showBox()   // Demonstrate the boundary box for an Arc
         }
@@ -64,35 +63,6 @@ class Roundy  {
     /// Print unobscured by test results and multiple calls to target function
     func ArcDebug() -> Void   {
         
-        let ctr = Point3D(x: 10.5, y: 6.0, z: -1.2)
-        
-        let green = Point3D(x: 11.8, y: 6.0, z: -1.2)
-        let checker = Point3D(x: 10.5, y: 7.3, z: -1.2)
-        
-        let sunSetting = try! Arc.buildFromCenterStartFinish(ctr, end1: checker, end2: green, useSmallAngle: true)
-
-        
-        let sqrt32 = sqrt(3.0) / 2.0
-        
-        var clock = Vector3D(i: 0.5, j: sqrt32, k: 0.0)
-        try! clock.normalize()
-        
-        var ray = try! Line(spot: ctr, arrow: clock)
-        
-        var plop = sunSetting.pointAt(0.333333)
-        let flag1 = Line.isCoincident(ray, trial: plop)
-        
-        
-        let countdown = try! Arc.buildFromCenterStartFinish(ctr, end1: checker, end2: green, useSmallAngle: false)
-        
-        clock = Vector3D(i: -1.0, j: 0.0, k: 0.0)
-        ray = try! Line(spot: ctr, arrow: clock)
-        
-        plop = countdown.pointAt(0.333333)
-        
-        let flag2 = Line.isCoincident(ray, trial: plop)
-        
-        let fred = 3.0
     }
     
     /// Build and plot an entire ellipse
