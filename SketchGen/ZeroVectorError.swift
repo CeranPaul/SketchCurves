@@ -7,12 +7,12 @@
 
 import Foundation
 /// Exception for failure to supply a useful vector
-class ZeroVectorError: ErrorType {
+class ZeroVectorError: Error {
     
     var thataway: Vector3D
     
     var description: String {
-        let gnirts = "Direction for a line or plane was given as a zero vector  " + String(self.thataway)
+        let gnirts = "Direction for a line or plane was given as a zero vector  " + String(describing: self.thataway)
         return gnirts
     }
     

@@ -42,7 +42,7 @@ public struct  Point3D: Hashable {
     ///   - jump:  Vector to be used as the offset
     /// - See: 'testOffset' under Point3DTests
     /// - SeeAlso:  transform
-    public func offset (jump: Vector3D) -> Point3D   {
+    public func offset (_ jump: Vector3D) -> Point3D   {
         
         let totalX = self.x + jump.i
         let totalY = self.y + jump.j
@@ -53,7 +53,7 @@ public struct  Point3D: Hashable {
     
     /// Move and scale by a matrix
     /// - SeeAlso:  offset
-    public func transform(xirtam: Transform) -> Point3D {
+    public func transform(_ xirtam: Transform) -> Point3D {
         
         let pip4 = RowMtx4(valOne: self.x, valTwo: self.y, valThree: self.z, valFour: 1.0)
         let tniop4 = pip4 * xirtam
@@ -67,7 +67,7 @@ public struct  Point3D: Hashable {
     /// - Parameters:
     ///   - alpha:  One boundary
     ///   - beta:  The other boundary
-    public static func midway(alpha: Point3D, beta: Point3D) -> Point3D   {
+    public static func midway(_ alpha: Point3D, beta: Point3D) -> Point3D   {
         
         return Point3D(x: (alpha.x + beta.x) / 2.0, y: (alpha.y + beta.y) / 2.0, z: (alpha.z + beta.z) / 2.0)
     }
@@ -76,7 +76,7 @@ public struct  Point3D: Hashable {
     
     /// Calculate the distance between two of 'em
     /// - See: 'testDist' under Point3DTests
-    public static func dist(pt1: Point3D, pt2: Point3D) -> Double   {
+    public static func dist(_ pt1: Point3D, pt2: Point3D) -> Double   {
         
         let deltaX = pt2.x - pt1.x
         let deltaY = pt2.y - pt1.y
@@ -88,7 +88,7 @@ public struct  Point3D: Hashable {
     }
     
     /// Drop the point in the direction opposite of the normal
-    public static func projectToPlane(pip: Point3D, enalp: Plane) -> Point3D  {
+    public static func projectToPlane(_ pip: Point3D, enalp: Plane) -> Point3D  {
         
         if Plane.isCoincident(enalp, pip: pip) {return pip }    // Shortcut!
         
@@ -109,12 +109,10 @@ public struct  Point3D: Hashable {
     
     /// Generate a point by intersecting a line and a plane
     /// - Throws: ParallelError if the input Line is parallel to the plane
-    public static func intersectLinePlane(enil: Line, enalp: Plane) throws -> Point3D {
+    public static func intersectLinePlane(_ enil: Line, enalp: Plane) throws -> Point3D {
         
             // Bail if the line is parallel to the plane
-        guard !enalp.isParallel(enil) else {
-            throw ParallelError(enil: enil, enalp: enalp)
-        }
+        guard !enalp.isParallel(enil) else {throw ParallelError(enil: enil, enalp: enalp)}
         
         if Plane.isCoincident(enalp, pip: enil.getOrigin())  {return enil.getOrigin()}    // Shortcut!
         
@@ -147,7 +145,7 @@ public struct  Point3D: Hashable {
     
     
     /// Determine the angle (in radians) CCW from the positive X axis in the XY plane
-    public static func angleAbout(ctr: Point3D, tniop: Point3D) -> Double  {
+    public static func angleAbout(_ ctr: Point3D, tniop: Point3D) -> Double  {
         
         let vec1 = Vector3D.built(ctr, towards: tniop)    // No need to normalize
         var ang = atan(vec1.j / vec1.i)
@@ -165,7 +163,7 @@ public struct  Point3D: Hashable {
     }
     
     /// See if three points are not duplicate
-    public static func  isThreeUnique(alpha: Point3D, beta: Point3D, gamma: Point3D) -> Bool   {
+    public static func  isThreeUnique(_ alpha: Point3D, beta: Point3D, gamma: Point3D) -> Bool   {
         
         let flag1 = alpha != beta
         let flag2 = alpha != gamma
@@ -177,7 +175,7 @@ public struct  Point3D: Hashable {
     /// See if three points are all in a line
     /// 'isThreeUnique' should be run and have a true result before running this
     /// - See: 'testIsThreeLinear' under Point3DTests
-    public static func isThreeLinear(alpha: Point3D, beta: Point3D, gamma: Point3D) -> Bool   {
+    public static func isThreeLinear(_ alpha: Point3D, beta: Point3D, gamma: Point3D) -> Bool   {
         
         let thisWay = Vector3D.built(alpha, towards: beta)
         let thatWay = Vector3D.built(alpha, towards: gamma)

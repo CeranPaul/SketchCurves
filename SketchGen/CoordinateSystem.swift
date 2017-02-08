@@ -9,7 +9,7 @@
 import Foundation
 
 /// Three dimensions with orthogonal axes
-public class CoordinateSystem   {
+open class CoordinateSystem   {
     
     var origin: Point3D
     
@@ -39,11 +39,11 @@ public class CoordinateSystem   {
         self.axisY = beta
         self.axisZ = gamma
         
-        guard (axisX.isUnit()) else {  throw NonUnitDirectionError(dir: self.axisX)  }
-        guard (axisY.isUnit()) else {  throw NonUnitDirectionError(dir: self.axisY)  }
-        guard (axisZ.isUnit()) else {  throw NonUnitDirectionError(dir: self.axisZ)  }
+        guard (axisX.isUnit()) else {  throw NonUnitDirectionError(dir: self.axisX)}
+        guard (axisY.isUnit()) else {  throw NonUnitDirectionError(dir: self.axisY)}
+        guard (axisZ.isUnit()) else {  throw NonUnitDirectionError(dir: self.axisZ)}
         
-        guard (CoordinateSystem.isMutOrtho(axisX, dos: axisY, tres: axisZ)) else {  throw NonOrthogonalCSYSError() }
+        guard (CoordinateSystem.isMutOrtho(axisX, dos: axisY, tres: axisZ)) else {  throw NonOrthogonalCSYSError()}
         
     }
     
@@ -86,7 +86,7 @@ public class CoordinateSystem   {
     }
     
     /// Check to see that these three vectors are mutually orthogonal
-    public static func isMutOrtho(uno: Vector3D, dos: Vector3D, tres: Vector3D) -> Bool   {
+    open static func isMutOrtho(_ uno: Vector3D, dos: Vector3D, tres: Vector3D) -> Bool   {
         
         let dot12 = Vector3D.dotProduct(uno, rhs: dos)
         let flag1 = abs(dot12) < Vector3D.EpsilonV
@@ -154,7 +154,7 @@ public class CoordinateSystem   {
     }
     
     /// Create a duplicate with a different origin
-    public static func relocate(originalCSYS: CoordinateSystem, betterOrigin: Point3D) -> CoordinateSystem   {
+    open static func relocate(_ originalCSYS: CoordinateSystem, betterOrigin: Point3D) -> CoordinateSystem   {
         
         let sparkling = try! CoordinateSystem(spot: betterOrigin, alpha: originalCSYS.axisX, beta: originalCSYS.axisY, gamma: originalCSYS.axisZ)
         

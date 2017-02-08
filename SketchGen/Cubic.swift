@@ -10,7 +10,7 @@ import Foundation
 import UIKit
 
 /// Curve defined by polynomials for each coordinate direction
-public class Cubic   {
+open class Cubic   {
     
     var ax: Double
     var bx: Double
@@ -75,7 +75,7 @@ public class Cubic   {
     
     /// Supply the point on the curve for the input parameter value
     /// Some notations show "t" as the parameter, instead of "u"
-    func pointAt(u: Double) -> Point3D   {
+    func pointAt(_ u: Double) -> Point3D   {
         
         let u2 = u * u
         let u3 = u2 * u
@@ -93,7 +93,7 @@ public class Cubic   {
     /// Some notations show "t" as the parameter, instead of "u"
     /// - Returns:
     ///   - tan:  Non-normalized vector
-    func tangentAt(u: Double) -> Vector3D   {
+    func tangentAt(_ u: Double) -> Vector3D   {
         
         let u2 = u * u
 
@@ -107,12 +107,12 @@ public class Cubic   {
     
     
     /// Plot the curve segment.  This will be called by the UIView 'drawRect' function
-    public func draw(context: CGContext)  {
+    open func draw(_ context: CGContext)  {
         
         var xCG: CGFloat = CGFloat(self.ax)    // Convert to "CGFloat", and throw out Z coordinate
         var yCG: CGFloat = CGFloat(self.ay)
         
-        CGContextMoveToPoint(context, xCG, yCG)
+        context.move(to: CGPoint(x: xCG, y: yCG))
         
         
         for g in 1...20   {
@@ -120,10 +120,10 @@ public class Cubic   {
             let stepU = Double(g) * 0.05   // Gee, this is brittle!
             xCG = CGFloat(pointAt(stepU).x)
             yCG = CGFloat(pointAt(stepU).y)
-            CGContextAddLineToPoint(context, xCG, yCG)
+            context.addLine(to: CGPoint(x: xCG, y: yCG))
         }
         
-        CGContextStrokePath(context)
+        context.strokePath()
         
     }
     

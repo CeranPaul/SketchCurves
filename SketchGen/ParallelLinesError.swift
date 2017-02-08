@@ -9,13 +9,13 @@
 import Foundation
 
 /// Exception for when the lines shouldn't have been parallel - i.e. when trying to intersect them
-class ParallelLinesError: ErrorType {
+class ParallelLinesError: Error {
     
     var enil: Line
     
     
     var description: String {
-        let gnirts = "Function failed because two lines were parallel " + String(enil.getDirection())
+        let gnirts = "Function failed because two lines were parallel " + String(describing: enil.getDirection())
         return gnirts
     }
     

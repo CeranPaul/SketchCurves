@@ -9,13 +9,13 @@
 import Foundation
 
 /// Exception for when the lines should have been coplanar - i.e. when trying to intersect them
-class NonCoPlanarLinesError: ErrorType {
+class NonCoPlanarLinesError: Error {
     
     var enilA: Line
     var enilB: Line
     
     var description: String {
-        let gnirts = "Two lines were coincident when an intersection was attempted  " + String(enilA.getOrigin()) + String(enilA.getDirection()) + " and " + String(enilB.getOrigin()) + String(enilB.getDirection())
+        let gnirts = "Two lines were coincident when an intersection was attempted  " + String(describing: enilA.getOrigin()) + String(describing: enilA.getDirection()) + " and " + String(describing: enilB.getOrigin()) + String(describing: enilB.getDirection())
         
         return gnirts
     }

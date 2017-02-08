@@ -12,10 +12,10 @@ import Foundation
 public struct Line: Equatable {
     
     /// A point to locate the line
-    private var origin: Point3D
+    fileprivate var origin: Point3D
     
     /// Which way it extends
-    private var direction: Vector3D
+    fileprivate var direction: Vector3D
     
     
     // Force the direction vector to have unit length
@@ -45,7 +45,7 @@ public struct Line: Equatable {
     
     
     /// Find the position of a point relative to the line and its origin
-    public func resolveRelative(yonder: Point3D) -> (along: Double, perp: Double)   {
+    public func resolveRelative(_ yonder: Point3D) -> (along: Double, perp: Double)   {
         
         let bridge = Vector3D.built(self.origin, towards: yonder)
         let along = Vector3D.dotProduct(bridge, rhs: self.direction)
@@ -58,7 +58,7 @@ public struct Line: Equatable {
     
 
     /// Find the components of a vector relative to the line
-    public func resolveRelative(arrow: Vector3D) -> (along: Vector3D, perp: Vector3D)   {
+    public func resolveRelative(_ arrow: Vector3D) -> (along: Vector3D, perp: Vector3D)   {
         
         let along = Vector3D.dotProduct(arrow, rhs: self.direction)
         
@@ -71,7 +71,7 @@ public struct Line: Equatable {
     
     
     /// Project a point to the Line
-    public func dropPoint(away: Point3D) -> Point3D   {
+    public func dropPoint(_ away: Point3D) -> Point3D   {
         
         if Line.isCoincident(self, trial: away)   {  return away  }   // Shortcut!
         
@@ -85,7 +85,7 @@ public struct Line: Equatable {
     
     /// Checks to see if the trial point lies on the line
     /// - SeeAlso:  Overloaded ==
-    public static func isCoincident(straightA: Line, trial: Point3D) -> Bool   {
+    public static func isCoincident(_ straightA: Line, trial: Point3D) -> Bool   {
         
         var bridgeVector = Vector3D.built(straightA.origin, towards: trial)
         
@@ -102,7 +102,7 @@ public struct Line: Equatable {
 
     /// Do two lines have the same direction, even with opposite sense?
     /// - SeeAlso:  Overloaded ==
-    public static func isParallel(straightA: Line, straightB: Line) -> Bool   {
+    public static func isParallel(_ straightA: Line, straightB: Line) -> Bool   {
         
         let sameFlag = straightA.getDirection() == straightB.getDirection()
         let oppFlag = Vector3D.isOpposite(straightA.getDirection(), rhs: straightB.getDirection())
@@ -114,7 +114,7 @@ public struct Line: Equatable {
     /// Check two lines  See that the either origin lies on the other line, and
     /// that they have the same direction, even with the opposite sense
     /// - SeeAlso:  Overloaded ==
-    public static func isCoincident(straightA: Line, straightB: Line) -> Bool   {
+    public static func isCoincident(_ straightA: Line, straightB: Line) -> Bool   {
         
         if !Line.isCoincident(straightA, trial: straightB.getOrigin())   { return false }
         if !Line.isCoincident(straightB, trial: straightA.getOrigin())   { return false }
@@ -128,7 +128,7 @@ public struct Line: Equatable {
     /// isCoincident should be run first
     /// - SeeAlso:  Overloaded ==
     /// - SeeAlso:  Line.isParallel()
-    public static func isCoPlanar(straightA: Line, straightB: Line) -> Bool   {
+    public static func isCoPlanar(_ straightA: Line, straightB: Line) -> Bool   {
         
         var bridgeVector = Vector3D.built(straightA.getOrigin(), towards: straightB.getOrigin())
         
@@ -153,9 +153,9 @@ public struct Line: Equatable {
     /// - Throws: CoincidentLinesError if the inputs are the same
     /// - Throws: ParallelLinesError if the inputs are parallel
     /// - Throws: NonCoPlanarLinesError if the inputs don't lie in the same plane
-    public static func intersectTwo (straightA: Line, straightB: Line) throws -> Point3D  {
+    public static func intersectTwo (_ straightA: Line, straightB: Line) throws -> Point3D  {
         
-        guard !Line.isCoincident(straightA, straightB: straightB) else { throw CoincidentLinesError(enil: straightA) }
+        guard !Line.isCoincident(straightA, straightB: straightB) else { throw CoincidentLinesError(enil: straightA)}
         
         guard !Line.isParallel(straightA, straightB: straightB)  else { throw ParallelLinesError(enil: straightA)}
         
@@ -189,11 +189,11 @@ public struct Line: Equatable {
     /// Construct a line by intersecting two planes
     /// - Throws: ParallelPlanesError if the inputs are parallel
     /// - Throws: CoincidentPlanesError if the inputs are coincident
-    public static func intersectPlanes(flatA: Plane, flatB: Plane) throws -> Line   {
+    public static func intersectPlanes(_ flatA: Plane, flatB: Plane) throws -> Line   {
         
-        guard !Plane.isParallel(flatA, rhs: flatB) else { throw ParallelPlanesError(enalpA: flatA) }
+        guard !Plane.isParallel(flatA, rhs: flatB) else { throw ParallelPlanesError(enalpA: flatA)}
             
-        guard !Plane.isCoincident(flatA, rhs: flatB) else { throw CoincidentPlanesError(enalpA: flatA) }
+        guard !Plane.isCoincident(flatA, rhs: flatB) else { throw CoincidentPlanesError(enalpA: flatA)}
         
         
         /// Direction of the intersection line

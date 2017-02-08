@@ -10,7 +10,7 @@ import Foundation
 
 /// A closed boundary that is the result of the sketch
 /// No provision for interior voids
-public class Perimeter {
+open class Perimeter {
     
     /// The display list
     var pieces: [PenCurve]
@@ -30,7 +30,7 @@ public class Perimeter {
     /// Pile on another curve
     /// Some curves may get reversed as a result of this function
     /// There are a whole bunch of checks that should be done as part of this process
-    func add(noob: PenCurve) -> Void   {
+    func add(_ noob: PenCurve) -> Void   {
         
         if self.pieces.isEmpty  {
             
@@ -43,27 +43,27 @@ public class Perimeter {
             
             // Look for an end point that is the same as the current beginning point
             
-            for (index, edge) in pieces.enumerate()   {
+            for (index, edge) in pieces.enumerated()   {
                 
                 let head = edge.getOneEnd()
                 let tail = edge.getOtherEnd()
                 
                 if  noob.getOneEnd() == tail  {
-                    pieces.insert(noob, atIndex: index + 1)
+                    pieces.insert(noob, at: index + 1)
                     didConnect = true
                     break
                 }  else if noob.getOtherEnd() == tail   {
                     noob.reverse()
-                    pieces.insert(noob, atIndex: index + 1)
+                    pieces.insert(noob, at: index + 1)
                     didConnect = true
                     break
                 }  else if noob.getOneEnd() == head  {
                     noob.reverse()
-                    pieces.insert(noob, atIndex: index)
+                    pieces.insert(noob, at: index)
                     didConnect = true
                     break
                 }  else if noob.getOtherEnd() == head   {
-                    pieces.insert(noob, atIndex: index)
+                    pieces.insert(noob, at: index)
                     didConnect = true
                     break
                 }
@@ -81,7 +81,7 @@ public class Perimeter {
         
         var closedFlag = true
         
-        for (index, edge) in self.pieces.enumerate()   {
+        for (index, edge) in self.pieces.enumerated()   {
             
             let plug = edge.getOtherEnd()
             
@@ -107,7 +107,7 @@ public class Perimeter {
     
     
     /// See if the input screen point is near the end of any of the line segments
-    func  nearEnd(speck: Point3D, enough: Double) -> Point3D?   {
+    func  nearEnd(_ speck: Point3D, enough: Double) -> Point3D?   {
         
         for g in 0..<pieces.count  {
             

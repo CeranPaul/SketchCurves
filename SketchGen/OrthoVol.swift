@@ -10,11 +10,11 @@ import Foundation
 /// A 'brick' aligned with the coordinate axes that envelops a curve.  Useful for scaling and intersections.
 public struct OrthoVol   {
     
-    private var origin: Point3D
+    fileprivate var origin: Point3D
     
-    private var width: Double    // These are assumed to be always positive
-    private var height: Double
-    private var depth: Double
+    fileprivate var width: Double    // These are assumed to be always positive
+    fileprivate var height: Double
+    fileprivate var depth: Double
     
     
     /// Rudimentary init
@@ -141,7 +141,7 @@ public struct OrthoVol   {
         self.depth = mostZ - leastZ
         
         // Because this is an 'init', a guard statement cannot be used at the top
-        if corner1 == corner2 { throw CoincidentPointsError(dupePt: corner1) }
+        if corner1 == corner2 { throw CoincidentPointsError(dupePt: corner1)}
         
     }
     

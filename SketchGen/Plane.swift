@@ -39,10 +39,10 @@ public struct Plane   {
         self.location = alpha
         self.normal = Vector3D(i: 0.6, j: 0.6, k: 0.6)
         
-        guard (Point3D.isThreeUnique(alpha, beta: beta, gamma: gamma)) else { throw CoincidentPointsError(dupePt: alpha)  }
+        guard (Point3D.isThreeUnique(alpha, beta: beta, gamma: gamma)) else { throw CoincidentPointsError(dupePt: alpha)}
         
         // TODO: Come up with a better error type
-        guard (!Point3D.isThreeLinear(alpha, beta: beta, gamma: gamma))  else  {  throw CoincidentPointsError(dupePt: alpha)  }
+        guard (!Point3D.isThreeLinear(alpha, beta: beta, gamma: gamma))  else  {  throw CoincidentPointsError(dupePt: alpha)}
             
         let thisWay = Vector3D.built(alpha, towards: beta)
         let thatWay = Vector3D.built(alpha, towards: gamma)
@@ -70,7 +70,7 @@ public struct Plane   {
     
     /// Does the argument point lie on the plane?
     /// - See: 'testIsCoincident' under PlaneTests
-    public static func isCoincident(flat: Plane, pip:  Point3D) -> Bool  {
+    public static func isCoincident(_ flat: Plane, pip:  Point3D) -> Bool  {
         
         if pip == flat.getLocation()   {  return true  }   // Shortcut!
         
@@ -84,7 +84,7 @@ public struct Plane   {
     
     
     /// Check to see that the line direction is perpendicular to the normal
-    func isParallel(enil: Line) -> Bool   {
+    func isParallel(_ enil: Line) -> Bool   {
         
         let perp = Vector3D.dotProduct(enil.getDirection(), rhs: self.normal)
         
@@ -92,7 +92,7 @@ public struct Plane   {
     }
     
     /// Check to see that the line is parallel to the plane, and lies on it
-    func isCoincident(enil: Line) -> Bool  {
+    func isCoincident(_ enil: Line) -> Bool  {
         
         return self.isParallel(enil) && Plane.isCoincident(self, pip: enil.getOrigin())
     }
@@ -101,20 +101,20 @@ public struct Plane   {
     
     /// Are the normals either parallel or opposite?
     /// - SeeAlso:  isCoincident and ==
-    public static func isParallel(lhs: Plane, rhs: Plane) -> Bool{
+    public static func isParallel(_ lhs: Plane, rhs: Plane) -> Bool{
         
         return lhs.normal == rhs.normal || Vector3D.isOpposite(lhs.normal, rhs: rhs.normal)
     }
     
     /// Planes are parallel, and rhs location lies on lhs
     /// - SeeAlso:  isParallel and ==
-    public static func isCoincident(lhs: Plane, rhs: Plane) -> Bool  {
+    public static func isCoincident(_ lhs: Plane, rhs: Plane) -> Bool  {
         
         return Plane.isCoincident(lhs, pip: rhs.location) && Plane.isParallel(lhs, rhs: rhs)
     }
     
     /// Construct a parallel plane offset some distance
-    public static func buildParallel(base: Plane, offset: Double, reverse: Bool) throws -> Plane  {
+    public static func buildParallel(_ base: Plane, offset: Double, reverse: Bool) throws -> Plane  {
     
         let jump = base.normal * offset    // offset can be a negative number
         
@@ -135,7 +135,7 @@ public struct Plane   {
     
     
     /// Construct a new plane perpendicular to an existing plane, and through a line on that plane
-    public static func buildPerpThruLine(enil:  Line, enalp: Plane) throws -> Plane   {
+    public static func buildPerpThruLine(_ enil:  Line, enalp: Plane) throws -> Plane   {
         
         // TODO:  Ensure that the input line is in the plane
         let newDir = try! Vector3D.crossProduct(enil.getDirection(), rhs: enalp.normal)

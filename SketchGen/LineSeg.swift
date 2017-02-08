@@ -11,18 +11,18 @@ import Foundation
 import UIKit
 
 /// A wire between two points
-public class LineSeg: PenCurve {    // Can this be a struct, instead?
+open class LineSeg: PenCurve {    // Can this be a struct, instead?
     
     // End points
-    private var endAlpha: Point3D   // Private access to limit modification
-    private var endOmega: Point3D
+    fileprivate var endAlpha: Point3D   // Private access to limit modification
+    fileprivate var endOmega: Point3D
     
     
     /// The enum that hints at the meaning of the curve
-    public var usage: PenTypes
+    open var usage: PenTypes
     
     /// The box that contains the curve
-    public var extent: OrthoVol
+    open var extent: OrthoVol
     
     
     
@@ -33,13 +33,13 @@ public class LineSeg: PenCurve {    // Can this be a struct, instead?
         self.endAlpha = end1
         self.endOmega = end2
         
-        self.usage = PenTypes.Default
+        self.usage = PenTypes.default
         
             // Dummy assignment because of the peculiarities of being an init
         self.extent = OrthoVol(minX: -0.5, maxX: 0.5, minY: -0.5, maxY: 0.5, minZ: -0.5, maxZ: 0.5)
         
             // Because this is an 'init', a guard statement cannot be used at the top
-        guard (end1 != end2) else { throw CoincidentPointsError(dupePt: end1) }
+        guard (end1 != end2) else { throw CoincidentPointsError(dupePt: end1)}
         
         self.extent = try OrthoVol(corner1: self.endAlpha, corner2: self.endOmega)
         
@@ -47,7 +47,7 @@ public class LineSeg: PenCurve {    // Can this be a struct, instead?
     
     /// Find the point along this line segment specified by the parameter 't'
     /// - Warning:  No checks are made for the value of t being inside some range
-    public func pointAt(t: Double) -> Point3D  {
+    open func pointAt(_ t: Double) -> Point3D  {
         
         let wholeVector = Vector3D.built(self.endAlpha, towards: self.endOmega)
         
@@ -60,25 +60,25 @@ public class LineSeg: PenCurve {    // Can this be a struct, instead?
     
     
     /// Attach new meaning to the curve
-    public func setIntent(purpose: PenTypes)   {
+    open func setIntent(_ purpose: PenTypes)   {
         
         self.usage = purpose
     }
     
     /// Fetch the location of an end
     /// - See: 'getOtherEnd()'
-    public func getOneEnd() -> Point3D   {
+    open func getOneEnd() -> Point3D   {
         return endAlpha
     }
     
     /// Fetch the location of the opposite end
     /// - See: 'getOneEnd()'
-    public func getOtherEnd() -> Point3D   {
+    open func getOtherEnd() -> Point3D   {
         return endOmega
     }
     
     /// Flip the order of the end points  Used to align members of a Perimeter
-    public func reverse() -> Void  {
+    open func reverse() -> Void  {
         
         let bubble = self.endAlpha
         self.endAlpha = self.endOmega
@@ -86,7 +86,7 @@ public class LineSeg: PenCurve {    // Can this be a struct, instead?
     }
     
     /// Create a unit vector showing direction
-    public func getDirection() -> Vector3D   {
+    open func getDirection() -> Vector3D   {
         
         var along = Vector3D.built(self.endAlpha, towards: self.endOmega)
         try! along.normalize()   // The checks in the constructor should make this safe
@@ -96,7 +96,7 @@ public class LineSeg: PenCurve {    // Can this be a struct, instead?
     
     /// Move, rotate, and scale by a matrix
     /// - Throws: CoincidentPointsError if it was scaled to be very small
-    public func transform(xirtam: Transform) throws -> LineSeg {
+    open func transform(_ xirtam: Transform) throws -> LineSeg {
         
         let tAlpha = endAlpha.transform(xirtam)
         let tOmega = endOmega.transform(xirtam)
@@ -108,7 +108,7 @@ public class LineSeg: PenCurve {    // Can this be a struct, instead?
     
     
     /// Find the position of a point relative to the LineSeg
-    public func resolveNeighbor(speck: Point3D) -> (along: Double, perp: Double)   {
+    open func resolveNeighbor(_ speck: Point3D) -> (along: Double, perp: Double)   {
         
         let unitAlong = self.getDirection()
         
@@ -126,19 +126,19 @@ public class LineSeg: PenCurve {    // Can this be a struct, instead?
     
     
     /// Plot the line segment.  This will be called by the UIView 'drawRect' function
-    public func draw(context: CGContext)  {
+    open func draw(_ context: CGContext)  {
         
         var xCG: CGFloat = CGFloat(self.endAlpha.x)    // Convert to "CGFloat", and throw out Z coordinate
         var yCG: CGFloat = CGFloat(self.endAlpha.y)
         
-        CGContextMoveToPoint(context, xCG, yCG)
+        context.move(to: CGPoint(x: xCG, y: yCG))
         
         
         xCG = CGFloat(self.endOmega.x)
         yCG = CGFloat(self.endOmega.y)
-        CGContextAddLineToPoint(context, xCG, yCG)
+        context.addLine(to: CGPoint(x: xCG, y: yCG))
         
-        CGContextStrokePath(context)
+        context.strokePath()
     }
     
 }

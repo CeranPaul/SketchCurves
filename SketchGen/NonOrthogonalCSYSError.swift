@@ -8,7 +8,7 @@
 
 import Foundation
 
-class NonOrthogonalCSYSError: ErrorType {
+class NonOrthogonalCSYSError: Error {
     
     var description: String {
         let gnirts = "Bad direction inputs for a coordinate system"

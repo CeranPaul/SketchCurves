@@ -32,7 +32,7 @@ class Roundy  {
         
         extent = OrthoVol(minX: -1.25, maxX: 1.25, minY: -1.25, maxY: 1.25, minZ: -1.25, maxZ: 1.25)   // A dummy value
         
-        let demoString = "spline"
+        let demoString = "herm"
         
         switch demoString   {
             
@@ -307,7 +307,7 @@ class Roundy  {
         do   {
             
             let bow = try Arc.buildFromCenterStartFinish(ctr, end1: start, end2: finish, useSmallAngle: true)
-            bow.setIntent(PenTypes.Arc)
+            bow.setIntent(PenTypes.arc)
             displayLines.append(bow)
             
             // Optionally draw the extent
@@ -322,25 +322,25 @@ class Roundy  {
                 let upperLeft = Point3D(x: boxX, y: boxY + bow.extent.getHeight(), z: 0.0)
                 
                 var rail = try LineSeg(end1: lowerLeft, end2: upperLeft)
-                rail.setIntent(PenTypes.Box)
+                rail.setIntent(PenTypes.box)
                 displayLines.append(rail)
                 
                 
                 let upperRight = Point3D(x: boxX + bow.extent.getWidth(), y: boxY + bow.extent.getHeight(), z: 0.0)
                 
                 rail = try LineSeg(end1: upperLeft, end2: upperRight)
-                rail.setIntent(PenTypes.Box)
+                rail.setIntent(PenTypes.box)
                 displayLines.append(rail)
                 
                 
                 let lowerRight = Point3D(x: boxX + bow.extent.getWidth(), y: boxY, z: 0.0)
                 
                 rail = try LineSeg(end1: upperRight, end2: lowerRight)
-                rail.setIntent(PenTypes.Box)
+                rail.setIntent(PenTypes.box)
                 displayLines.append(rail)
                 
                 rail = try LineSeg(end1: lowerRight, end2: lowerLeft)
-                rail.setIntent(PenTypes.Box)
+                rail.setIntent(PenTypes.box)
                 displayLines.append(rail)
                 
             }
@@ -465,7 +465,7 @@ class Roundy  {
         do   {
             
             let roundEdge = try Arc.buildFromCenterStartFinish(ctr, end1: start, end2: finish, useSmallAngle: false)
-            roundEdge.setIntent(PenTypes.Ideal)
+            roundEdge.setIntent(PenTypes.ideal)
             displayLines.append(roundEdge)
             
             
@@ -496,7 +496,7 @@ class Roundy  {
                 thatEnd = roundEdge.pointAt(currentT)
                 
                 let rail = try LineSeg(end1: thisEnd, end2: thatEnd)
-                rail.setIntent(PenTypes.Approx)
+                rail.setIntent(PenTypes.approx)
                 displayLines.append(rail)
                 
                 thisEnd = thatEnd

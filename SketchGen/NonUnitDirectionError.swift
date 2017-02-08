@@ -7,12 +7,12 @@
 
 import Foundation
 /// Exception for failure to supply a unit vector when constructing a line or plane
-class NonUnitDirectionError: ErrorType {
+class NonUnitDirectionError: Error {
     
     var thataway: Vector3D
     
     var description: String {
-        let gnirts = "Direction for a line or plane was not given as a unit vector  " + String(self.thataway)
+        let gnirts = "Direction for a line or plane was not given as a unit vector  " + String(describing: self.thataway)
         return gnirts
     }
     

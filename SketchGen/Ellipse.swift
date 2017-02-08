@@ -10,20 +10,20 @@ import Foundation
 import UIKit
 
 /// An elliptical arc, either whole, or a portion. More of a distorted circle rather than the path of an orbiting body
-public class Ellipse: PenCurve {
+open class Ellipse: PenCurve {
     
     /// Point around which the ellipse is swept
     /// As contrasted with focii for an orbital ellipse
-    private var ctr: Point3D
+    fileprivate var ctr: Point3D
     
     /// Length of the larger axis
-    private var a: Double
+    fileprivate var a: Double
     
     /// Length of the smaller axis
-    private var b: Double
+    fileprivate var b: Double
     
     /// Orientation of the long axis
-    private var azimuth: Double
+    fileprivate var azimuth: Double
     
     
     /// Beginning point as angle in radians
@@ -39,11 +39,11 @@ public class Ellipse: PenCurve {
     var isClockwise:  Bool
     
     /// The enum that hints at the meaning of the curve
-    public var usage: PenTypes
+    open var usage: PenTypes
     
     /// The box that contains the curve
     /// - Warning:  The class currently has no way to figure a correct and useful value    
-    public var extent: OrthoVol
+    open var extent: OrthoVol
     
     
     public init(retnec: Point3D, a: Double, b: Double, azimuth: Double, start: Point3D, finish: Point3D)   {
@@ -57,37 +57,37 @@ public class Ellipse: PenCurve {
         
         self.isFull = true
         self.isClockwise = true
-        self.usage = PenTypes.Default
+        self.usage = PenTypes.default
         self.extent = OrthoVol(minX: -0.5, maxX: 0.5, minY: -1.0, maxY: 1.0, minZ: -0.2, maxZ: 0.2)
     }
     
     
     /// Attach new meaning to the curve
-    public func setIntent(purpose: PenTypes)   {
+    open func setIntent(_ purpose: PenTypes)   {
         
         self.usage = purpose
     }
     
     /// Simple getter for the center point
-    public func getCenter() -> Point3D   {
+    open func getCenter() -> Point3D   {
         return self.ctr
     }
     
     /// Simple getter for the beginning point
-    public func getOneEnd() -> Point3D {   // This may not give the correct answer, depend on 'isClockwise'
+    open func getOneEnd() -> Point3D {   // This may not give the correct answer, depend on 'isClockwise'
         
         return self.start
     }
     
     /// Simple getter for the ending point
-    public func getOtherEnd() -> Point3D {   // This may not give the correct answer, depend on 'isClockwise'
+    open func getOtherEnd() -> Point3D {   // This may not give the correct answer, depend on 'isClockwise'
         
         return self.finish
     }
     
     /// Find the point along this line segment specified by the parameter 't'
     /// - Warning:  No checks are made for the value of t being inside some range
-    public func pointAt(t: Double) -> Point3D  {
+    open func pointAt(_ t: Double) -> Point3D  {
         
         
         // TODO: Make this something besides a cop-out
@@ -98,7 +98,7 @@ public class Ellipse: PenCurve {
     }
     
     /// Determine an X value from a given angle (in radians)
-    public func findX(ang: Double) -> Double   {
+    open func findX(_ ang: Double) -> Double   {
         
         let base = cos(ang)
         let alongX = base * self.a
@@ -108,14 +108,14 @@ public class Ellipse: PenCurve {
     
     
     /// Determine a Y value from a given X
-    public func findY(x: Double) -> Double  {
+    open func findY(_ x: Double) -> Double  {
         
         let y = sqrt(b * b * (1 - (x * x) / (a * a)))
         return y
     }
     
     /// Plot the elliptical segment.  This will be called by the UIView 'drawRect' function
-    public func draw(context: CGContext)  {
+    open func draw(_ context: CGContext)  {
         
         // TODO: Make this draw an ellipse, not a circle
         
@@ -127,7 +127,7 @@ public class Ellipse: PenCurve {
     
     
     /// Change the traversal direction of the curve so it can be aligned with other members of Perimeter
-    public func reverse() {
+    open func reverse() {
         
         // TODO: Make this something besides a cop-out
         
@@ -135,7 +135,7 @@ public class Ellipse: PenCurve {
     
     
     /// Figure how far the point is off the curve, and how far along the curve it is.  Useful for picks
-    public func resolveNeighbor(speck: Point3D) -> (along: Double, perp: Double)   {
+    open func resolveNeighbor(_ speck: Point3D) -> (along: Double, perp: Double)   {
         
         // TODO: Make this return something besides dummy values
         return (1.0, 0.0)

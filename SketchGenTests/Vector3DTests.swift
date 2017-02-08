@@ -203,7 +203,7 @@ class Vector3DTests: XCTestCase {
         
         let orig = Vector3D(i: 0.866, j: 0.0, k: 0.5)
         
-        let t = Transform(rotationAxis: Axis.Z, angleRad: M_PI / 4.0)
+        let t = Transform(rotationAxis: Axis.z, angleRad: M_PI / 4.0)
         
         let swung = orig.transform(t)
         

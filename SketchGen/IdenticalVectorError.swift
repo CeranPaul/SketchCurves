@@ -9,12 +9,12 @@
 import Foundation
 
 /// Exception for two vectors that shouldn't be duplicates
-class IdenticalVectorError: ErrorType   {
+class IdenticalVectorError: Error   {
     
     var thataway: Vector3D
     
     var description: String {
-        let gnirts = "Identical vectors used  " + String(self.thataway)
+        let gnirts = "Identical vectors used  " + String(describing: self.thataway)
         
         return gnirts
     }

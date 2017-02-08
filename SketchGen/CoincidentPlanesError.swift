@@ -9,12 +9,12 @@
 import Foundation
 
 /// Exception for when the planes shouldn't have been coincident - i.e. when trying to intersect them
-class CoincidentPlanesError: ErrorType {
+class CoincidentPlanesError: Error {
     
     var enalpA: Plane
     
     var description: String {
-        let gnirts = "Two planes were coincident when an intersection was attempted  " + String(enalpA.getNormal())
+        let gnirts = "Two planes were coincident when an intersection was attempted  " + String(describing: enalpA.getNormal())
         return gnirts
     }
     

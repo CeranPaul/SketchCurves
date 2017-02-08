@@ -9,12 +9,12 @@
 import Foundation
 
 /// Exception for when the lines shouldn't have been coincident - i.e. when trying to intersect them
-class CoincidentLinesError: ErrorType {
+class CoincidentLinesError: Error {
     
     var enil: Line
     
     var description: String {
-        let gnirts = "Two lines were coincident when an intersection was attempted  " + String(enil.getOrigin()) + String(enil.getDirection())
+        let gnirts = "Two lines were coincident when an intersection was attempted  " + String(describing: enil.getOrigin()) + String(describing: enil.getDirection())
             
         return gnirts
     }

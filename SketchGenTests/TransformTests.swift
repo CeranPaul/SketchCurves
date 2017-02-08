@@ -25,7 +25,7 @@ class TransformPlusTests: XCTestCase {
         let fodder = Point3D(x: 2.0, y: 0.0, z: 0.0)
         let rowA = RowMtx4(ptIn: fodder)
         
-        var simpleRot = Transform(rotationAxis: Axis.X, angleRad: M_PI_4)
+        var simpleRot = Transform(rotationAxis: Axis.x, angleRad: M_PI_4)
         
         var multRes = rowA * simpleRot
         
@@ -40,7 +40,7 @@ class TransformPlusTests: XCTestCase {
         XCTAssert(transformed == target1)
         
         
-        simpleRot = Transform(rotationAxis: Axis.Y, angleRad: M_PI_4)
+        simpleRot = Transform(rotationAxis: Axis.y, angleRad: M_PI_4)
         
         multRes = rowA * simpleRot
         
@@ -52,7 +52,7 @@ class TransformPlusTests: XCTestCase {
         
         
         
-        simpleRot = Transform(rotationAxis: Axis.Z, angleRad: M_PI_4)
+        simpleRot = Transform(rotationAxis: Axis.z, angleRad: M_PI_4)
         
         multRes = rowA * simpleRot
         

@@ -182,14 +182,14 @@
 		81414AFE1C08CE5E00A9DE83 /* SketchGen */ = {
 			isa = PBXGroup;
 			children = (
-				818D17831D599DF200BE248A /* Arc.swift */,
+				81FEAAD01C4E9411000F0E2A /* Errors */,
 				818D17851D599DF200BE248A /* CurveDemo.swift */,
 				818D17861D599DF200BE248A /* Vector3D.swift */,
-				81FEAAD01C4E9411000F0E2A /* Errors */,
 				81414B231C08CEE200A9DE83 /* Point3D.swift */,
 				81CDCC221C17E44B00060C8D /* Plane.swift */,
 				81CDCC1E1C17E3FD00060C8D /* Line.swift */,
 				81414B1F1C08CEE200A9DE83 /* LineSeg.swift */,
+				818D17831D599DF200BE248A /* Arc.swift */,
 				81078A741C587848001C21CD /* Ellipse.swift */,
 				8106F0021C1FA12C00C74FE6 /* Cubic.swift */,
 				814E0F5C1D3D64EF00200289 /* Spline.swift */,
@@ -300,9 +300,11 @@
 					81414AFB1C08CE5E00A9DE83 = {
 						CreatedOnToolsVersion = 7.1.1;
 						DevelopmentTeam = K62A888Z9M;
+						LastSwiftMigration = 0820;
 					};
 					81414B0F1C08CE5E00A9DE83 = {
 						CreatedOnToolsVersion = 7.1.1;
+						LastSwiftMigration = 0820;
 						TestTargetID = 81414AFB1C08CE5E00A9DE83;
 					};
 				};
@@ -553,6 +555,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.cerandm.SketchGen;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
+				SWIFT_VERSION = 3.0;
 			};
 			name = Debug;
 		};
@@ -567,6 +570,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.cerandm.SketchGen;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
+				SWIFT_VERSION = 3.0;
 			};
 			name = Release;
 		};
@@ -578,6 +582,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.cerandm.SketchGenTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SketchGen.app/SketchGen";
 			};
 			name = Debug;
@@ -590,6 +595,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.cerandm.SketchGenTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SketchGen.app/SketchGen";
 			};
 			name = Release;

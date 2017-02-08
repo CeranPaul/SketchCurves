@@ -12,7 +12,7 @@ import Foundation
 
 /// End-to-end Cubic curves in 3D
 /// Each piece is assumed to be parameterized from 0 to 1
-public class Spline   {
+open class Spline   {
     
     var pieces: [Cubic]
     

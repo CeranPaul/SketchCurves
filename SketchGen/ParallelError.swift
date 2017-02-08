@@ -8,13 +8,13 @@
 
 import Foundation
 
-class ParallelError: ErrorType {
+class ParallelError: Error {
     
     var enil: Line
     var enalp: Plane
     
     var description: String {
-        return " Line and plane were parallel  " + String(enil.getDirection())
+        return " Line and plane were parallel  " + String(describing: enil.getDirection())
     }
     
     init(enil: Line, enalp: Plane)   {

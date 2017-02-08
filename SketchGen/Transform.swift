@@ -9,7 +9,7 @@
 import Foundation
 
 /// Built the way I was taught in college, as opposed to being twisted to use SIMD
-public class Transform   {
+open class Transform   {
     
     var a, b, c, d: Double   // Labeling is done across each row, then down
     var e, f, g, h: Double
@@ -130,7 +130,7 @@ public class Transform   {
         
         switch rotationAxis   {
             
-        case .X:    a = 1.0
+        case .x:    a = 1.0
                     b = 0.0
                     c = 0.0
                     d = 0.0
@@ -151,7 +151,7 @@ public class Transform   {
                     t = 1.0
 
             
-        case .Y:    a = trigCos
+        case .y:    a = trigCos
                     b = 0.0
                     c = -trigSin
                     d = 0.0
@@ -173,7 +173,7 @@ public class Transform   {
             
 
             
-        case .Z:    a = trigCos
+        case .z:    a = trigCos
                     b = trigSin
                     c = 0.0
                     d = 0.0
@@ -228,17 +228,17 @@ public class Transform   {
 /// Simple parameter to indicate axis of rotation
 public enum Axis {
     
-    case X
+    case x
     
-    case Y
+    case y
     
-    case Z
+    case z
     
 }
 
 
 /// Row matrix of length 4
-public class RowMtx4   {
+open class RowMtx4   {
     
     var a, b, c, d:  Double
     
@@ -268,13 +268,13 @@ public class RowMtx4   {
     }
     
     
-    public func toPoint() -> Point3D   {
+    open func toPoint() -> Point3D   {
         
         return Point3D(x: a, y: b, z: c)
     }
     
     
-    public func toVector() -> Vector3D   {
+    open func toVector() -> Vector3D   {
         
         return Vector3D(i: a, j: b, k: c)
     }

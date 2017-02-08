@@ -19,7 +19,7 @@ public protocol PenCurve   {
     
     
     /// Supply the point on the curve for the input parameter value
-    func pointAt(t: Double) -> Point3D
+    func pointAt(_ t: Double) -> Point3D
     
     /// Retrieve the starting end
     func getOneEnd() -> Point3D
@@ -31,9 +31,9 @@ public protocol PenCurve   {
     func reverse() -> Void
     
     /// Plot the curve.  Your classic example of polymorphism
-    func draw(context: CGContext)
+    func draw(_ context: CGContext)
     
     /// Figure how far the point is off the curve, and how far along the curve it is.  Useful for picks  
-    func resolveNeighbor(speck: Point3D) -> (along: Double, perp: Double)
+    func resolveNeighbor(_ speck: Point3D) -> (along: Double, perp: Double)
     
 }

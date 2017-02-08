@@ -9,7 +9,7 @@
 import Foundation
 
 /// Exception for when the points should not have be coincident
-class ArcPointsError: ErrorType {
+class ArcPointsError: Error {
     
     var ptA: Point3D
     var ptB: Point3D
@@ -18,7 +18,7 @@ class ArcPointsError: ErrorType {
     
     
     var description: String {
-        return "Three points cannot make an arc: " + String(ptA) + ", " + String(ptB) + ", " + String(ptC)
+        return "Three points cannot make an arc: " + String(describing: ptA) + ", " + String(describing: ptB) + ", " + String(describing: ptC)
     }
     
     init(badPtA: Point3D, badPtB: Point3D, badPtC: Point3D)   {

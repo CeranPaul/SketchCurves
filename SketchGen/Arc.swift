@@ -12,33 +12,33 @@ import UIKit
 /// A circular arc - either whole, or a portion
 /// This DOES NOT handle the case of precisely half a circle
 /// - SeeAlso:  Ellipse
-public class Arc: PenCurve {
+open class Arc: PenCurve {
     
     /// Point around which the arc is swept
-    private var ctr: Point3D
+    fileprivate var ctr: Point3D
     
-    private var axisDir: Vector3D   // Needs to be a unit vector
+    fileprivate var axisDir: Vector3D   // Needs to be a unit vector
     
     /// Beginning point
-    private var start: Point3D
-    private var finish: Point3D
+    fileprivate var start: Point3D
+    fileprivate var finish: Point3D
     
-    private var sweepAngle: Double   // Can be either positive or negative
+    fileprivate var sweepAngle: Double   // Can be either positive or negative
                                      // Magnitude should be less that 2 pi
     
     
     
     /// Derived radius of the Arc
-    private var rad: Double
+    fileprivate var rad: Double
     
     /// Whether or not this is a complete circle
-    public var isFull: Bool
+    open var isFull: Bool
     
     /// The enum that hints at the meaning of the curve
-    public var usage: PenTypes
+    open var usage: PenTypes
     
     /// The box that contains the curve
-    public var extent: OrthoVol
+    open var extent: OrthoVol
     
     
     
@@ -56,7 +56,7 @@ public class Arc: PenCurve {
         if self.sweepAngle == 2.0 * M_PI   { self.isFull = true }
         
         
-        self.usage = PenTypes.Default   // Use 'setIntent' to attach the desired value
+        self.usage = PenTypes.default   // Use 'setIntent' to attach the desired value
         
         // Dummy assignment. Postpone the expensive calculation until after the guard statements
         self.extent = OrthoVol(minX: -0.5, maxX: 0.5, minY: -0.5, maxY: 0.5, minZ: -0.5, maxZ: 0.5)
@@ -65,7 +65,7 @@ public class Arc: PenCurve {
         guard (!self.axisDir.isZero()) else  {throw ZeroVectorError(dir: self.axisDir)}
         guard (self.axisDir.isUnit()) else  {throw NonUnitDirectionError(dir: self.axisDir)}
         
-        guard (self.ctr != self.start)  else  { throw CoincidentPointsError(dupePt: self.start) }
+        guard (self.ctr != self.start)  else  { throw CoincidentPointsError(dupePt: self.start)}
         
             
         var horiz = Vector3D.built(self.ctr, towards: self.start)
@@ -89,32 +89,32 @@ public class Arc: PenCurve {
     
     
     /// Simple getter for the center point
-    public func getCenter() -> Point3D   {
+    open func getCenter() -> Point3D   {
         return self.ctr
     }
     
-    public func getOneEnd() -> Point3D {   // This may not give the correct answer, depend on 'isClockwise'
+    open func getOneEnd() -> Point3D {   // This may not give the correct answer, depend on 'isClockwise'
         return self.start
     }
     
-    public func getOtherEnd() -> Point3D {   // This may not give the correct answer, depend on 'isClockwise'
+    open func getOtherEnd() -> Point3D {   // This may not give the correct answer, depend on 'isClockwise'
         return self.finish
     }
     
-    public func getRadius() -> Double   {
+    open func getRadius() -> Double   {
         return rad
     }
     
-    public func getAxisDir() -> Vector3D   {
+    open func getAxisDir() -> Vector3D   {
         return axisDir
     }
     
-    public func getSweepAngle() -> Double   {
+    open func getSweepAngle() -> Double   {
         return sweepAngle
     }
     
     /// Attach new meaning to the curve
-    public func setIntent(purpose: PenTypes)   {
+    open func setIntent(_ purpose: PenTypes)   {
         self.usage = purpose
     }
     
@@ -122,16 +122,16 @@ public class Arc: PenCurve {
     /// Build an arc from a center and two boundary points
     /// This blows up for a half or full circle
     /// - Throws: CoincidentPointsError, ArcPointsError
-    public static func buildFromCenterStartFinish(center: Point3D, end1: Point3D, end2: Point3D, useSmallAngle: Bool) throws -> Arc {
+    open static func buildFromCenterStartFinish(_ center: Point3D, end1: Point3D, end2: Point3D, useSmallAngle: Bool) throws -> Arc {
         
         // TODO: Add guard statements for half and full circles
         
         // Check that input points are unique  Can these be replaced by a call to 'isThreeUnique'?
-        guard (end1 != center && end2 != center) else { throw CoincidentPointsError(dupePt: center) }
-        guard (end1 != end2) else { throw CoincidentPointsError(dupePt: end1) }
+        guard (end1 != center && end2 != center) else { throw CoincidentPointsError(dupePt: center)}
+        guard (end1 != end2) else { throw CoincidentPointsError(dupePt: end1)}
         
         // See if an arc can actually be made from the three given inputs
-        guard (Arc.isArcable(center, end1: end1, end2: end2))  else  { throw ArcPointsError(badPtA: center, badPtB: end1, badPtC: end2)  }
+        guard (Arc.isArcable(center, end1: end1, end2: end2))  else  { throw ArcPointsError(badPtA: center, badPtB: end1, badPtC: end2)}
         
         
         
@@ -157,7 +157,7 @@ public class Arc: PenCurve {
     /// Angle is relative to a line between the center and the start point independent of direction of the arc
     /// - Parameter: theta: Angle in radians
     /// See the illustration in the wiki "Arc PointAtAngle" article
-    public func pointAtAngle(theta: Double) -> Point3D  {
+    open func pointAtAngle(_ theta: Double) -> Point3D  {
         
         var horiz = Vector3D.built(self.ctr, towards: self.start)
         try! horiz.normalize()
@@ -179,7 +179,7 @@ public class Arc: PenCurve {
     
     /// Find the point along this arc specified by the parameter 't'
     /// - Warning:  No checks are made for the value of t being inside some range
-    public func pointAt(t: Double) -> Point3D  {
+    open func pointAt(_ t: Double) -> Point3D  {
         
         let deltaAngle = t * self.sweepAngle    // Implies that 0 < t < 1
         
@@ -193,7 +193,7 @@ public class Arc: PenCurve {
     
     
     /// Change the traversal direction of the curve so it can be aligned with other members of Perimeter
-    public func reverse() {
+    open func reverse() {
         
         let bubble = self.start
         self.start = self.finish
@@ -206,7 +206,7 @@ public class Arc: PenCurve {
     /// - Parameter: center: Point3D used for pivoting
     /// - Parameter: end1: Point3D on the perimeter
     /// - Parameter: end2: Point3D on the perimeter
-    public static func isArcable(center: Point3D, end1: Point3D, end2: Point3D) -> Bool  {
+    open static func isArcable(_ center: Point3D, end1: Point3D, end2: Point3D) -> Bool  {
         
         if !Point3D.isThreeUnique(center, beta: end1, gamma: end2)  { return false }
         
@@ -220,7 +220,7 @@ public class Arc: PenCurve {
     
     /// Figure how far the point is off the curve, and how far along the curve it is.  Useful for picks
     /// Not implemented
-    public func resolveNeighbor(speck: Point3D) -> (along: Double, perp: Double)   {
+    open func resolveNeighbor(_ speck: Point3D) -> (along: Double, perp: Double)   {
         
         // TODO: Make this return something besides dummy values
         return (1.0, 0.0)
@@ -228,7 +228,7 @@ public class Arc: PenCurve {
     
     /// Plot the arc segment.  This will be called by the UIView 'drawRect' function
     /// Disabled because it only works in the XY plane
-    public func draw(context: CGContext)  {
+    open func draw(_ context: CGContext)  {
         
         let xCG: CGFloat = CGFloat(self.ctr.x)    // Convert to "CGFloat", and throw out Z coordinate
         let yCG: CGFloat = CGFloat(self.ctr.y)
@@ -238,7 +238,7 @@ public class Arc: PenCurve {
         
 //        CGContextAddArc(context, xCG, yCG, CGFloat(self.rad), CGFloat(self.startAngle), CGFloat(self.finishAngle), dirFlag)
         
-        CGContextStrokePath(context)
+        context.strokePath()
         
     }
     
@@ -348,9 +348,9 @@ public class Arc: PenCurve {
     
     /// Build the center of a circle from three points on the perimeter
     /// - Throws: ArcPointsError if there any coincident points in the inputs
-    public static func findCenter(larry: Point3D, curly: Point3D, moe: Point3D) throws -> Point3D   {
+    open static func findCenter(_ larry: Point3D, curly: Point3D, moe: Point3D) throws -> Point3D   {
         
-        guard(Point3D.isThreeUnique(larry, beta: curly, gamma: moe))  else  { throw ArcPointsError(badPtA: larry, badPtB: curly, badPtC: moe) }
+        guard(Point3D.isThreeUnique(larry, beta: curly, gamma: moe))  else  { throw ArcPointsError(badPtA: larry, badPtB: curly, badPtC: moe)}
         
         
         /// The desired result to be returned
@@ -392,7 +392,7 @@ public class Arc: PenCurve {
     /// - Parameter: lhs: One Arc
     /// - Parameter: rhs: Another Arc
     /// - SeeAlso:  Overloaded ==
-    public static func isConcentric(lhs: Arc, rhs: Arc) -> Bool  {
+    open static func isConcentric(_ lhs: Arc, rhs: Arc) -> Bool  {
         
         let ctrFlag = lhs.ctr == rhs.ctr
         
