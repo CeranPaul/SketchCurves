@@ -30,7 +30,7 @@ public protocol PenCurve   {
     func reverse() -> Void
     
     /// Plot the curve.  Your classic example of polymorphism
-    func draw(_ context: CGContext)
+    func draw(context: CGContext, tform: CGAffineTransform)
     
     /// Figure how far the point is off the curve, and how far along the curve it is.  Useful for picks  
     func resolveNeighbor(speck: Point3D) -> (along: Vector3D, perp: Vector3D)

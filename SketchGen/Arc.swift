@@ -231,21 +231,33 @@ open class Arc: PenCurve {
         return (alongVector, perpVector)
     }
     
-    /// Plot the arc segment.  This will be called by the UIView 'drawRect' function
-    /// Disabled because it only works in the XY plane
-    open func draw(_ context: CGContext)  {
+    /// Plot the curve segment.  This will be called by the UIView 'drawRect' function
+    public func draw(context: CGContext, tform: CGAffineTransform)  {
         
-        let xCG: CGFloat = CGFloat(self.ctr.x)    // Convert to "CGFloat", and throw out Z coordinate
-        let yCG: CGFloat = CGFloat(self.ctr.y)
+        var xCG: CGFloat = CGFloat(self.start.x)    // Convert to "CGFloat", and throw out Z coordinate
+        var yCG: CGFloat = CGFloat(self.start.y)
         
-        var dirFlag: Int32 = 1
-//        if !self.isClockwise  { dirFlag = 0 }
+        let startModel = CGPoint(x: xCG, y: yCG)
+        let screenStart = startModel.applying(tform)
         
-//        CGContextAddArc(context, xCG, yCG, CGFloat(self.rad), CGFloat(self.startAngle), CGFloat(self.finishAngle), dirFlag)
+        context.move(to: screenStart)
+        
+        
+        for g in 1...20   {
+            
+            let stepU = Double(g) * 0.05   // Gee, this is brittle!
+            xCG = CGFloat(pointAt(t: stepU).x)
+            yCG = CGFloat(pointAt(t: stepU).y)
+            //            print(String(describing: xCG) + "  " + String(describing: yCG))
+            let midPoint = CGPoint(x: xCG, y: yCG)
+            let midScreen = midPoint.applying(tform)
+            context.addLine(to: midScreen)
+        }
         
         context.strokePath()
         
     }
+    
     
     /// Define the smallest aligned rectangle that encloses the arc
     /// Probably returns bad values half of the time in the current state

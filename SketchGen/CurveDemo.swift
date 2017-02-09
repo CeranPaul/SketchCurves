@@ -6,18 +6,21 @@
 //  Copyright © 2015 Ceran Digital Media. All rights reserved.  See LICENSE.md
 //
 
-import Foundation
+import UIKit
 
 var modelGeo = Roundy()
 
 /// A class to run demonstrations of various curve types.  Use 'demoString' to drive the switch statement
 class Roundy  {
     
-    /// The display list, since this program uses only line segments
+    /// The display list
     var displayLines: [PenCurve]
     
     /// Points used to terminate the segments in "displayLines"
-    var displayPoints: [Point3D]
+//    var displayPoints: [Point3D]
+    
+    /// Bounding area for play
+    var arena = CGRect(x: -5.0, y: -5.0, width: 20.0, height: 20.0)
     
     /// Rectangle encompassing all of the curves to be displayed
     var extent: OrthoVol
@@ -28,7 +31,7 @@ class Roundy  {
         
         displayLines = [LineSeg]()   // Will get overwritten by test models
         
-        displayPoints = [Point3D]()
+//        displayPoints = [Point3D]()
         
         extent = OrthoVol(minX: -1.25, maxX: 1.25, minY: -1.25, maxY: 1.25, minZ: -1.25, maxZ: 1.25)   // A dummy value
         
@@ -36,26 +39,27 @@ class Roundy  {
         
         switch demoString   {
             
-            case "box":  showBox()
-        
-            case "eff": plotF()
+        case "box":  showBox()
             
-            case "segs": makeSegs()
+        case "eff": plotF()
             
-            case "stand": standProfile()
+        case "segs": makeSegs()
             
-            case "track": trackSection()
+        case "stand": standProfile()
             
-            case "cubic": firstCubic()
+        case "track": trackSection()
             
-            case "egg": wholeEllipse()
+        case "cubic": firstCubic()
+            
+        case "egg": wholeEllipse()
             
         case "herm": firstHermite()
             
         case "spline": firstSpline()
             
             
-       default:  showBox()   // Demonstrate the boundary box for an Arc
+        default:  showBox()   // Demonstrate the boundary box for an Arc
+            
         }
         
     }

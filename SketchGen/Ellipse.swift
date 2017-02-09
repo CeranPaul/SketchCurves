@@ -114,16 +114,33 @@ open class Ellipse: PenCurve {
         return y
     }
     
-    /// Plot the elliptical segment.  This will be called by the UIView 'drawRect' function
-    open func draw(_ context: CGContext)  {
+    /// Plot the curve segment.  This will be called by the UIView 'drawRect' function
+    public func draw(context: CGContext, tform: CGAffineTransform)  {
         
-        // TODO: Make this draw an ellipse, not a circle
+        var xCG: CGFloat = CGFloat(self.start.x)    // Convert to "CGFloat", and throw out Z coordinate
+        var yCG: CGFloat = CGFloat(self.start.y)
+        
+        let startModel = CGPoint(x: xCG, y: yCG)
+        let screenStart = startModel.applying(tform)
+        
+        context.move(to: screenStart)
         
         
+        for g in 1...20   {
+            
+            let stepU = Double(g) * 0.05   // Gee, this is brittle!
+            xCG = CGFloat(pointAt(t: stepU).x)
+            yCG = CGFloat(pointAt(t: stepU).y)
+            //            print(String(describing: xCG) + "  " + String(describing: yCG))
+            let midPoint = CGPoint(x: xCG, y: yCG)
+            let midScreen = midPoint.applying(tform)
+            context.addLine(to: midScreen)
+        }
         
-//        CGContextStrokePath(context)
+        context.strokePath()
         
     }
+    
     
     
     /// Change the traversal direction of the curve so it can be aligned with other members of Perimeter

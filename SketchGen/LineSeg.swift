@@ -188,19 +188,21 @@ public class LineSeg: PenCurve {    // Can this be a struct, instead?
     
 
     /// Plot the line segment.  This will be called by the UIView 'drawRect' function
-    open func draw(_ context: CGContext)  {
+    /// Notice that a model-to-display transform is applied
+    public func draw(context: CGContext, tform: CGAffineTransform)  {
         
-        var xCG: CGFloat = CGFloat(self.endAlpha.x)    // Convert to "CGFloat", and throw out Z coordinate
-        var yCG: CGFloat = CGFloat(self.endAlpha.y)
+        context.beginPath()
         
-        context.move(to: CGPoint(x: xCG, y: yCG))
+        var spot = CGPoint(x: self.endAlpha.x, y: self.endAlpha.y)    // Throw out Z coordinate
+        var screenSpot = spot.applying(tform)
+        context.move(to: screenSpot)
         
-        
-        xCG = CGFloat(self.endOmega.x)
-        yCG = CGFloat(self.endOmega.y)
-        context.addLine(to: CGPoint(x: xCG, y: yCG))
+        spot = CGPoint(x: self.endOmega.x, y: self.endOmega.y)    // Throw out Z coordinate
+        screenSpot = spot.applying(tform)
+        context.addLine(to: screenSpot)
         
         context.strokePath()
     }
+    
     
 }

@@ -337,29 +337,9 @@ open class Cubic: PenCurve   {
         self.usage = purpose
     }
     
-    /// Plot the curve segment.  This will be called by the UIView 'drawRect' function
-    open func draw(_ context: CGContext)  {
-        
-        var xCG: CGFloat = CGFloat(self.ax)    // Convert to "CGFloat", and throw out Z coordinate
-        var yCG: CGFloat = CGFloat(self.ay)
-        
-        context.move(to: CGPoint(x: xCG, y: yCG))
-        
-        
-        for g in 1...20   {
-            
-            let stepU = Double(g) * 0.05   // Gee, this is brittle!
-            xCG = CGFloat(pointAt(t: stepU).x)
-            yCG = CGFloat(pointAt(t: stepU).y)
-            context.addLine(to: CGPoint(x: xCG, y: yCG))
-        }
-        
-        context.strokePath()
-        
-    }
     
     /// Plot the curve segment.  This will be called by the UIView 'drawRect' function
-    public func draw2(context: CGContext, tform: CGAffineTransform)  {
+    public func draw(context: CGContext, tform: CGAffineTransform)  {
         
         var xCG: CGFloat = CGFloat(self.dx)    // Convert to "CGFloat", and throw out Z coordinate
         var yCG: CGFloat = CGFloat(self.dy)
