@@ -30,7 +30,7 @@ class LineSegTests: XCTestCase {
             
             let slash = try LineSeg(end1: pt1, end2: pt2)
         
-            let ladybug = slash.pointAt(0.6)
+            let ladybug = slash.pointAt(t: 0.6)
             
             let home = Point3D(x: 3.4, y: 3.4, z: 3.4)
             

@@ -96,7 +96,7 @@ class Easel2D: UIView {
                 context?.setLineWidth(standard)
                 context?.setLineDash(phase: 0, lengths: []);    // To clear any previous dash pattern
                 
-            case .default:
+            default:
                 context?.setStrokeColor(black!)
                 context?.setLineWidth(thin)
                 context?.setLineDash(phase: 0, lengths: []);    // To clear any previous dash pattern

@@ -59,7 +59,7 @@ class Point3DTests: XCTestCase {
         
         let jump = Vector3D(i: 1.5, j: 1.5, k: 1.5)
         
-        let tip = local.offset(jump)
+        let tip = local.offset(jump: jump)
         
         XCTAssert(tip.x == 0.5)
         XCTAssert(tip.y == 3.5)
@@ -72,7 +72,7 @@ class Point3DTests: XCTestCase {
         let here = Point3D(x: -10.0, y: -5.0, z: -23.0)
         let there = Point3D(x: -7.0, y: -9.0, z: -11.0)
         
-        let sep = Point3D.dist(here, pt2: there)
+        let sep = Point3D.dist(pt1: here, pt2: there)
         
         XCTAssert(sep == 13.0)
     }
@@ -82,7 +82,7 @@ class Point3DTests: XCTestCase {
         let here = Point3D(x: -5.0, y: -10.0, z: -23.0)
         let there = Point3D(x: -9.0, y: -7.0, z: -11.0)
         
-        let pbj = Point3D.midway(here, beta: there)
+        let pbj = Point3D.midway(alpha: here, beta: there)
         
         let target = Point3D(x: -7.0, y: -8.5, z: -17.0)
         
@@ -95,16 +95,16 @@ class Point3DTests: XCTestCase {
         let there = Point3D(x: -9.0, y: 9.0, z: 9.0)
         let pastThere = Point3D(x: -15.0, y: 15.0, z: 15.0)
         
-        XCTAssert(Point3D.isThreeUnique(here, beta: there, gamma: pastThere))
+        XCTAssert(Point3D.isThreeUnique(alpha: here, beta: there, gamma: pastThere))
         
-        XCTAssert(Point3D.isThreeLinear(here, beta: there, gamma: pastThere))
+        XCTAssert(Point3D.isThreeLinear(alpha: here, beta: there, gamma: pastThere))
         
         
         let missed = Point3D(x: -9.0, y: -9.0, z: 9.0)
         
-        XCTAssert(Point3D.isThreeUnique(here, beta: missed, gamma: pastThere))
+        XCTAssert(Point3D.isThreeUnique(alpha: here, beta: missed, gamma: pastThere))
         
-        XCTAssertFalse(Point3D.isThreeLinear(here, beta: missed, gamma: pastThere))
+        XCTAssertFalse(Point3D.isThreeLinear(alpha: here, beta: missed, gamma: pastThere))
         
     }
     

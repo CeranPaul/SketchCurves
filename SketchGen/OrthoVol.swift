@@ -98,7 +98,7 @@ public struct OrthoVol   {
     /// - Throws: CoincidentPointsError
     public init(corner1: Point3D, corner2: Point3D) throws  {
         
-        let sep = Point3D.dist(corner1, pt2: corner2)
+        let sep = Point3D.dist(pt1: corner1, pt2: corner2)
         let halfMin = sep / 10.0   // Used to keep the box from becoming a whisker
         
         var leastX: Double

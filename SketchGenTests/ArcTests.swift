@@ -116,13 +116,13 @@ class ArcTests: XCTestCase {
         do   {
             let grip = try Arc.buildFromCenterStartFinish(thumb, end1: knuckle, end2: tip, useSmallAngle: true)
             
-            var spot = grip.pointAt(0.5)
+            var spot = grip.pointAt(t: 0.5)
             
             XCTAssert(spot.z == 0.0)
             XCTAssert(spot.y == 6.0 + M_SQRT2)
             XCTAssert(spot.x == 3.5 + M_SQRT2)
             
-            spot = grip.pointAt(0.0)
+            spot = grip.pointAt(t: 0.0)
             
             XCTAssert(spot.z == 0.0)
             XCTAssert(spot.y == 6.0)
@@ -152,7 +152,7 @@ class ArcTests: XCTestCase {
         let ray = try! Line(spot: ctr, arrow: upRight)
         
         
-        var plop = shoulder.pointAt(0.5)
+        var plop = shoulder.pointAt(t: 0.5)
         
         let flag1 = Line.isCoincident(ray, trial: plop)
         
@@ -166,7 +166,7 @@ class ArcTests: XCTestCase {
         
         let ray2 = try! Line(spot: ctr, arrow: clock)
         
-        plop = sunSetting.pointAt(0.666667)
+        plop = sunSetting.pointAt(t: 0.666667)
         print(plop)
         
         XCTAssert(Line.isCoincident(ray2, trial: plop))
@@ -187,7 +187,7 @@ class ArcTests: XCTestCase {
         
         var ray3 = try! Line(spot: ctr, arrow: clock2)
         
-        plop = sunSetting2.pointAt(0.333333)
+        plop = sunSetting2.pointAt(t: 0.333333)
         XCTAssert(Line.isCoincident(ray3, trial: plop))
         
         
@@ -196,7 +196,7 @@ class ArcTests: XCTestCase {
         clock = Vector3D(i: -1.0, j: 0.0, k: 0.0)
         ray3 = try! Line(spot: ctr, arrow: clock)
         
-        plop = countdown.pointAt(0.333333)        
+        plop = countdown.pointAt(t: 0.333333)        
         XCTAssert(Line.isCoincident(ray3, trial: plop))
         
     }
@@ -218,7 +218,7 @@ class ArcTests: XCTestCase {
         
         let ray1 = try! Line(spot: ctr, arrow: clock1)
         
-        var plop = shoulder.pointAt(0.666667)
+        var plop = shoulder.pointAt(t: 0.666667)
         
         XCTAssert(Line.isCoincident(ray1, trial: plop))
         
@@ -230,7 +230,7 @@ class ArcTests: XCTestCase {
         
         let ray2 = try! Line(spot: ctr, arrow: clock2)
         
-        plop = shoulder.pointAt(0.666667)
+        plop = shoulder.pointAt(t: 0.666667)
         
         XCTAssert(Line.isCoincident(ray2, trial: plop))
     }
@@ -256,7 +256,7 @@ class ArcTests: XCTestCase {
     func testErrorThrow()  {
         
         let ctr = Point3D(x: 2.0, y: 1.0, z: 5.0)
-        let e1 = Point3D(x: 3.0, y: 1.0, z: 5.0)
+//        let e1 = Point3D(x: 3.0, y: 1.0, z: 5.0)
         let e2 = Point3D(x: 2.0, y: 2.0, z: 5.0)
         
            // Bad referencing should cause an error to be thrown

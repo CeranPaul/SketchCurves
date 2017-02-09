@@ -50,7 +50,7 @@ open class Arc: PenCurve {
         self.start = end1
         self.sweepAngle = sweep
         
-        self.rad = Point3D.dist(self.ctr, pt2: self.start)
+        self.rad = Point3D.dist(pt1: self.ctr, pt2: self.start)
         
         self.isFull = false
         if self.sweepAngle == 2.0 * M_PI   { self.isFull = true }
@@ -68,10 +68,10 @@ open class Arc: PenCurve {
         guard (self.ctr != self.start)  else  { throw CoincidentPointsError(dupePt: self.start)}
         
             
-        var horiz = Vector3D.built(self.ctr, towards: self.start)
+        var horiz = Vector3D.built(from: self.ctr, towards: self.start)
         try! horiz.normalize()
             
-        let vert = try! Vector3D.crossProduct(self.axisDir, rhs: horiz)
+        let vert = try! Vector3D.crossProduct(lhs: self.axisDir, rhs: horiz)
             
         let magnitudeH = self.rad * cos(sweepAngle)
         let deltaH = horiz * magnitudeH
@@ -81,7 +81,7 @@ open class Arc: PenCurve {
             
         let jump = deltaH + deltaV
             
-        self.finish = self.ctr.offset(jump)
+        self.finish = self.ctr.offset(jump: jump)
         
         self.extent = figureExtent()    // Replace the dummy value
         
@@ -135,15 +135,15 @@ open class Arc: PenCurve {
         
         
         
-        var vecStart = Vector3D.built(center, towards: end1)
+        var vecStart = Vector3D.built(from: center, towards: end1)
         try! vecStart.normalize()
-        var vecFinish = Vector3D.built(center, towards: end2)
+        var vecFinish = Vector3D.built(from: center, towards: end2)
         try! vecFinish.normalize()
         
-        var spin = try! Vector3D.crossProduct(vecStart, rhs: vecFinish)
+        var spin = try! Vector3D.crossProduct(lhs: vecStart, rhs: vecFinish)
         try! spin.normalize()
         
-        let rawAngle = try! Vector3D.findAngle(vecStart, measureTo: vecFinish, perp: spin)
+        let rawAngle = try! Vector3D.findAngle(baselineVec: vecStart, measureTo: vecFinish, perp: spin)
         
         var sweepAngle = rawAngle
         if !useSmallAngle   { sweepAngle = rawAngle - 2.0 * M_PI  }
@@ -159,11 +159,11 @@ open class Arc: PenCurve {
     /// See the illustration in the wiki "Arc PointAtAngle" article
     open func pointAtAngle(_ theta: Double) -> Point3D  {
         
-        var horiz = Vector3D.built(self.ctr, towards: self.start)
+        var horiz = Vector3D.built(from: self.ctr, towards: self.start)
         try! horiz.normalize()
         
         
-        let vert = try! Vector3D.crossProduct(self.axisDir, rhs: horiz)   // Shouldn't need to be normalized
+        let vert = try! Vector3D.crossProduct(lhs: self.axisDir, rhs: horiz)   // Shouldn't need to be normalized
         
         let magnitudeH = self.rad * cos(theta)
         let deltaH = horiz * magnitudeH
@@ -173,13 +173,13 @@ open class Arc: PenCurve {
         
         let jump = deltaH + deltaV
         
-        return self.ctr.offset(jump)
+        return self.ctr.offset(jump: jump)
     }
     
     
     /// Find the point along this arc specified by the parameter 't'
     /// - Warning:  No checks are made for the value of t being inside some range
-    open func pointAt(_ t: Double) -> Point3D  {
+    open func pointAt(t: Double) -> Point3D  {
         
         let deltaAngle = t * self.sweepAngle    // Implies that 0 < t < 1
         
@@ -208,10 +208,10 @@ open class Arc: PenCurve {
     /// - Parameter: end2: Point3D on the perimeter
     open static func isArcable(_ center: Point3D, end1: Point3D, end2: Point3D) -> Bool  {
         
-        if !Point3D.isThreeUnique(center, beta: end1, gamma: end2)  { return false }
+        if !Point3D.isThreeUnique(alpha: center, beta: end1, gamma: end2)  { return false }
         
-        let dist1 = Point3D.dist(center, pt2: end1)
-        let dist2 = Point3D.dist(center, pt2: end2)
+        let dist1 = Point3D.dist(pt1: center, pt2: end1)
+        let dist2 = Point3D.dist(pt1: center, pt2: end2)
         
         let thumbsUp = abs(dist1 - dist2) < Point3D.Epsilon
         
@@ -220,10 +220,15 @@ open class Arc: PenCurve {
     
     /// Figure how far the point is off the curve, and how far along the curve it is.  Useful for picks
     /// Not implemented
-    open func resolveNeighbor(_ speck: Point3D) -> (along: Double, perp: Double)   {
+    open func resolveNeighbor(speck: Point3D) -> (along: Vector3D, perp: Vector3D)   {
         
         // TODO: Make this return something besides dummy values
-        return (1.0, 0.0)
+        let otherSpeck = speck
+        let alongVector = Vector3D(i: 1.0, j: 0.0, k: 0.0)
+        
+        let perpVector = Vector3D(i: 0.0, j: 1.0, k: 0.0)
+        
+        return (alongVector, perpVector)
     }
     
     /// Plot the arc segment.  This will be called by the UIView 'drawRect' function
@@ -246,7 +251,7 @@ open class Arc: PenCurve {
     /// Probably returns bad values half of the time in the current state
     func figureExtent() -> OrthoVol  {
         
-        let rad = Point3D.dist(self.ctr, pt2: self.start)
+        let rad = Point3D.dist(pt1: self.ctr, pt2: self.start)
         
         var mostY = ctr.y + rad
         var mostX = ctr.x + rad
@@ -255,11 +260,11 @@ open class Arc: PenCurve {
         
         if !self.isFull   {
             
-            var chord = Vector3D.built(start, towards: finish)
+            var chord = Vector3D.built(from: start, towards: finish)
             try! chord.normalize()   // Checks in the constructor should keep this from being a zero vector
         
             let up = Vector3D(i: 0.0, j: 0.0, k: 1.0)   // TODO: Make this not so brittle
-            var split = try! Vector3D.crossProduct(up, rhs: chord)
+            var split = try! Vector3D.crossProduct(lhs: up, rhs: chord)
             try! split.normalize()   // Checks in the crossProduct should keep this from being a zero vector
         
             var discard = split
@@ -272,16 +277,16 @@ open class Arc: PenCurve {
             let west = Point3D(x: leastX, y: ctr.y, z: 0.0)
         
                 // Create vectors towards the compass points
-            let goNorth = Vector3D.built(start, towards: north)    // These could very well be zero length
-            let goEast = Vector3D.built(start, towards: east)
-            let goSouth = Vector3D.built(start, towards: south)
-            let goWest = Vector3D.built(start, towards: west)
+            let goNorth = Vector3D.built(from: start, towards: north)    // These could very well be zero length
+            let goEast = Vector3D.built(from: start, towards: east)
+            let goSouth = Vector3D.built(from: start, towards: south)
+            let goWest = Vector3D.built(from: start, towards: west)
         
         
-            let northDot = Vector3D.dotProduct(discard, rhs: goNorth)
-            let eastDot = Vector3D.dotProduct(discard, rhs: goEast)
-            let southDot = Vector3D.dotProduct(discard, rhs: goSouth)
-            let westDot = Vector3D.dotProduct(discard, rhs: goWest)
+            let northDot = Vector3D.dotProduct(lhs: discard, rhs: goNorth)
+            let eastDot = Vector3D.dotProduct(lhs: discard, rhs: goEast)
+            let southDot = Vector3D.dotProduct(lhs: discard, rhs: goSouth)
+            let westDot = Vector3D.dotProduct(lhs: discard, rhs: goWest)
         
             if northDot > 0.0   { mostY = max(start.y, finish.y) }
             if eastDot > 0.0   { mostX = max(start.x, finish.x) }
@@ -304,33 +309,33 @@ open class Arc: PenCurve {
         else  {
             
             /// Vector from the center towards the start point
-            var vecStart = Vector3D.built(self.ctr, towards: self.start)
+            var vecStart = Vector3D.built(from: self.ctr, towards: self.start)
             try! vecStart.normalize()   // Checks in the constructor should keep this from being zero length
             
-            var vecFinish = Vector3D.built(self.ctr, towards: self.finish)
+            var vecFinish = Vector3D.built(from: self.ctr, towards: self.finish)
             try! vecFinish.normalize()   // Checks in the constructor should keep this from being zero length
             
-            var perp = try! Vector3D.crossProduct(vecStart, rhs: vecFinish)
+            var perp = try! Vector3D.crossProduct(lhs: vecStart, rhs: vecFinish)
             try! perp.normalize()
             
             // For Case A in the illustration, perp will be going into the page
             
             
-            let perpToVecStart = try! Vector3D.crossProduct(perp, rhs: vecStart)
+            let perpToVecStart = try! Vector3D.crossProduct(lhs: perp, rhs: vecStart)
             
             
             /// Vector from the start point towards the finish point
-            let startFinish = Vector3D.built(self.start, towards: self.finish)
+            let startFinish = Vector3D.built(from: self.start, towards: self.finish)
             
             
             // Can range from -1.0 to 1.0, with a void at 0.0
-            let sense = Vector3D.dotProduct(perpToVecStart, rhs: startFinish)
+            let sense = Vector3D.dotProduct(lhs: perpToVecStart, rhs: startFinish)
             
             var side = true
             side = sense > 0.0
             
             
-            let projection = Vector3D.dotProduct(vecStart, rhs: vecFinish)
+            let projection = Vector3D.dotProduct(lhs: vecStart, rhs: vecFinish)
             
             /// The raw material for determining the range
             let angleRaw = acos(projection)
@@ -350,27 +355,27 @@ open class Arc: PenCurve {
     /// - Throws: ArcPointsError if there any coincident points in the inputs
     open static func findCenter(_ larry: Point3D, curly: Point3D, moe: Point3D) throws -> Point3D   {
         
-        guard(Point3D.isThreeUnique(larry, beta: curly, gamma: moe))  else  { throw ArcPointsError(badPtA: larry, badPtB: curly, badPtC: moe)}
+        guard(Point3D.isThreeUnique(alpha: larry, beta: curly, gamma: moe))  else  { throw ArcPointsError(badPtA: larry, badPtB: curly, badPtC: moe)}
         
         
         /// The desired result to be returned
         var ctr = Point3D(x: 0.0, y: 0.0, z: 0.0)
         
-        var vecA = Vector3D.built(larry, towards: curly)
+        var vecA = Vector3D.built(from: larry, towards: curly)
         try! vecA.normalize()   // The guard statement above should keep this from being a zero vector
         
-        var vecB = Vector3D.built(curly, towards: moe)
+        var vecB = Vector3D.built(from: curly, towards: moe)
         try! vecB.normalize()   // The guard statement above should keep this from being a zero vector
         
-        var axle = try! Vector3D.crossProduct(vecA, rhs: vecB)   // The guard statement above should keep these from being zero vectors
+        var axle = try! Vector3D.crossProduct(lhs: vecA, rhs: vecB)   // The guard statement above should keep these from being zero vectors
         try! axle.normalize()   // The crossProduct function should keep this from being a zero vector
         
-        let midA = Point3D.midway(larry, beta: curly)
-        var perpA = try! Vector3D.crossProduct(vecA, rhs: axle)
+        let midA = Point3D.midway(alpha: larry, beta: curly)
+        var perpA = try! Vector3D.crossProduct(lhs: vecA, rhs: axle)
         try! perpA.normalize()   // The crossProduct function should keep this from being a zero vector
         
-        let midB = Point3D.midway(curly, beta: moe)
-        var perpB = try! Vector3D.crossProduct(vecB, rhs: axle)
+        let midB = Point3D.midway(alpha: curly, beta: moe)
+        var perpB = try! Vector3D.crossProduct(lhs: vecB, rhs: axle)
         try! perpB.normalize()   // The crossProduct function should keep this from being a zero vector
         
         
@@ -397,7 +402,7 @@ open class Arc: PenCurve {
         let ctrFlag = lhs.ctr == rhs.ctr
         
         let axisFlag1 = lhs.getAxisDir() == rhs.getAxisDir()
-        let axisFlag2 = Vector3D.isOpposite(lhs.getAxisDir(), rhs: rhs.getAxisDir())
+        let axisFlag2 = Vector3D.isOpposite(lhs: lhs.getAxisDir(), rhs: rhs.getAxisDir())
         let axisFlag = axisFlag1 || axisFlag2
         
         return ctrFlag && axisFlag

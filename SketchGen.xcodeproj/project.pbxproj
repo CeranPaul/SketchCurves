@@ -184,18 +184,18 @@
 			children = (
 				81FEAAD01C4E9411000F0E2A /* Errors */,
 				818D17851D599DF200BE248A /* CurveDemo.swift */,
-				818D17861D599DF200BE248A /* Vector3D.swift */,
-				81414B231C08CEE200A9DE83 /* Point3D.swift */,
-				81CDCC221C17E44B00060C8D /* Plane.swift */,
+				818D17831D599DF200BE248A /* Arc.swift */,
+				8106F0021C1FA12C00C74FE6 /* Cubic.swift */,
+				81078A741C587848001C21CD /* Ellipse.swift */,
 				81CDCC1E1C17E3FD00060C8D /* Line.swift */,
 				81414B1F1C08CEE200A9DE83 /* LineSeg.swift */,
-				818D17831D599DF200BE248A /* Arc.swift */,
-				81078A741C587848001C21CD /* Ellipse.swift */,
-				8106F0021C1FA12C00C74FE6 /* Cubic.swift */,
+				81FEAAD11C4E9716000F0E2A /* Perimeter.swift */,
+				81CDCC221C17E44B00060C8D /* Plane.swift */,
+				81414B231C08CEE200A9DE83 /* Point3D.swift */,
 				814E0F5C1D3D64EF00200289 /* Spline.swift */,
 				8124968F1D0E0D8C0023A256 /* CoordinateSystem.swift */,
 				810328901C718F7A00E6FA21 /* Transform.swift */,
-				81FEAAD11C4E9716000F0E2A /* Perimeter.swift */,
+				818D17861D599DF200BE248A /* Vector3D.swift */,
 				81414B201C08CEE200A9DE83 /* OrthoVol.swift */,
 				81414B211C08CEE200A9DE83 /* PenCurve.swift */,
 				81414B221C08CEE200A9DE83 /* PenTypes.swift */,
@@ -551,6 +551,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = SketchGen/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.2;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.cerandm.SketchGen;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -566,6 +567,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = SketchGen/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.2;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.cerandm.SketchGen;
 				PRODUCT_NAME = "$(TARGET_NAME)";

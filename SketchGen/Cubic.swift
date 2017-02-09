@@ -6,11 +6,10 @@
 //  Copyright © 2015 Ceran Digital Media. All rights reserved.  See LICENSE.md
 //
 
-import Foundation
 import UIKit
 
 /// Curve defined by polynomials for each coordinate direction
-open class Cubic   {
+open class Cubic: PenCurve   {
     
     var ax: Double
     var bx: Double
@@ -26,6 +25,15 @@ open class Cubic   {
     var bz: Double
     var cz: Double
     var dz: Double
+    
+    var ptAlpha: Point3D
+    var ptOmega: Point3D
+    
+    /// The enum that hints at the meaning of the curve
+    public var usage: PenTypes
+    
+    /// The box that contains the segment
+    public var extent: OrthoVol
     
     
     
@@ -46,6 +54,16 @@ open class Cubic   {
         self.bz = bz
         self.cz = cz
         self.dz = dz
+        
+        ptAlpha = Point3D(x: dx, y: dy, z: dz)
+        ptOmega = Point3D(x: dx, y: dy, z: dz)
+        
+        self.usage = PenTypes.Ordinary
+        
+        // Dummy assignment. Postpone the expensive calculation until after the guard statements
+        self.extent = OrthoVol(minX: -0.5, maxX: 0.5, minY: -0.5, maxY: 0.5, minZ: -0.5, maxZ: 0.5)
+        
+        self.extent = self.getExtent()
         
     }
     
@@ -70,21 +88,215 @@ open class Cubic   {
         self.cz = slopeA.k
         self.dz = ptA.z
         
+        ptAlpha = Point3D(x: dx, y: dy, z: dz)
+        ptOmega = Point3D(x: dx, y: dy, z: dz)
+        
+        self.usage = PenTypes.Ordinary
+        
+        // Dummy assignment. Postpone the expensive calculation until after the guard statements
+        self.extent = OrthoVol(minX: -0.5, maxX: 0.5, minY: -0.5, maxY: 0.5, minZ: -0.5, maxZ: 0.5)
+        
+        self.extent = self.getExtent()
+        
     }
     
     
+    /// Build from two end points and two control points
+    /// Assignment statements from an algebraic manipulation of the equations
+    /// in the Wikipedia article on Bezier Curve
+    init(ptA: Point3D, controlA: Point3D, controlB: Point3D, ptB: Point3D)   {
+        
+        self.ax = 3.0 * controlA.x - ptA.x - 3.0 * controlB.x + ptB.x
+        self.bx = 3.0 * ptA.x - 6.0 * controlA.x + 3.0 * controlB.x
+        self.cx = 3.0 * controlA.x - 3.0 * ptA.x
+        self.dx = ptA.x
+        
+        self.ay = 3.0 * controlA.y - ptA.y - 3.0 * controlB.y + ptB.y
+        self.by = 3.0 * ptA.y - 6.0 * controlA.y + 3.0 * controlB.y
+        self.cy = 3.0 * controlA.y - 3.0 * ptA.y
+        self.dy = ptA.y
+        
+        self.az = 3.0 * controlA.z - ptA.z - 3.0 * controlB.z + ptB.z
+        self.bz = 3.0 * ptA.z - 6.0 * controlA.z + 3.0 * controlB.z
+        self.cz = 3.0 * controlA.z - 3.0 * ptA.z
+        self.dz = ptA.z
+        
+        ptAlpha = Point3D(x: dx, y: dy, z: dz)
+        ptOmega = Point3D(x: dx, y: dy, z: dz)
+        
+        self.usage = PenTypes.Ordinary
+        
+        // Dummy assignment. Postpone the expensive calculation until after the guard statements
+        self.extent = OrthoVol(minX: -0.5, maxX: 0.5, minY: -0.5, maxY: 0.5, minZ: -0.5, maxZ: 0.5)
+        
+        
+        self.extent = self.getExtent()
+        
+    }
+    
+    
+    /// Fetch the location of an end
+    /// - See: 'getOtherEnd()'
+    public func getOneEnd() -> Point3D   {
+        return ptAlpha
+    }
+    
+    /// Fetch the location of the opposite end
+    /// - See: 'getOneEnd()'
+    public func getOtherEnd() -> Point3D   {
+        return ptOmega
+    }
+    
+    /// Flip the order of the end points  Used to align members of a Perimeter
+    public func reverse() -> Void  {
+        
+        //        var bubble = self.ptAlpha
+        self.ptAlpha = self.ptOmega
+        //        self.ptOmega = bubble
+        
+        //        bubble = self.c
+    }
+    
+    /// Calculate the proper surrounding box
+    /// Increase the number of intermediate points as necessary
+    public func getExtent() -> OrthoVol   {
+        
+        var bucket = [Double]()
+        
+        for u in 1...9   {
+            let pip = self.pointAt(t: Double(u) * 0.10)
+            bucket.append(pip.x)
+        }
+        
+        bucket.append(ptOmega.x)
+        
+        let maxX = bucket.reduce(ptAlpha.x, max)
+        let minX = bucket.reduce(ptAlpha.x, min)
+        
+        
+        bucket = [Double]()   // Start with an empty array
+        
+        for u in 1...9   {
+            let pip = self.pointAt(t: Double(u) * 0.10)
+            bucket.append(pip.y)
+        }
+        
+        bucket.append(ptOmega.y)
+        
+        let maxY = bucket.reduce(ptAlpha.y, max)
+        let minY = bucket.reduce(ptAlpha.y, min)
+        
+        bucket = [Double]()   // Start with an empty array
+        
+        for u in 1...9   {
+            let pip = self.pointAt(t: Double(u) * 0.10)
+            bucket.append(pip.z)
+        }
+        
+        bucket.append(ptOmega.z)
+        
+        var maxZ = bucket.reduce(ptAlpha.z, max)
+        var minZ = bucket.reduce(ptAlpha.z, min)
+        
+        
+        // Avoid the case of zero thickness
+        let diffX = maxX - minX
+        let diffY = maxY - minY
+        let diffZ = maxZ - minZ
+        
+        let bigDiff = max(diffX, diffY)
+        let percent = 0.01 * bigDiff
+        
+        if abs(diffZ) < percent   {
+            maxZ += 0.5 * percent
+            minZ -= 0.5 * percent
+        }
+        
+        
+        let box = OrthoVol(minX: minX, maxX: maxX, minY: minY, maxY: maxY, minZ: minZ, maxZ: maxZ)
+        
+        return box
+    }
+    
+    /// Find the change in parameter that meets the crown requirement
+    public func findStep(allowableCrown: Double, currentT: Double, increasing: Bool) -> Double   {
+        
+        var trialT: Double
+        var deviation: Double
+        var step = 0.2 * 1.25  // Wild guess for original case
+        
+        /// Counter to prevent loop runaway
+        var safety = 0
+        
+        repeat   {
+            
+            step = step / 1.25
+            
+            if increasing   {
+                
+                trialT = currentT + step
+                if currentT > (1.0 - step)   {   // Prevent parameter value > 1.0
+                    trialT = 1.0
+                }
+                
+                deviation = self.findCrown(smallerT: currentT, largerT: trialT)
+                
+            }  else {
+                
+                trialT = currentT - step
+                if currentT < step   {   // Prevent parameter value < 0.0
+                    trialT = 0.0
+                }
+                deviation = self.findCrown(smallerT: trialT, largerT: currentT)
+            }
+            
+            safety += 1
+            
+        }  while deviation > allowableCrown  && safety < 9
+        
+        return trialT
+    }
+    
+    /// Calculate the crown over a small segment
+    public func findCrown(smallerT: Double, largerT: Double) -> Double   {
+        
+        let anchorA = self.pointAt(t: smallerT)
+        let anchorB = self.pointAt(t: largerT)
+        
+        let wire = try! LineSeg(end1: anchorA, end2: anchorB)
+        
+        let delta = largerT - smallerT
+        
+        var deviation = 0.0
+        
+        for g in 1...9   {
+            
+            let pip = self.pointAt(t: smallerT + Double(g) * delta / 10.0)
+            let diffs = wire.resolveNeighbor(speck: pip)
+            
+            let separation = diffs.perp.length()   // Always a positive value
+            
+            if separation > deviation   {
+                deviation = separation
+            }
+            
+        }
+        
+        return deviation
+    }
+    
     /// Supply the point on the curve for the input parameter value
     /// Some notations show "t" as the parameter, instead of "u"
-    func pointAt(_ u: Double) -> Point3D   {
+    public func pointAt(t: Double) -> Point3D   {
         
-        let u2 = u * u
-        let u3 = u2 * u
+        let t2 = t * t
+        let t3 = t2 * t
         
            // This notation came from "Fundamentals of Interactive Computer Graphics" by Foley and Van Dam
            // Warning!  The relationship of coefficients and powers of u might be unexpected, as notations vary
-        let myX = ax * u3 + bx * u2 + cx * u + dx
-        let myY = ay * u3 + by * u2 + cy * u + dy
-        let myZ = az * u3 + bz * u2 + cz * u + dz
+        let myX = ax * t3 + bx * t2 + cx * t + dx
+        let myY = ay * t3 + by * t2 + cy * t + dy
+        let myZ = az * t3 + bz * t2 + cz * t + dz
         
         return Point3D(x: myX, y: myY, z: myZ)
     }
@@ -93,18 +305,37 @@ open class Cubic   {
     /// Some notations show "t" as the parameter, instead of "u"
     /// - Returns:
     ///   - tan:  Non-normalized vector
-    func tangentAt(_ u: Double) -> Vector3D   {
+    func tangentAt(t: Double) -> Vector3D   {
         
-        let u2 = u * u
+        let t2 = t * t
 
-        let myI = 3.0 * ax * u2 + 2.0 * bx * u + cx
-        let myJ = 3.0 * ay * u2 + 2.0 * by * u + cy
-        let myK = 3.0 * az * u2 + 2.0 * bz * u + cz
+        let myI = 3.0 * ax * t2 + 2.0 * bx * t + cx
+        let myJ = 3.0 * ay * t2 + 2.0 * by * t + cy
+        let myK = 3.0 * az * t2 + 2.0 * bz * t + cz
         
         return Vector3D(i: myI, j: myJ, k: myK)    // Notice that this is not normalized!
     }
     
     
+    /// Find the position of a point relative to the line segment and its origin
+    /// - Returns: Vector components relative to the origin
+    public func resolveNeighbor(speck: Point3D) -> (along: Vector3D, perp: Vector3D)   {
+        
+        let otherSpeck = speck
+        
+        let alongVector = Vector3D(i: 1.0, j: 0.0, k: 0.0)
+        
+        let perpVector = Vector3D(i: 0.0, j: 1.0, k: 0.0)
+        
+        return (alongVector, perpVector)
+    }
+    
+    
+    /// Attach new meaning to the curve
+    public func setIntent(purpose: PenTypes)   {
+        
+        self.usage = purpose
+    }
     
     /// Plot the curve segment.  This will be called by the UIView 'drawRect' function
     open func draw(_ context: CGContext)  {
@@ -118,9 +349,36 @@ open class Cubic   {
         for g in 1...20   {
             
             let stepU = Double(g) * 0.05   // Gee, this is brittle!
-            xCG = CGFloat(pointAt(stepU).x)
-            yCG = CGFloat(pointAt(stepU).y)
+            xCG = CGFloat(pointAt(t: stepU).x)
+            yCG = CGFloat(pointAt(t: stepU).y)
             context.addLine(to: CGPoint(x: xCG, y: yCG))
+        }
+        
+        context.strokePath()
+        
+    }
+    
+    /// Plot the curve segment.  This will be called by the UIView 'drawRect' function
+    public func draw2(context: CGContext, tform: CGAffineTransform)  {
+        
+        var xCG: CGFloat = CGFloat(self.dx)    // Convert to "CGFloat", and throw out Z coordinate
+        var yCG: CGFloat = CGFloat(self.dy)
+        
+        let startModel = CGPoint(x: xCG, y: yCG)
+        let screenStart = startModel.applying(tform)
+        
+        context.move(to: screenStart)
+        
+        
+        for g in 1...20   {
+            
+            let stepU = Double(g) * 0.05   // Gee, this is brittle!
+            xCG = CGFloat(pointAt(t: stepU).x)
+            yCG = CGFloat(pointAt(t: stepU).y)
+            //            print(String(describing: xCG) + "  " + String(describing: yCG))
+            let midPoint = CGPoint(x: xCG, y: yCG)
+            let midScreen = midPoint.applying(tform)
+            context.addLine(to: midScreen)
         }
         
         context.strokePath()

@@ -157,8 +157,8 @@ class Roundy  {
         for g in 1..<segs  {
             let stepU = Double(g) * stepSize
             
-            let stepPoint1 = swoop1.pointAt(stepU)
-            let stepPoint2 = swoop2.pointAt(stepU)
+            let stepPoint1 = swoop1.pointAt(t: stepU)
+            let stepPoint2 = swoop2.pointAt(t: stepU)
 
             /// LineSeg to be added to the display list
             var stroke: PenCurve
@@ -216,7 +216,7 @@ class Roundy  {
         for g in 1..<segs  {
             let stepU = Double(g) * stepSize
             
-            let stepPoint1 = bump.pointAt(stepU)
+            let stepPoint1 = bump.pointAt(t: stepU)
             
             /// LineSeg to be added to the display list
             var stroke: PenCurve
@@ -264,7 +264,7 @@ class Roundy  {
         
         for piece in swing.pieces   {
             
-            var priorPt1 = piece.pointAt(0.0)
+            var priorPt1 = piece.pointAt(t: 0.0)
             
             let segs = 10
             let stepSize = 1.0 / Double(segs)
@@ -272,7 +272,7 @@ class Roundy  {
             for g in 1...segs  {
                 let stepU = Double(g) * stepSize
                 
-                let stepPoint1 = piece.pointAt(stepU)
+                let stepPoint1 = piece.pointAt(t: stepU)
                 
                 /// LineSeg to be added to the display list
                 var stroke: PenCurve
@@ -486,14 +486,14 @@ class Roundy  {
             /// The increment in parameter t for each segment
             let tStep = 1.0 / Double(divs)
             
-            var thisEnd = roundEdge.pointAt(0.0)
+            var thisEnd = roundEdge.pointAt(t: 0.0)
             var thatEnd: Point3D
             
             for g in 1...divs   {
                 
                 let currentT = Double(g) * tStep
                 
-                thatEnd = roundEdge.pointAt(currentT)
+                thatEnd = roundEdge.pointAt(t: currentT)
                 
                 let rail = try LineSeg(end1: thisEnd, end2: thatEnd)
                 rail.setIntent(PenTypes.approx)

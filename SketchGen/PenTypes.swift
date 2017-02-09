@@ -26,4 +26,6 @@ public enum PenTypes {
     
     case approx
     
+    case Ordinary
+    
 }

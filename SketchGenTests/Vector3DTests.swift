@@ -175,10 +175,10 @@ class Vector3DTests: XCTestCase {
         let slope = Vector3D(i: 0.0, j: 0.866, k: 0.5)
         let downhill = Vector3D(i: 0.0, j: -0.866, k: -0.5)
         
-        XCTAssert(Vector3D.isOpposite(slope, rhs: downhill))
+        XCTAssert(Vector3D.isOpposite(lhs: slope, rhs: downhill))
         
         let coast = Vector3D(i: 0.0, j: -0.866, k: 0.5)
-        XCTAssertFalse(Vector3D.isOpposite(slope, rhs: coast))
+        XCTAssertFalse(Vector3D.isOpposite(lhs: slope, rhs: coast))
         
     }
     
@@ -205,7 +205,7 @@ class Vector3DTests: XCTestCase {
         
         let t = Transform(rotationAxis: Axis.z, angleRad: M_PI / 4.0)
         
-        let swung = orig.transform(t)
+        let swung = orig.transform(xirtam: t)
         
         XCTAssertEqual(swung, target)
     }
@@ -218,14 +218,14 @@ class Vector3DTests: XCTestCase {
         let horiz = Vector3D(i: 1.0, j: 0.0, k: 0.0)
         let vert = Vector3D(i: 0.0, j: 1.0, k: 0.0)
         
-        var trial = try! Vector3D.crossProduct(horiz, rhs: vert)
+        var trial = try! Vector3D.crossProduct(lhs: horiz, rhs: vert)
         
         XCTAssert(trial == zee)
         
-        trial = try! Vector3D.crossProduct(vert, rhs: zee)
+        trial = try! Vector3D.crossProduct(lhs: vert, rhs: zee)
         XCTAssert(trial == horiz)
         
-        trial = try! Vector3D.crossProduct(zee, rhs: horiz)
+        trial = try! Vector3D.crossProduct(lhs: zee, rhs: horiz)
         XCTAssert(trial == vert)
         
         
@@ -233,16 +233,16 @@ class Vector3DTests: XCTestCase {
         let there = Vector3D(i: 0.4, j: -0.3, k: 0.9)
         let thereDupe = Vector3D(i: 0.4, j: -0.3, k: 0.9)
         
-        XCTAssertThrowsError(try Vector3D.crossProduct(there, rhs: thereDupe))
+        XCTAssertThrowsError(try Vector3D.crossProduct(lhs: there, rhs: thereDupe))
         
         let thereNeg = Vector3D(i: -0.4, j: 0.3, k: -0.9)
-        XCTAssertThrowsError(try Vector3D.crossProduct(thereNeg, rhs: there))
+        XCTAssertThrowsError(try Vector3D.crossProduct(lhs: thereNeg, rhs: there))
         
         let thereScale = Vector3D(i: 0.8, j: -0.6, k: 1.8)
-        XCTAssertThrowsError(try Vector3D.crossProduct(there, rhs: thereScale))
+        XCTAssertThrowsError(try Vector3D.crossProduct(lhs: there, rhs: thereScale))
         
         let thereScaleNeg = Vector3D(i: -0.8, j: 0.6, k: -1.8)
-        XCTAssertThrowsError(try Vector3D.crossProduct(there, rhs: thereScaleNeg))
+        XCTAssertThrowsError(try Vector3D.crossProduct(lhs: there, rhs: thereScaleNeg))
 
         
         do   {
@@ -250,7 +250,7 @@ class Vector3DTests: XCTestCase {
             let there = Vector3D(i: 0.4, j: -0.3, k: 0.9)
             let there2 = Vector3D(i: 0.4, j: 0.3, k: -0.9)
             
-            _ = try Vector3D.crossProduct(there, rhs: there2)
+            _ = try Vector3D.crossProduct(lhs: there, rhs: there2)
             
         }  catch  {
             XCTFail()
@@ -263,7 +263,7 @@ class Vector3DTests: XCTestCase {
         let there = Vector3D(i: 0.3, j: 0.4, k: 0.9)
         let there2 = Vector3D(i: 0.3, j: 0.4, k: 0.9)
         
-        let trial = Vector3D.dotProduct(there, rhs: there2)
+        let trial = Vector3D.dotProduct(lhs: there, rhs: there2)
         
         XCTAssert(trial == 1.06)
     }

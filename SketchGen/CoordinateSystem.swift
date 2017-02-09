@@ -56,7 +56,7 @@ open class CoordinateSystem   {
     ///   - spot: Point to serve as the origin
     init(direction1: Vector3D, direction2: Vector3D, useFirst: Bool, verticalRef: Bool, spot: Point3D)   {
         
-        var outOfPlane = try! Vector3D.crossProduct(direction1, rhs: direction2)
+        var outOfPlane = try! Vector3D.crossProduct(lhs: direction1, rhs: direction2)
         try! outOfPlane.normalize()
         
         self.axisZ = outOfPlane
@@ -65,20 +65,20 @@ open class CoordinateSystem   {
             
             if verticalRef   {
                 self.axisY = direction1
-                self.axisX = try! Vector3D.crossProduct(self.axisY, rhs: self.axisZ)
+                self.axisX = try! Vector3D.crossProduct(lhs: self.axisY, rhs: self.axisZ)
             }  else  {
                 self.axisX = direction1
-                self.axisY = try! Vector3D.crossProduct(self.axisZ, rhs: self.axisX)
+                self.axisY = try! Vector3D.crossProduct(lhs: self.axisZ, rhs: self.axisX)
             }
             
         }  else  {
             
             if verticalRef   {
                 self.axisY = direction2
-                self.axisX = try! Vector3D.crossProduct(self.axisY, rhs: self.axisZ)
+                self.axisX = try! Vector3D.crossProduct(lhs: self.axisY, rhs: self.axisZ)
             }  else  {
                 self.axisX = direction2
-                self.axisY = try! Vector3D.crossProduct(self.axisZ, rhs: self.axisX)
+                self.axisY = try! Vector3D.crossProduct(lhs: self.axisZ, rhs: self.axisX)
             }
         }
         
@@ -88,13 +88,13 @@ open class CoordinateSystem   {
     /// Check to see that these three vectors are mutually orthogonal
     open static func isMutOrtho(_ uno: Vector3D, dos: Vector3D, tres: Vector3D) -> Bool   {
         
-        let dot12 = Vector3D.dotProduct(uno, rhs: dos)
+        let dot12 = Vector3D.dotProduct(lhs: uno, rhs: dos)
         let flag1 = abs(dot12) < Vector3D.EpsilonV
         
-        let dot23 = Vector3D.dotProduct(dos, rhs: tres)
+        let dot23 = Vector3D.dotProduct(lhs: dos, rhs: tres)
         let flag2 = abs(dot23) < Vector3D.EpsilonV
         
-        let dot31 = Vector3D.dotProduct(tres, rhs: uno)
+        let dot31 = Vector3D.dotProduct(lhs: tres, rhs: uno)
         let flag3 = abs(dot31) < Vector3D.EpsilonV
         
         return flag1 && flag2 && flag3

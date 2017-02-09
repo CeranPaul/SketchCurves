@@ -54,7 +54,7 @@ class PlaneTests: XCTestCase {
         
         let targetNorm = Vector3D(i: 0.0, j: 1.0, k: 0.0)
         
-        let flag1 = constY.getNormal() == targetNorm || Vector3D.isOpposite(constY.getNormal(), rhs: targetNorm)
+        let flag1 = constY.getNormal() == targetNorm || Vector3D.isOpposite(lhs: constY.getNormal(), rhs: targetNorm)
         
         XCTAssert(flag1)
         

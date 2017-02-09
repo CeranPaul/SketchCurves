@@ -39,15 +39,15 @@ public struct Plane   {
         self.location = alpha
         self.normal = Vector3D(i: 0.6, j: 0.6, k: 0.6)
         
-        guard (Point3D.isThreeUnique(alpha, beta: beta, gamma: gamma)) else { throw CoincidentPointsError(dupePt: alpha)}
+        guard (Point3D.isThreeUnique(alpha: alpha, beta: beta, gamma: gamma)) else { throw CoincidentPointsError(dupePt: alpha)}
         
         // TODO: Come up with a better error type
-        guard (!Point3D.isThreeLinear(alpha, beta: beta, gamma: gamma))  else  {  throw CoincidentPointsError(dupePt: alpha)}
+        guard (!Point3D.isThreeLinear(alpha: alpha, beta: beta, gamma: gamma))  else  {  throw CoincidentPointsError(dupePt: alpha)}
             
-        let thisWay = Vector3D.built(alpha, towards: beta)
-        let thatWay = Vector3D.built(alpha, towards: gamma)
+        let thisWay = Vector3D.built(from: alpha, towards: beta)
+        let thatWay = Vector3D.built(from: alpha, towards: gamma)
         
-        var perpTo = try! Vector3D.crossProduct(thisWay, rhs: thatWay)
+        var perpTo = try! Vector3D.crossProduct(lhs: thisWay, rhs: thatWay)
         try! perpTo.normalize()
         
         self.normal = perpTo
@@ -74,10 +74,10 @@ public struct Plane   {
         
         if pip == flat.getLocation()   {  return true  }   // Shortcut!
         
-        let bridge = Vector3D.built(flat.location, towards: pip)
+        let bridge = Vector3D.built(from: flat.location, towards: pip)
         
         // This can be positive, negative, or zero
-        let distanceOffPlane = Vector3D.dotProduct(bridge, rhs: flat.normal)  
+        let distanceOffPlane = Vector3D.dotProduct(lhs: bridge, rhs: flat.normal)  
         
         return  abs(distanceOffPlane) < Point3D.Epsilon
     }
@@ -86,7 +86,7 @@ public struct Plane   {
     /// Check to see that the line direction is perpendicular to the normal
     func isParallel(_ enil: Line) -> Bool   {
         
-        let perp = Vector3D.dotProduct(enil.getDirection(), rhs: self.normal)
+        let perp = Vector3D.dotProduct(lhs: enil.getDirection(), rhs: self.normal)
         
         return abs(perp) < Vector3D.EpsilonV
     }
@@ -103,7 +103,7 @@ public struct Plane   {
     /// - SeeAlso:  isCoincident and ==
     public static func isParallel(_ lhs: Plane, rhs: Plane) -> Bool{
         
-        return lhs.normal == rhs.normal || Vector3D.isOpposite(lhs.normal, rhs: rhs.normal)
+        return lhs.normal == rhs.normal || Vector3D.isOpposite(lhs: lhs.normal, rhs: rhs.normal)
     }
     
     /// Planes are parallel, and rhs location lies on lhs
@@ -119,7 +119,7 @@ public struct Plane   {
         let jump = base.normal * offset    // offset can be a negative number
         
         let origPoint = base.location
-        let newLoc = origPoint.offset(jump)
+        let newLoc = origPoint.offset(jump: jump)
         
         
         var newNorm = base.normal
@@ -138,7 +138,7 @@ public struct Plane   {
     public static func buildPerpThruLine(_ enil:  Line, enalp: Plane) throws -> Plane   {
         
         // TODO:  Ensure that the input line is in the plane
-        let newDir = try! Vector3D.crossProduct(enil.getDirection(), rhs: enalp.normal)
+        let newDir = try! Vector3D.crossProduct(lhs: enil.getDirection(), rhs: enalp.normal)
         
         return try Plane(spot: enil.getOrigin(), arrow: newDir)
     }

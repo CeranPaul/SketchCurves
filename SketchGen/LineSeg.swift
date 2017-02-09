@@ -6,12 +6,10 @@
 //  Copyright © 2016 Ceran Digital Media. All rights reserved.  See LICENSE.md
 //
 
-import Foundation
-//import simd
 import UIKit
 
 /// A wire between two points
-open class LineSeg: PenCurve {    // Can this be a struct, instead?
+public class LineSeg: PenCurve {    // Can this be a struct, instead?
     
     // End points
     fileprivate var endAlpha: Point3D   // Private access to limit modification
@@ -47,13 +45,13 @@ open class LineSeg: PenCurve {    // Can this be a struct, instead?
     
     /// Find the point along this line segment specified by the parameter 't'
     /// - Warning:  No checks are made for the value of t being inside some range
-    open func pointAt(_ t: Double) -> Point3D  {
+    open func pointAt(t: Double) -> Point3D  {
         
-        let wholeVector = Vector3D.built(self.endAlpha, towards: self.endOmega)
+        let wholeVector = Vector3D.built(from: self.endAlpha, towards: self.endOmega)
         
         let scaled = wholeVector * t    // Implies that 0 < t < 1
         
-        let spot = self.endAlpha.offset(scaled)
+        let spot = self.endAlpha.offset(jump: scaled)
         
         return spot
     }
@@ -88,7 +86,7 @@ open class LineSeg: PenCurve {    // Can this be a struct, instead?
     /// Create a unit vector showing direction
     open func getDirection() -> Vector3D   {
         
-        var along = Vector3D.built(self.endAlpha, towards: self.endOmega)
+        var along = Vector3D.built(from: self.endAlpha, towards: self.endOmega)
         try! along.normalize()   // The checks in the constructor should make this safe
         
         return along   // I think it's weird that this has to be a separate line
@@ -98,8 +96,8 @@ open class LineSeg: PenCurve {    // Can this be a struct, instead?
     /// - Throws: CoincidentPointsError if it was scaled to be very small
     open func transform(_ xirtam: Transform) throws -> LineSeg {
         
-        let tAlpha = endAlpha.transform(xirtam)
-        let tOmega = endOmega.transform(xirtam)
+        let tAlpha = endAlpha.transform(xirtam: xirtam)
+        let tOmega = endOmega.transform(xirtam: xirtam)
         
         let transformed = try LineSeg(end1: tAlpha, end2: tOmega)   // Will generate a new extent
         transformed.setIntent(self.usage)   // Copy setting instead of having the default
@@ -108,23 +106,87 @@ open class LineSeg: PenCurve {    // Can this be a struct, instead?
     
     
     /// Find the position of a point relative to the LineSeg
-    open func resolveNeighbor(_ speck: Point3D) -> (along: Double, perp: Double)   {
+    public func resolveNeighbor(speck: Point3D) -> (along: Vector3D, perp: Vector3D)   {
         
-        let unitAlong = self.getDirection()
+        /// Direction of the segment.  Is a unit vector.
+        let thisWay = self.getDirection()
         
-        let bridge = Vector3D.built(self.endAlpha, towards: speck)
+        let bridge = Vector3D.built(from: self.endAlpha, towards: speck)
         
-        let lenAlong = Vector3D.dotProduct(unitAlong, rhs: bridge)
+        let along = Vector3D.dotProduct(lhs: bridge, rhs: thisWay)
+        let alongVector = thisWay * along
+        let perpVector = bridge - alongVector
         
-        let componentAlong = unitAlong * lenAlong
+        return (alongVector, perpVector)
+    }
+    
+    /// Build a parallel line towards the inside
+    /// - Parameters:
+    ///   - inset:  Distance desired for the offset
+    ///   - stbdIn:  Whether starboard represents "in"
+    ///   - upward:  Unit vector perpendicular to the plane of the Perimeter
+    /// - Returns: A Line, not a LineSeg
+    /// - Warning:  Does not have a Unit Test
+    func insetLine(inset: Double, stbdIn: Bool, upward: Vector3D) -> Line   {
         
-        let componentPerp = bridge - componentAlong
+        let thataway = self.getDirection()
         
-        return (lenAlong, componentPerp.length())
+        /// Across the segment
+        var trans = try! Vector3D.crossProduct(lhs: thataway, rhs: upward)
+        try! trans.normalize()
+        
+        /// Vector going towards the inside
+        var inward = trans
+        
+        if !stbdIn   {
+            inward = trans.reverse()
+        }
+        
+        let jump = inward * inset
+        let freshOrigin = self.endAlpha.offset(jump: jump)
+        
+        let arrow = try! Line(spot: freshOrigin, arrow: thataway)
+        
+        return arrow
     }
     
     
+    /// Create a trimmed version
+    /// - Parameters:
+    ///   - stub:  New terminating point
+    ///   - keepNear: Retain the near or far remnant?
+    /// - Warning:  No checks are made to see that stub lies on the segment
+    /// - Returns: A new LineSeg
+    /// - Warning:  Not tested!
+    public func clipTo(stub: Point3D, keepNear: Bool) -> LineSeg   {
+        
+        var freshSeg: LineSeg
+        
+        if keepNear   {
+            freshSeg = try! LineSeg(end1: self.getOneEnd(), end2: stub)
+        }  else  {
+            freshSeg = try! LineSeg(end1: stub, end2: self.getOtherEnd())
+        }
+        
+        return freshSeg
+    }
     
+    
+    /// Find the change in parameter that meets the crown requirement
+    public func findStep(allowableCrown: Double, currentT: Double, increasing: Bool) -> Double   {
+        
+        var trialT : Double
+        
+        if increasing   {
+            trialT = 1.0
+        }  else  {
+            trialT = 0.0
+        }
+        
+        return trialT
+    }
+    
+
     /// Plot the line segment.  This will be called by the UIView 'drawRect' function
     open func draw(_ context: CGContext)  {
         

@@ -7,8 +7,6 @@
 //
 
 import XCTest
-@testable import SketchGen
-
 class SketchGenTests: XCTestCase {
     
     override func setUp() {

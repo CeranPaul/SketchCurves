@@ -87,7 +87,7 @@ open class Ellipse: PenCurve {
     
     /// Find the point along this line segment specified by the parameter 't'
     /// - Warning:  No checks are made for the value of t being inside some range
-    open func pointAt(_ t: Double) -> Point3D  {
+    open func pointAt(t: Double) -> Point3D  {
         
         
         // TODO: Make this something besides a cop-out
@@ -135,10 +135,15 @@ open class Ellipse: PenCurve {
     
     
     /// Figure how far the point is off the curve, and how far along the curve it is.  Useful for picks
-    open func resolveNeighbor(_ speck: Point3D) -> (along: Double, perp: Double)   {
+    open func resolveNeighbor(speck: Point3D) -> (along: Vector3D, perp: Vector3D)   {
         
         // TODO: Make this return something besides dummy values
-        return (1.0, 0.0)
+        let otherSpeck = speck
+        let alongVector = Vector3D(i: 1.0, j: 0.0, k: 0.0)
+        
+        let perpVector = Vector3D(i: 0.0, j: 1.0, k: 0.0)
+        
+        return (alongVector, perpVector)
     }
     
     

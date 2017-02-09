@@ -6,7 +6,6 @@
 //  Copyright © 2016 Ceran Digital Media. All rights reserved.  See LICENSE.md
 //
 
-import Foundation
 import UIKit
 
 public protocol PenCurve   {
@@ -19,7 +18,7 @@ public protocol PenCurve   {
     
     
     /// Supply the point on the curve for the input parameter value
-    func pointAt(_ t: Double) -> Point3D
+    func pointAt(t: Double) -> Point3D
     
     /// Retrieve the starting end
     func getOneEnd() -> Point3D
@@ -34,6 +33,6 @@ public protocol PenCurve   {
     func draw(_ context: CGContext)
     
     /// Figure how far the point is off the curve, and how far along the curve it is.  Useful for picks  
-    func resolveNeighbor(_ speck: Point3D) -> (along: Double, perp: Double)
+    func resolveNeighbor(speck: Point3D) -> (along: Vector3D, perp: Vector3D)
     
 }

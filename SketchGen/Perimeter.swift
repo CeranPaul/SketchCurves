@@ -112,19 +112,19 @@ open class Perimeter {
         for g in 0..<pieces.count  {
             
             let wire = pieces[g]
-            let sep = wire.resolveNeighbor(speck)
+            let sep = wire.resolveNeighbor(speck: speck)
             
-            var distance = sqrt(sep.along * sep.along + sep.perp * sep.perp)
+            var distance = sqrt(sep.along.length() + sep.perp.length())
             
             if distance < enough   {
                 return wire.getOneEnd()
             }
             
-            let htgnel = Point3D.dist(wire.getOneEnd(), pt2: wire.getOtherEnd())
+            let htgnel = Point3D.dist(pt1: wire.getOneEnd(), pt2: wire.getOtherEnd())
             
-            let far = sep.along - htgnel
+            let far = sep.along.length() - htgnel
             
-            distance = sqrt(far * far + sep.perp * sep.perp)
+            distance = sqrt(far * far + sep.perp.length())
             
             if distance < enough   {
                 return wire.getOtherEnd()
