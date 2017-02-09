@@ -30,6 +30,13 @@ class Point3DTests: XCTestCase {
         XCTAssert(sample.z == 4.0)
     }
 
+    // Verify the original value for Epsilon
+    func testEpsilon()   {
+        
+        let target = 0.0001
+        XCTAssert(target == Point3D.Epsilon)
+    }
+    
     func testEquals()   {
         
         let trial = Point3D(x: -3.1, y: 6.8 + 0.75 * Point3D.Epsilon, z: -1.4)
@@ -77,6 +84,7 @@ class Point3DTests: XCTestCase {
         XCTAssert(sep == 13.0)
     }
     
+    // Check on calculating a middle point
     func testMidway()   {
         
         let here = Point3D(x: -5.0, y: -10.0, z: -23.0)
@@ -108,6 +116,6 @@ class Point3DTests: XCTestCase {
         
     }
     
-    // TODO: Add tests for transform, isThreeCoincident, isThreeLinear, and project
+    // TODO: Add tests for transform, isThreeCoincident and project
     
 }

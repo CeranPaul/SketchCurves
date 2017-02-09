@@ -3,7 +3,7 @@
 //  SketchCurves
 //
 //  Created by Paul on 10/30/15.
-//  Copyright © 2016 Ceran Digital Media. All rights reserved.  See LICENSE.md
+//  Copyright © 2017 Ceran Digital Media. All rights reserved.  See LICENSE.md
 //
 
 import XCTest
@@ -121,7 +121,6 @@ class Vector3DTests: XCTestCase {
     }
     
     
-    
     // Check the overloaded equality function
     func testEquals()   {
         
@@ -143,6 +142,19 @@ class Vector3DTests: XCTestCase {
         XCTAssertFalse(ping == pong2)
     }
     
+    // Test a common construction operation
+    func testBuiltFrom()   {
+        
+        let alpha = Point3D(x: 1.5, y: 2.0, z: -1.7)
+        let beta = Point3D(x: 15.0, y: 0.15, z: 3.0)
+        
+        let target = Vector3D(i: 13.5, j: -1.85, k: 4.7)
+        
+        let trial = Vector3D.built(from: alpha, towards: beta)
+        
+        XCTAssert(trial == target)
+        
+    }
     
     // Check the scaling operation
     func testScaling()   {
@@ -268,8 +280,31 @@ class Vector3DTests: XCTestCase {
         XCTAssert(trial == 1.06)
     }
     
-    // TODO: Add tests for addition
-    // TODO: Add tests for subtraction
+    // Test addition
+    func testPlus()   {
+        
+        let there = Vector3D(i: 0.3, j: 0.4, k: 0.9)
+        let there2 = Vector3D(i: 0.4, j: 0.3, k: -0.9)
+        
+        let target = Vector3D(i: 0.7, j: 0.7, k: 0.0)
+        
+        let trial = there + there2
+        
+        XCTAssert(trial == target)
+    }
+    
+    // Test subtraction
+    func testMinus()   {
+        
+        let there = Vector3D(i: 1.3, j: 0.4, k: 0.9)
+        let there2 = Vector3D(i: 0.4, j: -0.3, k: -0.9)
+        
+        let target = Vector3D(i: -0.9, j: -0.7, k: -1.8)
+        
+        let trial = there2 - there
+        
+        XCTAssert(trial == target)
+    }
     
     
 }

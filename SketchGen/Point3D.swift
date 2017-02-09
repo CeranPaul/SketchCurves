@@ -63,18 +63,11 @@ public struct  Point3D: Hashable {
     }
     
     
-    /// Create a point midway between two others
-    /// - Parameters:
-    ///   - alpha:  One boundary
-    ///   - beta:  The other boundary
-    public static func midway(alpha: Point3D, beta: Point3D) -> Point3D   {
-        
-        return Point3D(x: (alpha.x + beta.x) / 2.0, y: (alpha.y + beta.y) / 2.0, z: (alpha.z + beta.z) / 2.0)
-    }
-    
-    
     
     /// Calculate the distance between two of 'em
+    /// - Parameters:
+    ///   - pt1:  One point
+    ///   - pt2:  Another point
     /// - See: 'testDist' under Point3DTests
     public static func dist(pt1: Point3D, pt2: Point3D) -> Double   {
         
@@ -87,15 +80,28 @@ public struct  Point3D: Hashable {
         return sqrt(sum)
     }
     
+    /// Create a point midway between two others
+    /// - Parameters:
+    ///   - alpha:  One boundary
+    ///   - beta:  The other boundary
+    /// - See: 'testMidway' under Point3DTests
+    public static func midway(alpha: Point3D, beta: Point3D) -> Point3D   {
+        
+        return Point3D(x: (alpha.x + beta.x) / 2.0, y: (alpha.y + beta.y) / 2.0, z: (alpha.z + beta.z) / 2.0)
+    }
+    
     /// Drop the point in the direction opposite of the normal
+    /// - Parameters:
+    ///   - pip:  Point to be projected
+    ///   - enalp:  Flat surface to hit
     public static func projectToPlane(pip: Point3D, enalp: Plane) -> Point3D  {
         
-        if Plane.isCoincident(enalp, pip: pip) {return pip }    // Shortcut!
+        if Plane.isCoincident(flat: enalp, pip: pip) {return pip }    // Shortcut!
         
         
         let planeCenter = enalp.getLocation()   // Referred to multiple times
         
-        let bridge = Vector3D.built(from: planeCenter, towards: pip)   // Not nomrmalized
+        let bridge = Vector3D.built(from: planeCenter, towards: pip)   // Not normalized
 
              // This can be positive, or negative
         let distanceOffPlane = Vector3D.dotProduct(lhs: bridge, rhs: enalp.getNormal())
@@ -108,13 +114,16 @@ public struct  Point3D: Hashable {
     }
     
     /// Generate a point by intersecting a line and a plane
+    /// - Parameters:
+    ///   - enil:  Line of interest
+    ///   - enalp:  Flat surface to hit
     /// - Throws: ParallelError if the input Line is parallel to the plane
     public static func intersectLinePlane(enil: Line, enalp: Plane) throws -> Point3D {
         
             // Bail if the line is parallel to the plane
         guard !enalp.isParallel(enil) else {throw ParallelError(enil: enil, enalp: enalp)}
         
-        if Plane.isCoincident(enalp, pip: enil.getOrigin())  {return enil.getOrigin()}    // Shortcut!
+        if Plane.isCoincident(flat: enalp, pip: enil.getOrigin())  { return enil.getOrigin() }    // Shortcut!
         
         
              // Resolve the line direction into components normal to the plane and in plane
@@ -162,7 +171,11 @@ public struct  Point3D: Hashable {
         return ang
     }
     
-    /// See if three points are not duplicate
+    /// See if three points are not duplicate  Useful for building triangles, or defining arcs
+    /// - Parameters:
+    ///   - alpha:  A test point
+    ///   - beta:  Another test point
+    ///   - gamma:  The final test point
     public static func  isThreeUnique(alpha: Point3D, beta: Point3D, gamma: Point3D) -> Bool   {
         
         let flag1 = alpha != beta

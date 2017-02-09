@@ -192,17 +192,17 @@ class PlaneTests: XCTestCase {
         
         var trial = Point3D(x: 2.0, y: 5.0, z: 3.5)
         
-        XCTAssert(Plane.isCoincident(playingField, pip: trial))
+        XCTAssert(Plane.isCoincident(flat: playingField, pip: trial))
         
         
         trial = Point3D(x: 1.9, y: 3.0, z: 4.0)
         
-        XCTAssertFalse(Plane.isCoincident(playingField, pip: trial))
+        XCTAssertFalse(Plane.isCoincident(flat: playingField, pip: trial))
         
         
         trial = Point3D(x: 2.0, y: 3.0, z: 4.0)
         
-        XCTAssert(Plane.isCoincident(playingField, pip: trial))
+        XCTAssert(Plane.isCoincident(flat: playingField, pip: trial))
         
     }
 }

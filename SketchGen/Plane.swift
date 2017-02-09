@@ -70,7 +70,7 @@ public struct Plane   {
     
     /// Does the argument point lie on the plane?
     /// - See: 'testIsCoincident' under PlaneTests
-    public static func isCoincident(_ flat: Plane, pip:  Point3D) -> Bool  {
+    public static func isCoincident(flat: Plane, pip:  Point3D) -> Bool  {
         
         if pip == flat.getLocation()   {  return true  }   // Shortcut!
         
@@ -92,9 +92,9 @@ public struct Plane   {
     }
     
     /// Check to see that the line is parallel to the plane, and lies on it
-    func isCoincident(_ enil: Line) -> Bool  {
+    func isCoincident(enil: Line) -> Bool  {
         
-        return self.isParallel(enil) && Plane.isCoincident(self, pip: enil.getOrigin())
+        return self.isParallel(enil) && Plane.isCoincident(flat: self, pip: enil.getOrigin())
     }
     
     
@@ -110,7 +110,7 @@ public struct Plane   {
     /// - SeeAlso:  isParallel and ==
     public static func isCoincident(_ lhs: Plane, rhs: Plane) -> Bool  {
         
-        return Plane.isCoincident(lhs, pip: rhs.location) && Plane.isParallel(lhs, rhs: rhs)
+        return Plane.isCoincident(flat: lhs, pip: rhs.location) && Plane.isParallel(lhs, rhs: rhs)
     }
     
     /// Construct a parallel plane offset some distance

@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import simd
 
 /// A direction built from three orthogonal components
 public struct Vector3D: Equatable {
@@ -20,6 +19,7 @@ public struct Vector3D: Equatable {
     public static let EpsilonV: Double = 0.001
     
     /// The simplest constructor
+    /// - See: 'testFidelity' under Vector3DTests
     public init(i: Double, j: Double, k: Double)   {
         
         self.i = i
@@ -54,8 +54,8 @@ public struct Vector3D: Equatable {
     
     
     /// Destructively change the vector length to 1.0
-    /// - See: 'testNormalize' under Vector3DTests
     /// - Throws: ZeroVectorError if the Vector has zero length
+    /// - See: 'testNormalize' under Vector3DTests
     public mutating func normalize() throws  {
         
         guard(!isZero()) else {throw ZeroVectorError(dir: self)}
@@ -85,6 +85,7 @@ public struct Vector3D: Equatable {
     
     
     /// Rotate by a matrix
+    /// - See: 'testTransform' under Vector3DTests
     public func transform(xirtam: Transform) -> Vector3D {
         
         let dir4 = RowMtx4(valOne: self.i, valTwo: self.j, valThree: self.k, valFour: 0.0)
@@ -95,8 +96,36 @@ public struct Vector3D: Equatable {
     }
     
     
+    /// Construct a vector that has been rotated from self about the axis specified by the first argument
+    /// - Parameter:  angleRad  The amount that the direction should change  Expressed in radians, not degrees!
+    func twistAbout(axisDir: Vector3D, angleRad: Double) -> Vector3D  {   // Should this become a static func?
+        
+        let perp = try! Vector3D.crossProduct(lhs: axisDir, rhs: self)
+        
+        let alongStep = self * cos(angleRad)
+        let perpStep = perp * sin(angleRad)
+        
+        var rotated = alongStep + perpStep
+        try! rotated.normalize()
+        
+        return rotated
+    }
+    
+    
+    /// Construct a vector re-directed one quarter turn away in the counterclockwise direction in the XY plane
+    /// Use crossProduct to do this for a more general case
+    public func perp() -> Vector3D   {
+        
+        let rightAngle = Vector3D(i: -self.j, j: self.i, k: 0.0)   // Perpendicular in a CCW direction
+        
+        return rightAngle
+    }
+    
+    
     /// Construct vector from first input point towards the second
+    /// Does not check for a zero vector
     /// Consider using "normalize" on the returned value
+    /// - See: 'testBuiltFrom' under Vector3DTests
     public static func built(from: Point3D, towards: Point3D) -> Vector3D {
         
         return Vector3D(i: towards.x - from.x, j: towards.y - from.y, k: towards.z - from.z)
@@ -114,7 +143,7 @@ public struct Vector3D: Equatable {
     /// - Throws: IdenticalVectorError if the inputs are identical or opposite
     /// - Throws: IdenticalVectorError if the inputs are scaled versions of each other
     /// - See: 'testCross' under Vector3DTests
-    public static func  crossProduct(lhs: Vector3D, rhs: Vector3D) throws -> Vector3D   {
+    public static func crossProduct(lhs: Vector3D, rhs: Vector3D) throws -> Vector3D   {
         
         guard(lhs != rhs) else { throw IdenticalVectorError(dir: lhs)}
         guard(!Vector3D.isOpposite(lhs: lhs, rhs: rhs)) else { throw IdenticalVectorError(dir: lhs)}
@@ -133,8 +162,9 @@ public struct Vector3D: Equatable {
     }
     
     /// Check for vectors with the same direction but a different sense
-    /// - See: 'testIsOpposite' under Vector3DTests
+    /// This assumes that they are of identical length
     /// - SeeAlso:  isScaled()
+    /// - See: 'testIsOpposite' under Vector3DTests
     public static func isOpposite(lhs: Vector3D, rhs: Vector3D) -> Bool   {
         
         let tempVec = lhs * -1.0
@@ -147,8 +177,8 @@ public struct Vector3D: Equatable {
     /// - SeeAlso:  isOpposite()
     public static func  isScaled(lhs: Vector3D, rhs: Vector3D) throws -> Bool  {
         
-        guard(!lhs.isZero()) else {  throw ZeroVectorError(dir: lhs)}
-        guard(!rhs.isZero()) else {  throw ZeroVectorError(dir: rhs)}
+        guard(!lhs.isZero()) else {  throw ZeroVectorError(dir: lhs)  }
+        guard(!rhs.isZero()) else {  throw ZeroVectorError(dir: rhs)  }
         
         var leftNormalized = Vector3D(model: lhs)
         try! leftNormalized.normalize()
@@ -190,32 +220,6 @@ public struct Vector3D: Equatable {
     
     
     
-    /// Construct a vector that has been rotated from self about the axis specified by the first argument
-    /// - Parameter:  angleRad  The amount that the direction should change  Expressed in radians, not degrees!
-    func twistAbout(axisDir: Vector3D, angleRad: Double) -> Vector3D  {   // Should this become a static func?
-        
-        let perp = try! Vector3D.crossProduct(lhs: axisDir, rhs: self)
-        
-        let alongStep = self * cos(angleRad)
-        let perpStep = perp * sin(angleRad)
-        
-        var rotated = alongStep + perpStep
-        try! rotated.normalize()
-        
-        return rotated
-    }
-    
-    
-    /// Construct a vector re-directed one quarter turn away in the counterclockwise direction in the XY plane
-    /// Use crossProduct to do this for a more general case
-    public func perp() -> Vector3D   {
-        
-        let rightAngle = Vector3D(i: -self.j, j: self.i, k: 0.0)   // Perpendicular in a CCW direction
-        
-        return rightAngle
-    }
-    
-    
     /// Build a Vector3D in the XY plane
     /// - Parameter: angle: Desired angle in degrees
     static func makeXZ(_ angle: Double) -> Vector3D  {
@@ -245,12 +249,14 @@ public func == (lhs: Vector3D, rhs: Vector3D) -> Bool   {
 }
 
 /// Construct a vector that is the sum of the two input vectors
+/// - See: 'testPlus' under Vector3DTests
 public func + (lhs: Vector3D, rhs: Vector3D) -> Vector3D   {
     
     return Vector3D(i: lhs.i + rhs.i, j: lhs.j + rhs.j, k: lhs.k + rhs.k)
 }
 
 /// Construct a vector that is the difference between the two input vectors
+/// - See: 'testMinus' under Vector3DTests
 public func - (lhs: Vector3D, rhs: Vector3D) -> Vector3D   {
     
     return Vector3D(i: lhs.i - rhs.i, j: lhs.j - rhs.j, k: lhs.k - rhs.k)

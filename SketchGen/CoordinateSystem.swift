@@ -43,7 +43,7 @@ open class CoordinateSystem   {
         guard (axisY.isUnit()) else {  throw NonUnitDirectionError(dir: self.axisY)}
         guard (axisZ.isUnit()) else {  throw NonUnitDirectionError(dir: self.axisZ)}
         
-        guard (CoordinateSystem.isMutOrtho(axisX, dos: axisY, tres: axisZ)) else {  throw NonOrthogonalCSYSError()}
+        guard (CoordinateSystem.isMutOrtho(axisX, dos: axisY, tres: axisZ)) else { throw NonOrthogonalCSYSError() }
         
     }
     
