@@ -41,21 +41,21 @@ class Roundy  {
             
         case "box":  showBox()
             
-        case "eff": plotF()
+        case "eff": plotF()   // Untested
             
-        case "segs": makeSegs()
+        case "segs": makeSegs()   // Broken by a negative sweep angle
             
         case "stand": standProfile()
             
-        case "track": trackSection()
+        case "track": trackSection()   // Untested
             
-        case "cubic": firstCubic()
+        case "cubic": firstCubic()   // Untested
             
-        case "egg": wholeEllipse()
+        case "egg": wholeEllipse()   // Untested
             
         case "herm": firstHermite()
             
-        case "spline": firstSpline()
+        case "spline": firstSpline()   // Untested
             
             
         default:  showBox()   // Demonstrate the boundary box for an Arc

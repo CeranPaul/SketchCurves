@@ -1,9 +1,9 @@
 //
 //  CubicTests.swift
-//  SketchGen
+//  SketchCurves
 //
 //  Created by Paul on 7/16/16.
-//  Copyright © 2016 Ceran Digital Media. All rights reserved.  See LICENSE.md
+//  Copyright © 2017 Ceran Digital Media. All rights reserved.  See LICENSE.md
 //
 
 import XCTest

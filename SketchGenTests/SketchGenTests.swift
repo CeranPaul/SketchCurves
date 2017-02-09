@@ -1,8 +1,8 @@
 //
 //  SketchGenTests.swift
-//  SketchGenTests
+//  SketchCurves
 //
-//  Created by Paul Hollingshead on 11/27/15.
+//  Created by Paul on 11/27/15.
 //  Copyright © 2015 Ceran Digital Media. All rights reserved.
 //
 

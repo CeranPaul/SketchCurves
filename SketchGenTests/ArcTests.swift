@@ -1,9 +1,9 @@
 //
 //  ArcTests.swift
-//  BoxChopDemo
+//  SketchCurves
 //
 //  Created by Paul on 11/12/15.
-//  Copyright © 2015 Paul Hollingshead. All rights reserved.  See LICENSE.md
+//  Copyright © 2017 Ceran Digital Media. All rights reserved.  See LICENSE.md
 //
 
 import XCTest
@@ -262,6 +262,22 @@ class ArcTests: XCTestCase {
            // Bad referencing should cause an error to be thrown
         XCTAssertThrowsError(try Arc.buildFromCenterStartFinish(ctr, end1: e2, end2: ctr, useSmallAngle: true))
 
+        
+    }
+    func testExtent()   {
+        
+        let axis = Vector3D(i: 0.0, j: 0.0, k: 1.0)
+        
+        let ctr = Point3D(x: 2.0, y: 1.0, z: 5.0)
+        let e1 = Point3D(x: 4.5, y: 1.0, z: 5.0)
+        
+        let shield = try! Arc(center: ctr, axis: axis, end1: e1, sweep: M_PI_4 + 0.15)
+        
+        let box = shield.extent
+        
+        let target = 0.0
+        
+        XCTAssert(box.getOrigin().y >= 1.0)
         
     }
     

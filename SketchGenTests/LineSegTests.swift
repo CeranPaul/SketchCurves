@@ -81,6 +81,19 @@ class LineSegTests: XCTestCase {
         
     }
 
+    func testLength()   {
+        
+        let alpha = Point3D(x: 2.5, y: 2.5, z: 2.5)
+        let beta = Point3D(x: 4.5, y: 2.5, z: 2.5)
+        
+        let bar = try! LineSeg(end1: alpha, end2: beta)
+        
+        let target = 2.0
+        
+        XCTAssertEqual(bar.getLength(), target)
+    }
+    
+
     func testReverse()   {
         
         let alpha = Point3D(x: 2.5, y: 2.5, z: 2.5)
@@ -93,4 +106,60 @@ class LineSegTests: XCTestCase {
         XCTAssertEqual(alpha, stroke.getOtherEnd())
         XCTAssertEqual(beta, stroke.getOneEnd())
     }
+    func testClipTo()   {
+        
+        let alpha = Point3D(x: 2.5, y: 2.5, z: 2.5)
+        let beta = Point3D(x: 4.5, y: 4.5, z: 2.5)
+        
+        let stroke = try! LineSeg(end1: alpha, end2: beta)
+        
+        let cliff = Point3D(x: 4.0, y: 4.0, z: 2.5)
+        
+        let shorter = stroke.clipTo(stub: cliff, keepNear: true)
+        
+        let target = 1.5 * sqrt(2.0)
+        
+        XCTAssertEqualWithAccuracy(target, shorter.getLength(), accuracy: 0.00001)
+        
+    }
+    
+    func testResolveRelative()   {
+        
+        let alpha = Point3D(x: 2.5, y: 2.5, z: 2.5)
+        let beta = Point3D(x: 4.5, y: 2.5, z: 2.5)
+        
+        let stroke = try! LineSeg(end1: alpha, end2: beta)
+        
+        let pip = Point3D(x: 3.5, y: 3.0, z: 2.5)
+        
+        let offset = stroke.resolveNeighbor(speck: pip)
+        
+        
+        let targetA = Vector3D(i: 1.0, j: 0.0, k: 0.0)
+        let targetP = Vector3D(i: 0.0, j: 0.5, k: 0.0)
+        
+        XCTAssertEqual(offset.along, targetA)
+        XCTAssertEqual(offset.perp, targetP)
+        
+    }
+    
+    func testIsCrossing()   {
+        
+        let alpha = Point3D(x: 2.5, y: 2.5, z: 2.5)
+        let beta = Point3D(x: 2.5, y: 4.5, z: 2.5)
+        
+        let stroke = try! LineSeg(end1: alpha, end2: beta)
+        
+        let chopA = Point3D(x: 2.4, y: 2.8, z: 2.5)
+        let chopB = Point3D(x: 2.6, y: 2.7, z: 2.5)
+        
+        let chop = try! LineSeg(end1: chopA, end2: chopB)
+        
+        let flag1 = stroke.isCrossing(chop: chop)
+        
+        XCTAssert(flag1)
+        
+        
+    }
+    
 }

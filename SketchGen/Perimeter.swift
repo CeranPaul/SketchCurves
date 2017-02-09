@@ -6,14 +6,18 @@
 //  Copyright © 2016 Ceran Digital Media. All rights reserved.  See LICENSE.md
 //
 
-import Foundation
+import UIKit
 
 /// A closed boundary that is the result of the sketch
-/// No provision for interior voids
+/// Interior voids have only been tested one deep
 open class Perimeter {
     
     /// The display list
     var pieces: [PenCurve]
+    
+    /// Collection of interior voids
+    /// This has not been tested with multiple circular holes
+    var cutouts: [Perimeter]
     
     /// Whether or not the perimeter has any gaps
     var closed: Bool
@@ -23,6 +27,10 @@ open class Perimeter {
         pieces = [PenCurve]()
         
         closed = false
+        
+        /// Each subset should be ordered
+        cutouts = [Perimeter]()
+        
     }
     
     
@@ -73,6 +81,14 @@ open class Perimeter {
             if !didConnect   { pieces.append(noob) }   // Add to the end of the array
             
         }   // End of outside 'else' clause
+        
+    }
+    
+    /// Put in a void
+    /// Does no checks for inclusion or overlap
+    func addCutout(seeThrough: Perimeter) -> Void   {
+        
+        cutouts.append(seeThrough)
         
     }
     
@@ -134,6 +150,38 @@ open class Perimeter {
         
         return nil   // A new way of doing things
     }
+    
+    /// Find the combined extent
+    func getExtent() -> OrthoVol   {
+        
+        var box = self.pieces[0].extent
+        
+        for (index, stroke) in self.pieces.enumerated()   {
+            if index != 0   {
+                box = box + stroke.extent
+            }
+        }
+        
+        return box
+    }
+    
+    /// Plot the boundaries.  This will be called by the UIView 'draw' function
+    /// Notice that a model-to-display transform is applied
+    public func draw(context: CGContext, tform: CGAffineTransform)  {
+        
+        for stroke in self.pieces   {
+            stroke.draw(context: context, tform: tform)
+        }
+        
+        for seeThrough in self.cutouts   {   // Iterate through the cutouts
+            
+            for stroke in seeThrough.pieces   {
+                stroke.draw(context: context, tform: tform)
+            }
+            
+        }   // End of outer loop
+        
+    }   // End of function 'draw'
     
     
 }

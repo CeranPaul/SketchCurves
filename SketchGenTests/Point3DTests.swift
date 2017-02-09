@@ -2,7 +2,7 @@
 //  Point3DTests.swift
 //  SketchCurves
 //
-//  Created by Paul Hollingshead on 11/5/15.
+//  Created by Paul on 11/5/15.
 //  Copyright © 2016 Ceran Digital Media. All rights reserved.  See LICENSE.md
 //
 

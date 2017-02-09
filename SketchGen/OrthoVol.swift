@@ -1,8 +1,9 @@
 //
 //  OrthoVol.swift
-//  CurveLab
+//  SketchCurves
 //
 //  Created by Paul on 10/30/15.
+//  Copyright © 2017 Ceran Digital Media. All rights reserved.  See LICENSE.md
 //
 
 import Foundation

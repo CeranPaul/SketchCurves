@@ -1,8 +1,8 @@
 //
 //  CoordinateSystem.swift
-//  SketchGen
+//  SketchCurves
 //
-//  Created by Paul Hollingshead on 6/6/16.
+//  Created by Paul on 6/6/16.
 //  Copyright © 2016 Ceran Digital Media. All rights reserved.  See LICENSE.md
 //
 

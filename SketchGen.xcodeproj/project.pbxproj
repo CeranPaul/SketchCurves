@@ -182,7 +182,6 @@
 		81414AFE1C08CE5E00A9DE83 /* SketchGen */ = {
 			isa = PBXGroup;
 			children = (
-				81FEAAD01C4E9411000F0E2A /* Errors */,
 				818D17851D599DF200BE248A /* CurveDemo.swift */,
 				818D17831D599DF200BE248A /* Arc.swift */,
 				8106F0021C1FA12C00C74FE6 /* Cubic.swift */,
@@ -200,6 +199,7 @@
 				81414B211C08CEE200A9DE83 /* PenCurve.swift */,
 				81414B221C08CEE200A9DE83 /* PenTypes.swift */,
 				81414B2E1C08CF2B00A9DE83 /* Easel2D.swift */,
+				81FEAAD01C4E9411000F0E2A /* Errors */,
 				81414AFF1C08CE5E00A9DE83 /* AppDelegate.swift */,
 				81414B011C08CE5E00A9DE83 /* ViewController.swift */,
 				81414B031C08CE5E00A9DE83 /* Main.storyboard */,

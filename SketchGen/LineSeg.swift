@@ -92,6 +92,11 @@ public class LineSeg: PenCurve {    // Can this be a struct, instead?
         return along   // I think it's weird that this has to be a separate line
     }
     
+    /// Calculate length
+    func getLength() -> Double   {
+        return Point3D.dist(pt1: self.endAlpha, pt2: self.endOmega)
+    }
+    
     /// Move, rotate, and scale by a matrix
     /// - Throws: CoincidentPointsError if it was scaled to be very small
     open func transform(_ xirtam: Transform) throws -> LineSeg {
@@ -171,6 +176,24 @@ public class LineSeg: PenCurve {    // Can this be a struct, instead?
         return freshSeg
     }
     
+    
+    /// See if another segment crosses this one
+    public func isCrossing(chop: LineSeg) -> Bool   {
+        
+        let compsA = self.resolveNeighbor(speck: chop.endAlpha)
+        let compsB = self.resolveNeighbor(speck: chop.endOmega)
+        
+        let compliance = Vector3D.dotProduct(lhs: compsA.perp, rhs: compsB.perp)
+        
+        let flag1 = compliance < 0.0
+        
+        let farthest = self.getLength()
+        
+        let flag2A = compsA.along.length() <= farthest
+        let flag2B = compsB.along.length() <= farthest
+        
+        return flag1 && flag2A && flag2B
+    }
     
     /// Find the change in parameter that meets the crown requirement
     public func findStep(allowableCrown: Double, currentT: Double, increasing: Bool) -> Double   {
