@@ -98,6 +98,51 @@ open class Arc: PenCurve {
     }
     
     
+    /// Build an arc from a center and two terminating points - perhaps tangent points
+    /// Direction is derived from the ordering of end1 and end2
+    /// Will fail for a half or full circle
+    /// - Parameters:
+    ///   - center: Point3D used for pivoting
+    ///   - end1: Point3D on the perimeter
+    ///   - end2: Point3D on the perimeter
+    /// - Throws: ArcPointsError
+    public init(center: Point3D, end1: Point3D, end2: Point3D, useSmallAngle: Bool) throws   {
+        
+        self.ctr = center
+        self.start = end1
+        self.finish = end2
+        
+        self.rad = Point3D.dist(pt1: self.ctr, pt2: self.start)
+        
+        var vecStart = Vector3D.built(from: center, towards: end1)
+        try! vecStart.normalize()
+        var vecFinish = Vector3D.built(from: center, towards: end2)
+        try! vecFinish.normalize()
+        
+        var spin = try! Vector3D.crossProduct(lhs: vecStart, rhs: vecFinish)   // The guard statement should keep this from failing
+        try! spin.normalize()
+        
+        self.axisDir = spin
+        
+        self.usage = PenTypes.ordinary   // Use 'setIntent' to attach the desired value
+        
+        // Dummy assignment. Postpone the expensive calculation until after the guard statements
+        self.extent = OrthoVol(minX: -0.5, maxX: 0.5, minY: -0.5, maxY: 0.5, minZ: -0.5, maxZ: 0.5)
+        
+        self.isFull = false
+        
+        self.sweepAngle = 0.0   // Dummy value
+        
+        
+        self.sweepAngle = findRange(useSmallAngle: useSmallAngle)
+        
+        // See if an arc can actually be made from the three given inputs
+        guard (Arc.isArcable(center: center, end1: end1, end2: end2))  else  { throw ArcPointsError(badPtA: center, badPtB: end1, badPtC: end2)}
+        
+        self.extent = figureExtent()    // Replace the dummy value
+
+    }
+    
     /// Simple getter for the center point
     open func getCenter() -> Point3D   {
         return self.ctr
@@ -129,48 +174,10 @@ open class Arc: PenCurve {
     }
     
     
-    /// Build an arc from a center and two boundary points
-    /// - Parameters:
-    ///   - center: Point3D used for pivoting
-    ///   - end1: Point3D on the perimeter
-    ///   - end2: Point3D on the perimeter
-    ///   - useSmallAngle: Which of the possibilities to use
-    /// This blows up for a half or full circle
-    /// - Throws: CoincidentPointsError, ArcPointsError
-    open static func buildFromCenterStartFinish(center: Point3D, end1: Point3D, end2: Point3D, useSmallAngle: Bool) throws -> Arc {
-        
-        // TODO: Add guard statements for half and full circles
-        
-        // Check that input points are unique  Can these be replaced by a call to 'isThreeUnique'?
-        guard (end1 != center && end2 != center) else { throw CoincidentPointsError(dupePt: center)}
-        guard (end1 != end2) else { throw CoincidentPointsError(dupePt: end1)}
-        
-        // See if an arc can actually be made from the three given inputs
-        guard (Arc.isArcable(center: center, end1: end1, end2: end2))  else  { throw ArcPointsError(badPtA: center, badPtB: end1, badPtC: end2)}
-        
-        
-        
-        var vecStart = Vector3D.built(from: center, towards: end1)
-        try! vecStart.normalize()
-        var vecFinish = Vector3D.built(from: center, towards: end2)
-        try! vecFinish.normalize()
-        
-        var spin = try! Vector3D.crossProduct(lhs: vecStart, rhs: vecFinish)
-        try! spin.normalize()
-        
-        let rawAngle = try! Vector3D.findAngle(baselineVec: vecStart, measureTo: vecFinish, perp: spin)
-        
-        var sweepAngle = rawAngle
-        if !useSmallAngle   { sweepAngle = rawAngle - 2.0 * M_PI  }
-        
-        let bow = try Arc(center: center, axis: spin, end1: end1, sweep: sweepAngle)
-        
-        return bow
-    }
     
     
     /// Angle is relative to a line between the center and the start point independent of direction of the arc
-    /// - Parameter: theta: Angle in radians
+    /// - Parameter: theta: Angle in radians from the positive X axis
     /// See the illustration in the wiki "Arc PointAtAngle" article
     open func pointAtAngle(theta: Double) -> Point3D  {
         
@@ -194,11 +201,19 @@ open class Arc: PenCurve {
     
     /// Find the point along this arc specified by the parameter 't'
     /// - Warning:  No checks are made for the value of t being inside some range
+    /// - Returns: Point
     open func pointAt(t: Double) -> Point3D  {
+        
+        let horzRef = Vector3D(i: 1.0, j: 0.0, k: 0.0)
+        
+        var vecStart = Vector3D.built(from: self.ctr, towards: self.start)
+        try! vecStart.normalize()
+        
+        let startAngle = try! Vector3D.findAngle(baselineVec: horzRef, measureTo: vecStart, perp: self.axisDir)
         
         let deltaAngle = t * self.sweepAngle    // Implies that 0 < t < 1
         
-        let spot = pointAtAngle(theta: deltaAngle)
+        let spot = pointAtAngle(theta: startAngle + deltaAngle)   // Should have the start angle added!
         
         return spot
     }
@@ -231,7 +246,15 @@ open class Arc: PenCurve {
         
         let thumbsUp = abs(dist1 - dist2) < Point3D.Epsilon
         
-        return thumbsUp
+        var vecStart = Vector3D.built(from: center, towards: end1)
+        try! vecStart.normalize()
+        
+        var vecFinish = Vector3D.built(from: center, towards: end2)
+        try! vecFinish.normalize()
+        
+        let flag1 = Vector3D.isOpposite(lhs: vecStart, rhs: vecFinish)
+        
+        return thumbsUp && !flag1
     }
     
     /// Figure how far the point is off the curve, and how far along the curve it is.  Useful for picks
@@ -357,54 +380,37 @@ open class Arc: PenCurve {
     
     
     /// Determine the range of angles covered by the arc
-    /// See the first illustration in the wiki article "Arc Configuration".
-    ///  - Warning:  Will blow up with a half circle
-    func findRange() -> Double   {
+    /// Separated out for testing
+    func findRange(useSmallAngle:  Bool) -> Double   {
+    
+        var vecStart = Vector3D.built(from: self.ctr, towards: self.start)
+        try! vecStart.normalize()
+        var vecFinish = Vector3D.built(from: self.ctr, towards: self.finish)
+        try! vecFinish.normalize()
         
-        if self.isFull   {  return 2.0 * M_PI  }   // This case should have been avoided by logic in the constructor
-            
-        else  {
-            
-            /// Vector from the center towards the start point
-            var vecStart = Vector3D.built(from: self.ctr, towards: self.start)
-            try! vecStart.normalize()   // Checks in the constructor should keep this from being zero length
-            
-            var vecFinish = Vector3D.built(from: self.ctr, towards: self.finish)
-            try! vecFinish.normalize()   // Checks in the constructor should keep this from being zero length
-            
-            var perp = try! Vector3D.crossProduct(lhs: vecStart, rhs: vecFinish)
-            try! perp.normalize()
-            
-            // For Case A in the illustration, perp will be going into the page
-            
-            
-//            let perpToVecStart = try! Vector3D.crossProduct(lhs: perp, rhs: vecStart)
-            
-            
-            /// Vector from the start point towards the finish point
-//            let startFinish = Vector3D.built(from: self.start, towards: self.finish)
-            
-            
-            // Can range from -1.0 to 1.0, with a void at 0.0
-//            let sense = Vector3D.dotProduct(lhs: perpToVecStart, rhs: startFinish)
-            
-//            var side = true
-//            side = sense > 0.0
-            
-            
-            let projection = Vector3D.dotProduct(lhs: vecStart, rhs: vecFinish)
-            
-            /// The raw material for determining the range
-            let angleRaw = acos(projection)
-            
-            
-            
-            /// Value to be returned.  The initial value will be overwritten 50% of the time
-            let angle = angleRaw
-            
-            
-            return angle
+        /// Larger of the possible ranges
+        var ccwSweep: Double
+        
+        let thetaStart = atan2(vecStart.j, vecStart.i)   // Between -M_PI and M_PI
+        var thetaFinish = atan2(vecFinish.j, vecFinish.i)
+        
+        if thetaFinish >= 0.0   {
+            ccwSweep = thetaFinish - thetaStart
+            if ccwSweep < 0.0   { ccwSweep += 2.0 * M_PI }
+        }  else  {
+            thetaFinish += 2.0 * M_PI
+            ccwSweep = thetaFinish - thetaStart
         }
+        
+        if useSmallAngle && ccwSweep > M_PI   {
+            ccwSweep = -1.0 * (2.0 * M_PI - ccwSweep)   //2.0 * M_PI - ccwSweep
+        }
+        
+        if !useSmallAngle && ccwSweep < M_PI   {
+            ccwSweep = -1.0 * (2.0 * M_PI - ccwSweep)
+        }
+        
+        return ccwSweep
     }
     
     

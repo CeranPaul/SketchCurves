@@ -280,6 +280,42 @@ class Vector3DTests: XCTestCase {
         XCTAssert(trial == 1.06)
     }
     
+    func testFindAngle()   {
+        
+        /// Reference vector for "up"
+        let rocket = Vector3D(i: 0.0, j: 0.0, k: 1.0)
+        
+        let thisWay = Vector3D(i: 1.0, j: 0.0, k: 0.0)
+        let thatWay = Vector3D(i: 0.0, j: -1.0, k: 0.0)
+        
+        let target = -M_PI_2
+        
+        let trial = try! Vector3D.findAngle(baselineVec: thisWay, measureTo: thatWay, perp: rocket)
+        
+        XCTAssertEqualWithAccuracy(trial, target, accuracy: Vector3D.EpsilonV)
+
+
+        let thatWay2 = Vector3D(i: 0.866, j: -0.5, k: 0.0)
+        let trial2 = try! Vector3D.findAngle(baselineVec: thisWay, measureTo: thatWay2, perp: rocket)
+        let target2 = -M_PI / 6.0
+        
+        XCTAssertEqualWithAccuracy(trial2, target2, accuracy: Vector3D.EpsilonV)
+
+        
+        let thatWay3 = Vector3D(i: -1.0, j: 0.0, k: 0.0)
+        let trial3 = try! Vector3D.findAngle(baselineVec: thisWay, measureTo: thatWay3, perp: rocket)
+        let target3 = M_PI
+        
+        XCTAssertEqualWithAccuracy(trial3, target3, accuracy: Vector3D.EpsilonV)
+        
+        
+        let thatWay4 = Vector3D(i: 1.0, j: 0.0, k: 0.0)
+        let trial4 = try! Vector3D.findAngle(baselineVec: thisWay, measureTo: thatWay4, perp: rocket)
+        let target4 = 0.0
+        
+        XCTAssertEqualWithAccuracy(trial4, target4, accuracy: Vector3D.EpsilonV)
+    }
+    
     // Test addition
     func testPlus()   {
         
@@ -292,6 +328,7 @@ class Vector3DTests: XCTestCase {
         
         XCTAssert(trial == target)
     }
+    
     
     // Test subtraction
     func testMinus()   {

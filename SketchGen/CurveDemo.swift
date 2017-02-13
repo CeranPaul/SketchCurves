@@ -303,7 +303,7 @@ class Roundy  {
     /// Build an Arc, then illustrate its surrounding extent
     /// - Returns:  Void, but modifies 'displayCurves'
     func showBox()   {
-        
+                
         let v = sqrt(3.0) / 2.0
         let ctr = Point3D(x: 0.0, y: 0.0, z: 0.0)
         let start = Point3D(x: 0.5, y: v, z: 0.0)
@@ -312,7 +312,7 @@ class Roundy  {
         do   {
             
             // The Boolean seems to be reversed
-            let bow = try Arc.buildFromCenterStartFinish(center: ctr, end1: start, end2: finish, useSmallAngle: false)
+            let bow = try Arc(center: ctr, end1: start, end2: finish, useSmallAngle: false)
             bow.setIntent(purpose: PenTypes.arc)
             displayCurves.append(bow)
             
@@ -408,7 +408,8 @@ class Roundy  {
             stroke = try LineSeg(end1: ptE, end2: ptF)
             displayCurves.append(stroke)
             
-            stroke = try Arc.buildFromCenterStartFinish(center: ptG, end1: ptF, end2: ptH, useSmallAngle: true)
+               // This will blow up!
+            stroke = try Arc(center: ptG, end1: ptF, end2: ptH, useSmallAngle: false)
             displayCurves.append(stroke)
             
             stroke = try LineSeg(end1: ptH, end2: ptJ)
@@ -420,7 +421,8 @@ class Roundy  {
             stroke = try LineSeg(end1: ptK, end2: ptL)
             displayCurves.append(stroke)
             
-            stroke = try Arc.buildFromCenterStartFinish(center: ptG, end1: ptL, end2: ptM, useSmallAngle: false)
+               // This will blow up!
+            stroke = try Arc(center: ptG, end1: ptL, end2: ptM, useSmallAngle: false)
             displayCurves.append(stroke)
             
             stroke = try LineSeg(end1: ptM, end2: ptN)
@@ -473,7 +475,7 @@ class Roundy  {
         
         do   {
             
-            let roundEdge = try Arc.buildFromCenterStartFinish(center: ctr, end1: start, end2: finish, useSmallAngle: false)
+            let roundEdge = try Arc(center: ctr, end1: start, end2: finish, useSmallAngle: false)
             roundEdge.setIntent(purpose: PenTypes.ideal)
             displayCurves.append(roundEdge)
             
@@ -625,7 +627,7 @@ class Roundy  {
         
             var stroke: PenCurve    // Used to hold arcs and line segments
             
-            stroke = try Arc.buildFromCenterStartFinish(center: ptA, end1: ptK, end2: ptC, useSmallAngle: false)
+            stroke = try Arc(center: ptA, end1: ptK, end2: ptC, useSmallAngle: false)
             displayCurves.append(stroke)
             
             self.extent = stroke.extent
@@ -643,7 +645,7 @@ class Roundy  {
             stroke = try LineSeg(end1: ptE, end2: ptF)
             displayCurves.append(stroke)
             
-            stroke = try Arc.buildFromCenterStartFinish(center: ptB, end1: ptF, end2: ptG, useSmallAngle: false)
+            stroke = try Arc(center: ptB, end1: ptF, end2: ptG, useSmallAngle: false)
             displayCurves.append(stroke)
             
             self.extent = self.extent + stroke.extent

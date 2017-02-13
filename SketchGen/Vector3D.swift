@@ -194,26 +194,29 @@ public struct Vector3D: Equatable {
     
     
     /// Find a positive or negative angle between two unit vectors
-    /// - Parameter: baselineVec: Direction to be measured from
-    /// - Parameter: measureTo: Direction of interest
-    /// - Parameter: perp: Normal vector used to determine positive and negative
-    /// - Throws: ZeroVectorError if any of the inputs are of zero length
+    /// - Parameters:
+    ///   - baselineVec: Unit direction vector to be measured from
+    ///   - measureTo: Unit direction vector of interest
+    ///   - perp: Unit normal vector used to determine positive and negative
+    /// - Throws: NonUnitDirectionError
     /// - Returns: Angle in radians between -M_PI and M_PI
+    /// - See: 'testFindAngle' under Vector3DTests
     public static func findAngle(baselineVec: Vector3D, measureTo: Vector3D, perp: Vector3D) throws -> Double   {
         
-        guard !baselineVec.isZero()  else  { throw ZeroVectorError(dir: baselineVec)}
-        guard !measureTo.isZero()  else  { throw ZeroVectorError(dir: measureTo)}
-        guard !perp.isZero()  else  { throw ZeroVectorError(dir: perp)}
+        guard baselineVec.isUnit()  else  { throw NonUnitDirectionError(dir: baselineVec)}
+        guard measureTo.isUnit()  else  { throw NonUnitDirectionError(dir: measureTo)}
+        guard perp.isUnit()  else  { throw NonUnitDirectionError(dir: perp)}
+        
         
         let projection = Vector3D.dotProduct(lhs: baselineVec, rhs: measureTo)
-        var angle = acos(projection)   // Default case
+        var angle = acos(projection)   // Default case.  May be negated below
         
+           // Should the angle be negated?
         var positiveVert = try! Vector3D.crossProduct(lhs: perp, rhs: baselineVec)
         try! positiveVert.normalize()
         
-        let side = Vector3D.dotProduct(lhs: measureTo, rhs: positiveVert)
-        
-        if side < 0.0   { angle = 2.0 * M_PI - angle  }
+        let side = Vector3D.dotProduct(lhs: measureTo, rhs: positiveVert)        
+        if side < 0.0   { angle = -1.0 * angle }
         
         return angle
     }
