@@ -56,9 +56,15 @@ open class Cubic: PenCurve   {
         self.dz = dz
         
         ptAlpha = Point3D(x: dx, y: dy, z: dz)
-        ptOmega = Point3D(x: dx, y: dy, z: dz)
         
-        self.usage = PenTypes.Ordinary
+        let sumX = self.ax + self.bx + self.cx + self.dx
+        let sumY = self.ay + self.by + self.cy + self.dy
+        let sumZ = self.az + self.bz + self.cz + self.dz
+        
+        ptOmega = Point3D(x: sumX, y: sumY, z: sumZ)
+        
+        
+        self.usage = PenTypes.ordinary
         
         // Dummy assignment. Postpone the expensive calculation until after the guard statements
         self.extent = OrthoVol(minX: -0.5, maxX: 0.5, minY: -0.5, maxY: 0.5, minZ: -0.5, maxZ: 0.5)
@@ -70,8 +76,11 @@ open class Cubic: PenCurve   {
     /// Build from two points and two slopes
     /// The assignment statements come from an algebraic manipulation of the equations
     /// in the Wikipedia article on Cubic Hermite spline
+    /// - See: 'testSumsHermite' under CubicTests
     init(ptA: Point3D, slopeA: Vector3D, ptB: Point3D, slopeB: Vector3D)   {
         
+        ptAlpha = ptA
+        ptOmega = ptB
         
         self.ax = 2.0 * ptA.x + slopeA.i - 2.0 * ptB.x + slopeB.i
         self.bx = -3.0 * ptA.x - 2.0 * slopeA.i + 3.0 * ptB.x - slopeB.i
@@ -88,10 +97,7 @@ open class Cubic: PenCurve   {
         self.cz = slopeA.k
         self.dz = ptA.z
         
-        ptAlpha = Point3D(x: dx, y: dy, z: dz)
-        ptOmega = Point3D(x: dx, y: dy, z: dz)
-        
-        self.usage = PenTypes.Ordinary
+        self.usage = PenTypes.ordinary
         
         // Dummy assignment. Postpone the expensive calculation until after the guard statements
         self.extent = OrthoVol(minX: -0.5, maxX: 0.5, minY: -0.5, maxY: 0.5, minZ: -0.5, maxZ: 0.5)
@@ -104,7 +110,11 @@ open class Cubic: PenCurve   {
     /// Build from two end points and two control points
     /// Assignment statements from an algebraic manipulation of the equations
     /// in the Wikipedia article on Bezier Curve
+    /// - See: 'testSumsBezier' under CubicTests
     init(ptA: Point3D, controlA: Point3D, controlB: Point3D, ptB: Point3D)   {
+        
+        ptAlpha = ptA
+        ptOmega = ptB
         
         self.ax = 3.0 * controlA.x - ptA.x - 3.0 * controlB.x + ptB.x
         self.bx = 3.0 * ptA.x - 6.0 * controlA.x + 3.0 * controlB.x
@@ -121,10 +131,7 @@ open class Cubic: PenCurve   {
         self.cz = 3.0 * controlA.z - 3.0 * ptA.z
         self.dz = ptA.z
         
-        ptAlpha = Point3D(x: dx, y: dy, z: dz)
-        ptOmega = Point3D(x: dx, y: dy, z: dz)
-        
-        self.usage = PenTypes.Ordinary
+        self.usage = PenTypes.ordinary
         
         // Dummy assignment. Postpone the expensive calculation until after the guard statements
         self.extent = OrthoVol(minX: -0.5, maxX: 0.5, minY: -0.5, maxY: 0.5, minZ: -0.5, maxZ: 0.5)
@@ -321,7 +328,7 @@ open class Cubic: PenCurve   {
     /// - Returns: Vector components relative to the origin
     public func resolveNeighbor(speck: Point3D) -> (along: Vector3D, perp: Vector3D)   {
         
-        let otherSpeck = speck
+//        let otherSpeck = speck
         
         let alongVector = Vector3D(i: 1.0, j: 0.0, k: 0.0)
         

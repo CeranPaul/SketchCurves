@@ -27,7 +27,7 @@ class ArcTests: XCTestCase {
         let atlantis = Point3D(x: 3.5, y: 8.0, z: 0.0)
         
         do   {
-            let orbit = try Arc.buildFromCenterStartFinish(sun, end1: earth, end2: atlantis, useSmallAngle: false)
+            let orbit = try Arc.buildFromCenterStartFinish(center: sun, end1: earth, end2: atlantis, useSmallAngle: false)
             
             XCTAssert(orbit.getCenter() == sun)
             XCTAssert(orbit.getOneEnd() == earth)
@@ -38,7 +38,7 @@ class ArcTests: XCTestCase {
         }
         
         do   {
-            let orbit = try Arc.buildFromCenterStartFinish(sun, end1: earth, end2: atlantis, useSmallAngle: false)
+            let orbit = try Arc.buildFromCenterStartFinish(center: sun, end1: earth, end2: atlantis, useSmallAngle: false)
             
             XCTAssertFalse(orbit.isFull)
             
@@ -47,7 +47,7 @@ class ArcTests: XCTestCase {
         }
         
         do   {
-            let orbit = try Arc.buildFromCenterStartFinish(sun, end1: earth, end2: earth, useSmallAngle: false)
+            let orbit = try Arc.buildFromCenterStartFinish(center: sun, end1: earth, end2: earth, useSmallAngle: false)
             
             XCTAssert(orbit.isFull)   // Never gets to this test
             
@@ -63,7 +63,7 @@ class ArcTests: XCTestCase {
         let earth = Point3D(x: 5.5, y: 6.0, z: 0.0)
         let atlantis = Point3D(x: 3.5, y: 8.0, z: 0.0)
         
-        let orbitXY = try! Arc.buildFromCenterStartFinish(sun, end1: earth, end2: atlantis, useSmallAngle: true)
+        let orbitXY = try! Arc.buildFromCenterStartFinish(center: sun, end1: earth, end2: atlantis, useSmallAngle: true)
         
         XCTAssert(orbitXY.getSweepAngle() == M_PI_2)
         
@@ -78,7 +78,7 @@ class ArcTests: XCTestCase {
         let s1 = Point3D(x: 0.9, y: -1.21 + sqrt32, z: 3.5 + 0.5)
         let f1 = Point3D(x: 0.9, y: -1.21, z: 3.5 + 1.0)
         
-        let slice = try! Arc.buildFromCenterStartFinish(c1, end1: s1, end2: f1, useSmallAngle: false)
+        let slice = try! Arc.buildFromCenterStartFinish(center: c1, end1: s1, end2: f1, useSmallAngle: false)
         
         let target = Vector3D(i: 1.0, j: 0.0, k: 0.0)
         
@@ -95,14 +95,14 @@ class ArcTests: XCTestCase {
         let green = Point3D(x: -9.2, y: 3.0, z: -1.2)
         let checker = Point3D(x: -10.5, y: 4.3, z: -1.2)
         
-        let shoulder = try! Arc.buildFromCenterStartFinish(ctr, end1: green, end2: checker, useSmallAngle: true)
+        let shoulder = try! Arc.buildFromCenterStartFinish(center: ctr, end1: green, end2: checker, useSmallAngle: true)
         
         var clock = Vector3D(i: 0.866, j: 0.5, k: 0.0)
         try! clock.normalize()
         
         let ray = try! Line(spot: ctr, arrow: clock)
         
-        let splat = shoulder.pointAtAngle(M_PI / 6.0)
+        let splat = shoulder.pointAtAngle(theta: M_PI / 6.0)
         
         XCTAssert(Line.isCoincident(ray, trial: splat))
     }
@@ -114,7 +114,7 @@ class ArcTests: XCTestCase {
         let tip = Point3D(x: 3.5, y: 8.0, z: 0.0)
         
         do   {
-            let grip = try Arc.buildFromCenterStartFinish(thumb, end1: knuckle, end2: tip, useSmallAngle: true)
+            let grip = try Arc.buildFromCenterStartFinish(center: thumb, end1: knuckle, end2: tip, useSmallAngle: true)
             
             var spot = grip.pointAt(t: 0.5)
             
@@ -142,7 +142,7 @@ class ArcTests: XCTestCase {
         /// Noon sun
         let checker = Point3D(x: 10.5, y: 7.3, z: -1.2)
         
-        let shoulder = try! Arc.buildFromCenterStartFinish(ctr, end1: green, end2: checker, useSmallAngle: true)
+        let shoulder = try! Arc.buildFromCenterStartFinish(center: ctr, end1: green, end2: checker, useSmallAngle: true)
         
         
         var upRight = Vector3D(i: 1.0, j: 1.0, k: 0.0)
@@ -159,7 +159,7 @@ class ArcTests: XCTestCase {
         XCTAssert(flag1)
         
     
-        let sunSetting = try! Arc.buildFromCenterStartFinish(ctr, end1: checker, end2: green, useSmallAngle: true)
+        let sunSetting = try! Arc.buildFromCenterStartFinish(center: ctr, end1: checker, end2: green, useSmallAngle: true)
         
         var clock = Vector3D(i: 0.866, j: 0.5, k: 0.0)
         try! clock.normalize()
@@ -177,7 +177,7 @@ class ArcTests: XCTestCase {
         ctr = Point3D(x: 10.5, y: 6.0, z: -1.2)
         
         
-        let sunSetting2 = try! Arc.buildFromCenterStartFinish(ctr, end1: checker, end2: green, useSmallAngle: true)
+        let sunSetting2 = try! Arc.buildFromCenterStartFinish(center: ctr, end1: checker, end2: green, useSmallAngle: true)
         
         
         let sqrt32 = sqrt(3.0) / 2.0
@@ -191,7 +191,7 @@ class ArcTests: XCTestCase {
         XCTAssert(Line.isCoincident(ray3, trial: plop))
         
         
-        let countdown = try! Arc.buildFromCenterStartFinish(ctr, end1: checker, end2: green, useSmallAngle: false)
+        let countdown = try! Arc.buildFromCenterStartFinish(center: ctr, end1: checker, end2: green, useSmallAngle: false)
         
         clock = Vector3D(i: -1.0, j: 0.0, k: 0.0)
         ray3 = try! Line(spot: ctr, arrow: clock)
@@ -209,7 +209,7 @@ class ArcTests: XCTestCase {
         let checker = Point3D(x: 10.5, y: 7.3, z: -1.2)
         
         /// One quarter of a full circle - in quadrant I
-        let shoulder = try! Arc.buildFromCenterStartFinish(ctr, end1: green, end2: checker, useSmallAngle: true)
+        let shoulder = try! Arc.buildFromCenterStartFinish(center: ctr, end1: green, end2: checker, useSmallAngle: true)
         
         XCTAssertEqual(M_PI_2, shoulder.getSweepAngle())
         
@@ -245,9 +245,9 @@ class ArcTests: XCTestCase {
         let planetX = Point3D(x: 5.5, y: 6.0, z: 0.0)
         let planetY = Point3D(x: 3.5, y: 8.0, z: 0.0)
         
-        let solarSystem1 = try! Arc.buildFromCenterStartFinish(sun, end1: earth, end2: atlantis, useSmallAngle: true)
+        let solarSystem1 = try! Arc.buildFromCenterStartFinish(center: sun, end1: earth, end2: atlantis, useSmallAngle: true)
         
-        let solarSystem2 = try! Arc.buildFromCenterStartFinish(betelgeuse, end1: planetX, end2: planetY, useSmallAngle: true)
+        let solarSystem2 = try! Arc.buildFromCenterStartFinish(center: betelgeuse, end1: planetX, end2: planetY, useSmallAngle: true)
         
         XCTAssert(solarSystem1 == solarSystem2)
         
@@ -260,7 +260,7 @@ class ArcTests: XCTestCase {
         let e2 = Point3D(x: 2.0, y: 2.0, z: 5.0)
         
            // Bad referencing should cause an error to be thrown
-        XCTAssertThrowsError(try Arc.buildFromCenterStartFinish(ctr, end1: e2, end2: ctr, useSmallAngle: true))
+        XCTAssertThrowsError(try Arc.buildFromCenterStartFinish(center: ctr, end1: e2, end2: ctr, useSmallAngle: true))
 
         
     }
@@ -275,7 +275,7 @@ class ArcTests: XCTestCase {
         
         let box = shield.extent
         
-        let target = 0.0
+//        let target = 0.0
         
         XCTAssert(box.getOrigin().y >= 1.0)
         

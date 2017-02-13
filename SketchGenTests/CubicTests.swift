@@ -72,6 +72,48 @@ class CubicTests: XCTestCase {
         
     }
     
+    func testSumsHermite()   {
+        
+        let alpha = Point3D(x: 2.3, y: 1.5, z: 0.7)
+        let alSlope = Vector3D(i: 0.866, j: 0.5, k: 0.0)
+        
+        let beta = Point3D(x: 3.1, y: 1.6, z: 0.7)
+        let betSlope = Vector3D(i: 0.866, j: -0.5, k: 0.0)
+        
+        let bump = Cubic(ptA: alpha, slopeA: alSlope, ptB: beta, slopeB: betSlope)
+        
+        let sumX = bump.ax + bump.bx + bump.cx + bump.dx
+        let sumY = bump.ay + bump.by + bump.cy + bump.dy
+        let sumZ = bump.az + bump.bz + bump.cz + bump.dz
+        
+        XCTAssertEqualWithAccuracy(beta.x, sumX, accuracy: 0.0001)
+        XCTAssertEqualWithAccuracy(beta.y, sumY, accuracy: 0.0001)
+        XCTAssertEqualWithAccuracy(beta.z, sumZ, accuracy: 0.0001)
+    }
+    
+    func testSumsBezier()   {
+        
+        let alpha = Point3D(x: 2.3, y: 1.5, z: 0.7)
+        let alSlope = Vector3D(i: 0.866, j: 0.5, k: 0.0)
+        
+        let control1 = alpha.offset(jump: alSlope)
+        
+        let beta = Point3D(x: 3.1, y: 1.6, z: 0.7)
+        let betSlope = Vector3D(i: 0.866, j: -0.5, k: 0.0)
+        let bReverse = betSlope.reverse()
+        let control2 = beta.offset(jump: bReverse)
+        
+        let bump = Cubic(ptA: alpha, controlA: control1, controlB: control2, ptB: beta)
+        
+        let sumX = bump.ax + bump.bx + bump.cx + bump.dx
+        let sumY = bump.ay + bump.by + bump.cy + bump.dy
+        let sumZ = bump.az + bump.bz + bump.cz + bump.dz
+        
+        XCTAssertEqualWithAccuracy(beta.x, sumX, accuracy: 0.0001)
+        XCTAssertEqualWithAccuracy(beta.y, sumY, accuracy: 0.0001)
+        XCTAssertEqualWithAccuracy(beta.z, sumZ, accuracy: 0.0001)
+    }
+    
     func testExtent()   {
         
         let alpha = Point3D(x: -2.3, y: 1.5, z: 0.7)

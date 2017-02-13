@@ -31,7 +31,7 @@ class PerimeterTests: XCTestCase {
         
            // Create line segments for a sample perimeter
         let liberator = try! LineSeg(end1: alum, end2: steel)
-        var mustang = try! LineSeg(end1: steel, end2: rubber)
+        let mustang = try! LineSeg(end1: steel, end2: rubber)
         let fortress = try! LineSeg(end1: rubber, end2: acrylic)
         let lightning = try! LineSeg(end1: acrylic, end2: leather)
         let thunderbolt = try! LineSeg(end1: leather, end2: alum)

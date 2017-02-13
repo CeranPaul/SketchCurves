@@ -56,7 +56,7 @@ class Easel2D: UIView {
     
     override func draw(_ rect: CGRect) {
         
-        guard !modelGeo.displayLines.isEmpty else {    // Bail if there isn't anything to plot
+        guard !modelGeo.displayCurves.isEmpty else {    // Bail if there isn't anything to plot
             print("Nothing to plot!")
             return
         }
@@ -66,12 +66,7 @@ class Easel2D: UIView {
         context.saveGState();    // Preserve settings that were used before
         
         
-        
-        
-        
-        
-        
-        for wire in modelGeo.displayLines   {    // Traverse through the entire collection of displayLines
+        for wire in modelGeo.displayCurves   {    // Traverse through the entire collection
             
                 // Choose the appropriate pen
             switch wire.usage  {
@@ -86,7 +81,7 @@ class Easel2D: UIView {
                 context.setLineWidth(thin)
                 context.setLineDash(phase: 0, lengths: [CGFloat(10), CGFloat(8)]);
                                 
-            case .box:
+            case .extent:
                 context.setStrokeColor(brown)
                 context.setLineWidth(thin)
                 context.setLineDash(phase: 5, lengths: [CGFloat(10), CGFloat(8)])    // To clear any previous dash pattern
@@ -117,6 +112,7 @@ class Easel2D: UIView {
         context.restoreGState();    // Restore prior settings
         
     }    // End of drawRect
+    
     
     /// Determines parameters to center the model on the screen.
     /// - Parameter: displayRect: Bounds of the plotting area

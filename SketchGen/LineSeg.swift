@@ -31,7 +31,7 @@ public class LineSeg: PenCurve {    // Can this be a struct, instead?
         self.endAlpha = end1
         self.endOmega = end2
         
-        self.usage = PenTypes.default
+        self.usage = PenTypes.ordinary
         
             // Dummy assignment because of the peculiarities of being an init
         self.extent = OrthoVol(minX: -0.5, maxX: 0.5, minY: -0.5, maxY: 0.5, minZ: -0.5, maxZ: 0.5)

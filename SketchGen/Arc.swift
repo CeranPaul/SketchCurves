@@ -6,7 +6,6 @@
 //  Copyright © 2016 Ceran Digital Media. All rights reserved.  See LICENSE.md
 //
 
-import Foundation
 import UIKit
 
 /// A circular arc - either whole, or a portion
@@ -24,7 +23,8 @@ open class Arc: PenCurve {
     fileprivate var finish: Point3D
     
     fileprivate var sweepAngle: Double   // Can be either positive or negative
-                                     // Magnitude should be less that 2 pi
+                                         // Magnitude should be less that 2 pi
+                                         // Should this become a measurement?
     
     
     
@@ -43,6 +43,13 @@ open class Arc: PenCurve {
     
     
     /// The simplest initializer
+    /// - Parameters:
+    ///   - center: Point3D used for pivoting
+    ///   - axis: Unit vector, often in the +Z direction
+    ///   - end1: Starting point
+    ///   - sweep: Angle (in radians).  Can be positive or negative
+    /// - Throws: ZeroVectorError, NonUnitDirectionError, CoincidentPointsError
+    /// This doesn't catch the case of a bad axis direction
     public init(center: Point3D, axis: Vector3D, end1: Point3D, sweep: Double) throws   {
         
         self.ctr = center
@@ -55,8 +62,7 @@ open class Arc: PenCurve {
         self.isFull = false
         if self.sweepAngle == 2.0 * M_PI   { self.isFull = true }
         
-        
-        self.usage = PenTypes.default   // Use 'setIntent' to attach the desired value
+        self.usage = PenTypes.ordinary   // Use 'setIntent' to attach the desired value
         
         // Dummy assignment. Postpone the expensive calculation until after the guard statements
         self.extent = OrthoVol(minX: -0.5, maxX: 0.5, minY: -0.5, maxY: 0.5, minZ: -0.5, maxZ: 0.5)
@@ -69,8 +75,11 @@ open class Arc: PenCurve {
         
             
         var horiz = Vector3D.built(from: self.ctr, towards: self.start)
-        try! horiz.normalize()
-            
+        try! horiz.normalize()   // The guard statement should keep this from being a zero vector
+        
+             // Check the dot product of this and the axis?
+        
+        /// A vector perpendicular to horiz in the plane of the circle
         let vert = try! Vector3D.crossProduct(lhs: self.axisDir, rhs: horiz)
             
         let magnitudeH = self.rad * cos(sweepAngle)
@@ -82,6 +91,7 @@ open class Arc: PenCurve {
         let jump = deltaH + deltaV
             
         self.finish = self.ctr.offset(jump: jump)
+        
         
         self.extent = figureExtent()    // Replace the dummy value
         
@@ -114,15 +124,20 @@ open class Arc: PenCurve {
     }
     
     /// Attach new meaning to the curve
-    open func setIntent(_ purpose: PenTypes)   {
+    open func setIntent(purpose: PenTypes)   {
         self.usage = purpose
     }
     
     
     /// Build an arc from a center and two boundary points
+    /// - Parameters:
+    ///   - center: Point3D used for pivoting
+    ///   - end1: Point3D on the perimeter
+    ///   - end2: Point3D on the perimeter
+    ///   - useSmallAngle: Which of the possibilities to use
     /// This blows up for a half or full circle
     /// - Throws: CoincidentPointsError, ArcPointsError
-    open static func buildFromCenterStartFinish(_ center: Point3D, end1: Point3D, end2: Point3D, useSmallAngle: Bool) throws -> Arc {
+    open static func buildFromCenterStartFinish(center: Point3D, end1: Point3D, end2: Point3D, useSmallAngle: Bool) throws -> Arc {
         
         // TODO: Add guard statements for half and full circles
         
@@ -131,7 +146,7 @@ open class Arc: PenCurve {
         guard (end1 != end2) else { throw CoincidentPointsError(dupePt: end1)}
         
         // See if an arc can actually be made from the three given inputs
-        guard (Arc.isArcable(center, end1: end1, end2: end2))  else  { throw ArcPointsError(badPtA: center, badPtB: end1, badPtC: end2)}
+        guard (Arc.isArcable(center: center, end1: end1, end2: end2))  else  { throw ArcPointsError(badPtA: center, badPtB: end1, badPtC: end2)}
         
         
         
@@ -157,7 +172,7 @@ open class Arc: PenCurve {
     /// Angle is relative to a line between the center and the start point independent of direction of the arc
     /// - Parameter: theta: Angle in radians
     /// See the illustration in the wiki "Arc PointAtAngle" article
-    open func pointAtAngle(_ theta: Double) -> Point3D  {
+    open func pointAtAngle(theta: Double) -> Point3D  {
         
         var horiz = Vector3D.built(from: self.ctr, towards: self.start)
         try! horiz.normalize()
@@ -183,7 +198,7 @@ open class Arc: PenCurve {
         
         let deltaAngle = t * self.sweepAngle    // Implies that 0 < t < 1
         
-        let spot = pointAtAngle(deltaAngle)
+        let spot = pointAtAngle(theta: deltaAngle)
         
         return spot
     }
@@ -203,10 +218,11 @@ open class Arc: PenCurve {
     
     
     /// Check three points to see if they fit the pattern for defining an Arc
-    /// - Parameter: center: Point3D used for pivoting
-    /// - Parameter: end1: Point3D on the perimeter
-    /// - Parameter: end2: Point3D on the perimeter
-    open static func isArcable(_ center: Point3D, end1: Point3D, end2: Point3D) -> Bool  {
+    /// - Parameters:
+    ///   - center: Point3D used for pivoting
+    ///   - end1: Point3D on the perimeter
+    ///   - end2: Point3D on the perimeter
+    open static func isArcable(center: Point3D, end1: Point3D, end2: Point3D) -> Bool  {
         
         if !Point3D.isThreeUnique(alpha: center, beta: end1, gamma: end2)  { return false }
         
@@ -223,7 +239,7 @@ open class Arc: PenCurve {
     open func resolveNeighbor(speck: Point3D) -> (along: Vector3D, perp: Vector3D)   {
         
         // TODO: Make this return something besides dummy values
-        let otherSpeck = speck
+//        let otherSpeck = speck
         let alongVector = Vector3D(i: 1.0, j: 0.0, k: 0.0)
         
         let perpVector = Vector3D(i: 0.0, j: 1.0, k: 0.0)
@@ -232,7 +248,8 @@ open class Arc: PenCurve {
     }
     
     /// Plot the curve segment.  This will be called by the UIView 'drawRect' function
-    public func draw(context: CGContext, tform: CGAffineTransform)  {
+    /// As opposed to calling the function of CGContext?
+    public func drawOld(context: CGContext, tform: CGAffineTransform)  {
         
         var xCG: CGFloat = CGFloat(self.start.x)    // Convert to "CGFloat", and throw out Z coordinate
         var yCG: CGFloat = CGFloat(self.start.y)
@@ -259,6 +276,34 @@ open class Arc: PenCurve {
     }
     
     
+    /// Plot the arc segment.  This will be called by the UIView 'drawRect' function
+    /// - Warning:  This only works in the XY plane
+    /// Notice that a model-to-display transform is applied
+    public func draw(context: CGContext, tform: CGAffineTransform)  {
+        
+        let centerCG = CGPoint(x: self.ctr.x, y: self.ctr.y)   // Throw out Z information
+        let displayCenter = centerCG.applying(tform)
+        let radCG = CGFloat(self.rad) * tform.a   // This value should be the scale
+        
+        // Figure the start angle
+        let startDir = Vector3D.built(from: self.ctr, towards: self.start)
+        let thetaS = CGFloat(atan2(-1.0 * startDir.j, startDir.i))   // Because Y is positive downward on the screen
+        
+        // Figure the end angle
+        let finishDir = Vector3D.built(from: self.ctr, towards: self.finish)
+        let thetaF =  CGFloat(atan2(-1.0 * finishDir.j, finishDir.i))
+        
+        
+        let startCG = CGPoint(x: self.start.x, y: self.start.y)   // Throw out Z information
+        let displayStart = startCG.applying(tform)
+        
+        context.move(to: displayStart)
+        context.addArc(center: displayCenter, radius: radCG, startAngle: thetaS, endAngle: thetaF, clockwise: self.sweepAngle > 0.0)
+        
+        context.strokePath()
+        
+    }
+    
     /// Define the smallest aligned rectangle that encloses the arc
     /// Probably returns bad values half of the time in the current state
     func figureExtent() -> OrthoVol  {
@@ -279,7 +324,7 @@ open class Arc: PenCurve {
             var split = try! Vector3D.crossProduct(lhs: up, rhs: chord)
             try! split.normalize()   // Checks in the crossProduct should keep this from being a zero vector
         
-            var discard = split
+            let discard = split
 //            if self.isClockwise   { discard = split.reverse()  }
         
         
@@ -333,18 +378,18 @@ open class Arc: PenCurve {
             // For Case A in the illustration, perp will be going into the page
             
             
-            let perpToVecStart = try! Vector3D.crossProduct(lhs: perp, rhs: vecStart)
+//            let perpToVecStart = try! Vector3D.crossProduct(lhs: perp, rhs: vecStart)
             
             
             /// Vector from the start point towards the finish point
-            let startFinish = Vector3D.built(from: self.start, towards: self.finish)
+//            let startFinish = Vector3D.built(from: self.start, towards: self.finish)
             
             
             // Can range from -1.0 to 1.0, with a void at 0.0
-            let sense = Vector3D.dotProduct(lhs: perpToVecStart, rhs: startFinish)
+//            let sense = Vector3D.dotProduct(lhs: perpToVecStart, rhs: startFinish)
             
-            var side = true
-            side = sense > 0.0
+//            var side = true
+//            side = sense > 0.0
             
             
             let projection = Vector3D.dotProduct(lhs: vecStart, rhs: vecFinish)
@@ -355,7 +400,7 @@ open class Arc: PenCurve {
             
             
             /// Value to be returned.  The initial value will be overwritten 50% of the time
-            var angle = angleRaw
+            let angle = angleRaw
             
             
             return angle

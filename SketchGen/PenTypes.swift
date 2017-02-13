@@ -13,19 +13,16 @@ import Foundation
 /// - Notes:  Will probably vary for each different app
 public enum PenTypes {
     
-    // TODO: Change this term to "Ordinary", and update at least LineSeg and Arc
-    case `default`     // Required by some constructors
-    
     case arc
     
     case sweep
     
-    case box
+    case extent
     
     case ideal
     
     case approx
     
-    case Ordinary
+    case ordinary
     
 }

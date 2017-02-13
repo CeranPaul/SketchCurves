@@ -3,7 +3,7 @@
 //  SketchCurves
 //
 //  Created by Paul on 11/8/15.
-//  Copyright © 2015 Ceran Digital Media. All rights reserved.  See LICENSE.md
+//  Copyright © 2017 Ceran Digital Media. All rights reserved.  See LICENSE.md
 //
 
 import UIKit
@@ -14,10 +14,8 @@ var modelGeo = Roundy()
 class Roundy  {
     
     /// The display list
-    var displayLines: [PenCurve]
+    var displayCurves: [PenCurve]
     
-    /// Points used to terminate the segments in "displayLines"
-//    var displayPoints: [Point3D]
     
     /// Bounding area for play
     var arena = CGRect(x: -5.0, y: -5.0, width: 20.0, height: 20.0)
@@ -29,33 +27,32 @@ class Roundy  {
     /// Instantiate the arrays, and call a running routine
     init()   {
         
-        displayLines = [LineSeg]()   // Will get overwritten by test models
+        displayCurves = [PenCurve]()   // Will get overwritten by test models
         
-//        displayPoints = [Point3D]()
         
         extent = OrthoVol(minX: -1.25, maxX: 1.25, minY: -1.25, maxY: 1.25, minZ: -1.25, maxZ: 1.25)   // A dummy value
         
-        let demoString = "herm"
+        let demoString = "box"
         
         switch demoString   {
             
-        case "box":  showBox()
+        case "box":  showBox()   // Just one case
             
-        case "eff": plotF()   // Untested
+        case "eff": plotF()   // Broken
             
-        case "segs": makeSegs()   // Broken by a negative sweep angle
+        case "segs": makeSegs()   // Try both values for "useSmallAngle"
             
         case "stand": standProfile()
             
-        case "track": trackSection()   // Untested
+        case "track": trackSection()   // Works with bad scaling
             
-        case "cubic": firstCubic()   // Untested
+        case "cubic": firstCubic()   // Pair of curves, almost like an offset
             
-        case "egg": wholeEllipse()   // Untested
+        case "egg": wholeEllipse()   // Which actually is one quarter
             
         case "herm": firstHermite()
             
-        case "spline": firstSpline()   // Untested
+        case "spline": firstSpline()
             
             
         default:  showBox()   // Demonstrate the boundary box for an Arc
@@ -73,6 +70,7 @@ class Roundy  {
     func wholeEllipse()   {
         
         extent = OrthoVol(minX: -62.5, maxX: 62.5, minY: -62.5, maxY: 62.5, minZ: -62.5, maxZ: 62.5)   // Fixed value
+        arena = CGRect(x: -62.5, y: -62.5, width: 125.0, height: 125.0)
         
         let a = 50.0
         let b = 30.0
@@ -102,7 +100,7 @@ class Roundy  {
                 let checkeredFlag = Point3D(x: home.x + newX, y: home.y + newY, z: home.z)
                 
                 let stroke = try LineSeg(end1: greenFlag, end2: checkeredFlag)
-                displayLines.append(stroke)
+                displayCurves.append(stroke)
         
                 greenFlag = checkeredFlag
                 g += 1
@@ -123,6 +121,7 @@ class Roundy  {
     func firstCubic()   {
         
         extent = OrthoVol(minX: -62.5, maxX: 62.5, minY: -62.5, maxY: 62.5, minZ: -62.5, maxZ: 62.5)   // Fixed value
+        arena = CGRect(x: -62.5, y: -62.5, width: 125.0, height: 125.0)
         
         let ax = 0.0;
         let bx = 25.0;
@@ -170,12 +169,12 @@ class Roundy  {
             do   {
                 
                 stroke = try LineSeg(end1: priorPt1, end2: stepPoint1)
-                displayLines.append(stroke)
+                displayCurves.append(stroke)
                 
                 priorPt1 = stepPoint1   // Shuffle values in preparation for the next segment
                 
                 stroke = try LineSeg(end1: priorPt2, end2: stepPoint2)
-                displayLines.append(stroke)
+                displayCurves.append(stroke)
                 
                 priorPt2 = stepPoint2   // Shuffle values in preparation for the next segment
                 
@@ -200,6 +199,7 @@ class Roundy  {
     func firstHermite()   {
         
         extent = OrthoVol(minX: 1.75, maxX: 3.5, minY: 1.0, maxY: 3.0, minZ: -1.0, maxZ: 1.0)   // Fixed value
+        arena = CGRect(x: 1.75, y: 1.0, width: 1.75, height: 2.0)
         
         let alpha = Point3D(x: 2.3, y: 1.5, z: 0.7)
         let alSlope = Vector3D(i: 0.866, j: -0.5, k: 0.0)
@@ -228,7 +228,7 @@ class Roundy  {
             do   {
                 
                 stroke = try LineSeg(end1: priorPt1, end2: stepPoint1)
-                displayLines.append(stroke)
+                displayCurves.append(stroke)
                 
                 priorPt1 = stepPoint1   // Shuffle values in preparation for the next segment
                 
@@ -246,6 +246,7 @@ class Roundy  {
     func firstSpline()   {
         
         extent = OrthoVol(minX: -1.00, maxX: 1.5, minY: -1.5, maxY: 1.5, minZ: 3.0, maxZ: 5.0)   // Fixed value
+        arena = CGRect(x: -1.00, y: -1.5, width: 2.5, height: 3.0)
         
         var lilyPads = [Point3D]()
         
@@ -284,7 +285,7 @@ class Roundy  {
                 do   {
                     
                     stroke = try LineSeg(end1: priorPt1, end2: stepPoint1)
-                    displayLines.append(stroke)
+                    displayCurves.append(stroke)
                     
                     priorPt1 = stepPoint1   // Shuffle values in preparation for the next segment
                     
@@ -296,11 +297,11 @@ class Roundy  {
                 }
                 
             }
-        }
+        }   // End of outer loop
     }
     
     /// Build an Arc, then illustrate its surrounding extent
-    /// - Returns:  Void, but modifies 'displayLines' and 'displayPoints'
+    /// - Returns:  Void, but modifies 'displayCurves'
     func showBox()   {
         
         let v = sqrt(3.0) / 2.0
@@ -310,9 +311,10 @@ class Roundy  {
         
         do   {
             
-            let bow = try Arc.buildFromCenterStartFinish(ctr, end1: start, end2: finish, useSmallAngle: true)
-            bow.setIntent(PenTypes.arc)
-            displayLines.append(bow)
+            // The Boolean seems to be reversed
+            let bow = try Arc.buildFromCenterStartFinish(center: ctr, end1: start, end2: finish, useSmallAngle: false)
+            bow.setIntent(purpose: PenTypes.arc)
+            displayCurves.append(bow)
             
             // Optionally draw the extent
             let exDraw = true
@@ -326,26 +328,26 @@ class Roundy  {
                 let upperLeft = Point3D(x: boxX, y: boxY + bow.extent.getHeight(), z: 0.0)
                 
                 var rail = try LineSeg(end1: lowerLeft, end2: upperLeft)
-                rail.setIntent(PenTypes.box)
-                displayLines.append(rail)
+                rail.setIntent(PenTypes.extent)
+                displayCurves.append(rail)
                 
                 
                 let upperRight = Point3D(x: boxX + bow.extent.getWidth(), y: boxY + bow.extent.getHeight(), z: 0.0)
                 
                 rail = try LineSeg(end1: upperLeft, end2: upperRight)
-                rail.setIntent(PenTypes.box)
-                displayLines.append(rail)
+                rail.setIntent(PenTypes.extent)
+                displayCurves.append(rail)
                 
                 
                 let lowerRight = Point3D(x: boxX + bow.extent.getWidth(), y: boxY, z: 0.0)
                 
                 rail = try LineSeg(end1: upperRight, end2: lowerRight)
-                rail.setIntent(PenTypes.box)
-                displayLines.append(rail)
+                rail.setIntent(PenTypes.extent)
+                displayCurves.append(rail)
                 
                 rail = try LineSeg(end1: lowerRight, end2: lowerLeft)
-                rail.setIntent(PenTypes.box)
-                displayLines.append(rail)
+                rail.setIntent(PenTypes.extent)
+                displayCurves.append(rail)
                 
             }
             
@@ -359,11 +361,13 @@ class Roundy  {
             print("Some other error while adding a line")
         }
         
+        arena = CGRect(x: extent.getOrigin().x, y: extent.getOrigin().y, width: extent.getWidth(), height: extent.getHeight())
+        
     }
     
     
     /// Draw a letter that uses line segments and arcs
-    /// Modifies 'displayLines' and 'displayPoints'
+    /// Modifies 'displayCurves'
     func plotF() -> Void  {
         
         let ptA = Point3D(x: 0.1, y: 0.0, z: 0.0)
@@ -373,7 +377,7 @@ class Roundy  {
         let ptE = Point3D(x: 0.1, y: 0.6, z: 0.0)
         let ptF = Point3D(x: 0.1, y: 0.75, z: 0.0)
         let ptG = Point3D(x: 0.35, y: 0.75, z: 0.0)
-        let ptH = Point3D(x: 0.6, y: 0.75, z: 0.0)
+        let ptH = Point3D(x: 0.6, y: 0.77, z: 0.0)
         let ptJ = Point3D(x: 0.6, y: 0.7, z: 0.0)
         let ptK = Point3D(x: 0.45, y: 0.7, z: 0.0)
         let ptL = Point3D(x: 0.45, y: 0.75, z: 0.0)
@@ -390,64 +394,63 @@ class Roundy  {
         do   {
             
             stroke = try LineSeg(end1: ptA, end2: ptB)
-            displayLines.append(stroke)
+            displayCurves.append(stroke)
             
             stroke = try LineSeg(end1: ptB, end2: ptC)
-            displayLines.append(stroke)
+            displayCurves.append(stroke)
             
             stroke = try LineSeg(end1: ptC, end2: ptD)
-            displayLines.append(stroke)
+            displayCurves.append(stroke)
             
             stroke = try LineSeg(end1: ptD, end2: ptE)
-            displayLines.append(stroke)
+            displayCurves.append(stroke)
             
             stroke = try LineSeg(end1: ptE, end2: ptF)
-            displayLines.append(stroke)
+            displayCurves.append(stroke)
             
-            stroke = try Arc.buildFromCenterStartFinish(ptG, end1: ptF, end2: ptH, useSmallAngle: true)
-            displayLines.append(stroke)
+            stroke = try Arc.buildFromCenterStartFinish(center: ptG, end1: ptF, end2: ptH, useSmallAngle: true)
+            displayCurves.append(stroke)
             
             stroke = try LineSeg(end1: ptH, end2: ptJ)
-            displayLines.append(stroke)
+            displayCurves.append(stroke)
             
             stroke = try LineSeg(end1: ptJ, end2: ptK)
-            displayLines.append(stroke)
+            displayCurves.append(stroke)
             
             stroke = try LineSeg(end1: ptK, end2: ptL)
-            displayLines.append(stroke)
+            displayCurves.append(stroke)
             
-            stroke = try Arc.buildFromCenterStartFinish(ptG, end1: ptL, end2: ptM, useSmallAngle: false)
-            displayLines.append(stroke)
+            stroke = try Arc.buildFromCenterStartFinish(center: ptG, end1: ptL, end2: ptM, useSmallAngle: false)
+            displayCurves.append(stroke)
             
             stroke = try LineSeg(end1: ptM, end2: ptN)
-            displayLines.append(stroke)
+            displayCurves.append(stroke)
             
             stroke = try LineSeg(end1: ptN, end2: ptP)
-            displayLines.append(stroke)
+            displayCurves.append(stroke)
             
             stroke = try LineSeg(end1: ptP, end2: ptQ)
-            displayLines.append(stroke)
+            displayCurves.append(stroke)
             
             stroke = try LineSeg(end1: ptQ, end2: ptR)
-            displayLines.append(stroke)
+            displayCurves.append(stroke)
             
             stroke = try LineSeg(end1: ptR, end2: ptS)
-            displayLines.append(stroke)
+            displayCurves.append(stroke)
             
             stroke = try LineSeg(end1: ptS, end2: ptA)
-            displayLines.append(stroke)
+            displayCurves.append(stroke)
             
             
             
+            // Build the extent for the figure   Is there a way to do this as a 'reduce' closure?
             
-            
-            // Build the extent for the figure
-            
-            extent = displayLines.first!.extent
-            for g in 1..<displayLines.count  {
-                extent = extent + displayLines[g].extent
+            extent = displayCurves.first!.extent
+            for g in 1..<displayCurves.count  {
+                extent = extent + displayCurves[g].extent
             }
             
+            arena = CGRect(x: extent.getOrigin().x, y: extent.getOrigin().y, width: extent.getWidth(), height: extent.getHeight())
             
         }  catch let error as CoincidentPointsError  {
             let gnirts = error.description
@@ -455,6 +458,8 @@ class Roundy  {
         }  catch  {
             print("Some other error while adding a line")
         }
+        
+//        arena = CGRect(x: -0.25, y: -0.25, width: 1.5, height: 1.5)
         
     }
     
@@ -468,9 +473,9 @@ class Roundy  {
         
         do   {
             
-            let roundEdge = try Arc.buildFromCenterStartFinish(ctr, end1: start, end2: finish, useSmallAngle: false)
-            roundEdge.setIntent(PenTypes.ideal)
-            displayLines.append(roundEdge)
+            let roundEdge = try Arc.buildFromCenterStartFinish(center: ctr, end1: start, end2: finish, useSmallAngle: false)
+            roundEdge.setIntent(purpose: PenTypes.ideal)
+            displayCurves.append(roundEdge)
             
             
             // Figure how many segments are needed to represent the corner
@@ -478,11 +483,11 @@ class Roundy  {
             let maxCrown = 0.05
             
             let arg = (roundEdge.getRadius() - maxCrown) / roundEdge.getRadius()
-            let theta = 2.0 * acos(arg)
+            let crownTheta = 2.0 * acos(arg)
             
             
-            let divisions = ceil(roundEdge.getSweepAngle() / theta)
-            let divs = Int(divisions)
+            let divisions = ceil(roundEdge.getSweepAngle() / crownTheta)
+            let divs = abs(Int(divisions))
             
             
             // Show proper number of segments for the Arc to meet the crown requirement
@@ -501,7 +506,7 @@ class Roundy  {
                 
                 let rail = try LineSeg(end1: thisEnd, end2: thatEnd)
                 rail.setIntent(PenTypes.approx)
-                displayLines.append(rail)
+                displayCurves.append(rail)
                 
                 thisEnd = thatEnd
             }
@@ -516,6 +521,8 @@ class Roundy  {
         }  catch  {
             print("Some other error while making a rounded corner")
         }
+        
+        arena = CGRect(x: -1.0, y: -1.0, width: 2.0, height: 2.0)
         
     }
     
@@ -540,53 +547,55 @@ class Roundy  {
             let ptM = Point3D(x: 2.25, y: 1.0, z: 0.0)
             
             var stroke = try LineSeg(end1: ptA, end2: ptB)
-            displayLines.append(stroke)
+            displayCurves.append(stroke)
             
             self.extent = stroke.extent
             
             stroke = try LineSeg(end1: ptB, end2: ptC)
-            displayLines.append(stroke)
+            displayCurves.append(stroke)
             self.extent = self.extent + stroke.extent
             
             stroke = try LineSeg(end1: ptC, end2: ptD)
-            displayLines.append(stroke)
+            displayCurves.append(stroke)
             self.extent = self.extent + stroke.extent
             
             stroke = try LineSeg(end1: ptD, end2: ptE)
-            displayLines.append(stroke)
+            displayCurves.append(stroke)
             self.extent = self.extent + stroke.extent
             
             stroke = try LineSeg(end1: ptE, end2: ptF)
-            displayLines.append(stroke)
+            displayCurves.append(stroke)
             self.extent = self.extent + stroke.extent
             
             stroke = try LineSeg(end1: ptF, end2: ptG)
-            displayLines.append(stroke)
+            displayCurves.append(stroke)
             self.extent = self.extent + stroke.extent
             
             stroke = try LineSeg(end1: ptG, end2: ptH)
-            displayLines.append(stroke)
+            displayCurves.append(stroke)
             self.extent = self.extent + stroke.extent
             
             stroke = try LineSeg(end1: ptH, end2: ptJ)
-            displayLines.append(stroke)
+            displayCurves.append(stroke)
             self.extent = self.extent + stroke.extent
             
             stroke = try LineSeg(end1: ptJ, end2: ptK)
-            displayLines.append(stroke)
+            displayCurves.append(stroke)
             self.extent = self.extent + stroke.extent
             
             stroke = try LineSeg(end1: ptK, end2: ptL)
-            displayLines.append(stroke)
+            displayCurves.append(stroke)
             self.extent = self.extent + stroke.extent
             
             stroke = try LineSeg(end1: ptL, end2: ptM)
-            displayLines.append(stroke)
+            displayCurves.append(stroke)
             self.extent = self.extent + stroke.extent
             
             stroke = try LineSeg(end1: ptM, end2: ptA)
-            displayLines.append(stroke)
+            displayCurves.append(stroke)
             self.extent = self.extent + stroke.extent
+            
+            arena = CGRect(x: extent.getOrigin().x, y: extent.getOrigin().y, width: extent.getWidth(), height: extent.getHeight())
             
         }  catch let error as CoincidentPointsError  {
             let gnirts = error.description
@@ -616,44 +625,46 @@ class Roundy  {
         
             var stroke: PenCurve    // Used to hold arcs and line segments
             
-            stroke = try Arc.buildFromCenterStartFinish(ptA, end1: ptK, end2: ptC, useSmallAngle: true)
-            displayLines.append(stroke)
+            stroke = try Arc.buildFromCenterStartFinish(center: ptA, end1: ptK, end2: ptC, useSmallAngle: false)
+            displayCurves.append(stroke)
             
             self.extent = stroke.extent
 
             stroke = try LineSeg(end1: ptC, end2: ptD)
-            displayLines.append(stroke)
+            displayCurves.append(stroke)
             
             self.extent = self.extent + stroke.extent
             
             stroke = try LineSeg(end1: ptD, end2: ptE)
-            displayLines.append(stroke)
+            displayCurves.append(stroke)
             
             self.extent = self.extent + stroke.extent
             
             stroke = try LineSeg(end1: ptE, end2: ptF)
-            displayLines.append(stroke)
+            displayCurves.append(stroke)
             
-            stroke = try Arc.buildFromCenterStartFinish(ptB, end1: ptF, end2: ptG, useSmallAngle: true)
-            displayLines.append(stroke)
+            stroke = try Arc.buildFromCenterStartFinish(center: ptB, end1: ptF, end2: ptG, useSmallAngle: false)
+            displayCurves.append(stroke)
             
             self.extent = self.extent + stroke.extent
             
             stroke = try LineSeg(end1: ptG, end2: ptH)
-            displayLines.append(stroke)
+            displayCurves.append(stroke)
             
             self.extent = self.extent + stroke.extent
             
             stroke = try LineSeg(end1: ptH, end2: ptJ)
-            displayLines.append(stroke)
+            displayCurves.append(stroke)
             
             self.extent = self.extent + stroke.extent
             
             stroke = try LineSeg(end1: ptJ, end2: ptK)
-            displayLines.append(stroke)
+            displayCurves.append(stroke)
  
             self.extent = self.extent + stroke.extent
 
+            arena = CGRect(x: extent.getOrigin().x, y: extent.getOrigin().y, width: extent.getWidth(), height: extent.getHeight())
+            
             
             
         }  catch let error as CoincidentPointsError  {
@@ -663,8 +674,10 @@ class Roundy  {
             let gnirts = error.description
             print(gnirts)
         }  catch  {
-            print("Some other error while making the wedge sketch")
+            print("Some other error while making the track sketch")
         }
+        
+//        arena = CGRect(x: -10.0, y: -10.0, width: 20.0, height: 20.0)
         
     }
     

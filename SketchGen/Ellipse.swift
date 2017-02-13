@@ -57,7 +57,7 @@ open class Ellipse: PenCurve {
         
         self.isFull = true
         self.isClockwise = true
-        self.usage = PenTypes.default
+        self.usage = PenTypes.ordinary
         self.extent = OrthoVol(minX: -0.5, maxX: 0.5, minY: -1.0, maxY: 1.0, minZ: -0.2, maxZ: 0.2)
     }
     
@@ -155,7 +155,7 @@ open class Ellipse: PenCurve {
     open func resolveNeighbor(speck: Point3D) -> (along: Vector3D, perp: Vector3D)   {
         
         // TODO: Make this return something besides dummy values
-        let otherSpeck = speck
+//        let otherSpeck = speck
         let alongVector = Vector3D(i: 1.0, j: 0.0, k: 0.0)
         
         let perpVector = Vector3D(i: 0.0, j: 1.0, k: 0.0)
