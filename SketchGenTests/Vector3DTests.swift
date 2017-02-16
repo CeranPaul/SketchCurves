@@ -267,8 +267,33 @@ class Vector3DTests: XCTestCase {
         }  catch  {
             XCTFail()
         }
-    }
         
+        /// Handy numbers for building vectors
+        let sqrt22 = sqrt(2.0) / 2.0
+        let sqrt32 = sqrt(3.0) / 2.0
+        
+        var base = Vector3D(i: 2.5 * sqrt22, j: 2.5 * sqrt22, k: 0.0)
+        try! base.normalize()
+        
+        var closer = Vector3D(i: -2.5 * sqrt32, j: -2.5 * 0.5, k: 0.0)
+        try! closer.normalize()
+        
+        var farther = Vector3D(i: -2.5 * 0.5, j: -2.5 * sqrt32, k: 0.0)
+        try! farther.normalize()
+        
+        var incoming = try! Vector3D.crossProduct(lhs: base, rhs: closer)
+        try! incoming.normalize()
+        print(incoming)
+        XCTAssertEqualWithAccuracy(incoming.k, 1.0, accuracy: 0.0001)
+        
+        var outgoing = try! Vector3D.crossProduct(lhs: base, rhs: farther)
+        try! outgoing.normalize()
+        print(outgoing)
+        
+        XCTAssertEqualWithAccuracy(outgoing.k, -1.0, accuracy: 0.0001)
+        
+    }
+    
     
     // TODO: Add more complete tests for dot product
     func testDot()  {

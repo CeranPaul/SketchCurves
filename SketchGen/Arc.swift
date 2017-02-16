@@ -47,7 +47,7 @@ open class Arc: PenCurve {
     ///   - center: Point3D used for pivoting
     ///   - axis: Unit vector, often in the +Z direction
     ///   - end1: Starting point
-    ///   - sweep: Angle (in radians).  Can be positive or negative
+    ///   - sweep: Angle (in radians) in the CCW direction.  Can be positive or negative
     /// - Throws: ZeroVectorError, NonUnitDirectionError, CoincidentPointsError
     /// This doesn't catch the case of a bad axis direction
     public init(center: Point3D, axis: Vector3D, end1: Point3D, sweep: Double) throws   {
@@ -113,6 +113,8 @@ open class Arc: PenCurve {
         self.finish = end2
         
         self.rad = Point3D.dist(pt1: self.ctr, pt2: self.start)
+        self.isFull = false
+        self.usage = PenTypes.ordinary   // Use 'setIntent' to attach the desired value
         
         var vecStart = Vector3D.built(from: center, towards: end1)
         try! vecStart.normalize()
@@ -124,24 +126,29 @@ open class Arc: PenCurve {
         
         self.axisDir = spin
         
-        self.usage = PenTypes.ordinary   // Use 'setIntent' to attach the desired value
+        
+        let thetaStart = atan2(vecStart.j, vecStart.i)   // Between -M_PI and M_PI
+        let thetaFinish = atan2(vecFinish.j, vecFinish.i)
+        
+        
+        self.sweepAngle = abs(thetaFinish - thetaStart)   // Angle for the shorter path
+        
+        if !useSmallAngle   {
+            self.sweepAngle = self.sweepAngle - 2.0 * M_PI
+        }
         
         // Dummy assignment. Postpone the expensive calculation until after the guard statements
         self.extent = OrthoVol(minX: -0.5, maxX: 0.5, minY: -0.5, maxY: 0.5, minZ: -0.5, maxZ: 0.5)
         
-        self.isFull = false
-        
-        self.sweepAngle = 0.0   // Dummy value
-        
-        
-        self.sweepAngle = findRange(useSmallAngle: useSmallAngle)
         
         // See if an arc can actually be made from the three given inputs
+        // This should go first and make this a failable initializer
         guard (Arc.isArcable(center: center, end1: end1, end2: end2))  else  { throw ArcPointsError(badPtA: center, badPtB: end1, badPtC: end2)}
         
         self.extent = figureExtent()    // Replace the dummy value
-
     }
+    
+    
     
     /// Simple getter for the center point
     open func getCenter() -> Point3D   {
@@ -176,27 +183,6 @@ open class Arc: PenCurve {
     
     
     
-    /// Angle is relative to a line between the center and the start point independent of direction of the arc
-    /// - Parameter: theta: Angle in radians from the positive X axis
-    /// See the illustration in the wiki "Arc PointAtAngle" article
-    open func pointAtAngle(theta: Double) -> Point3D  {
-        
-        var horiz = Vector3D.built(from: self.ctr, towards: self.start)
-        try! horiz.normalize()
-        
-        
-        let vert = try! Vector3D.crossProduct(lhs: self.axisDir, rhs: horiz)   // Shouldn't need to be normalized
-        
-        let magnitudeH = self.rad * cos(theta)
-        let deltaH = horiz * magnitudeH
-        
-        let magnitudeV = self.rad * sin(theta)
-        let deltaV = vert * magnitudeV
-        
-        let jump = deltaH + deltaV
-        
-        return self.ctr.offset(jump: jump)
-    }
     
     
     /// Find the point along this arc specified by the parameter 't'
@@ -204,16 +190,22 @@ open class Arc: PenCurve {
     /// - Returns: Point
     open func pointAt(t: Double) -> Point3D  {
         
-        let horzRef = Vector3D(i: 1.0, j: 0.0, k: 0.0)
-        
         var vecStart = Vector3D.built(from: self.ctr, towards: self.start)
         try! vecStart.normalize()
         
-        let startAngle = try! Vector3D.findAngle(baselineVec: horzRef, measureTo: vecStart, perp: self.axisDir)
+        let vert = try! Vector3D.crossProduct(lhs: self.axisDir, rhs: vecStart)   // Shouldn't need to be normalized
         
         let deltaAngle = t * self.sweepAngle    // Implies that 0 < t < 1
         
-        let spot = pointAtAngle(theta: startAngle + deltaAngle)   // Should have the start angle added!
+        let magnitudeH = self.rad * cos(deltaAngle)
+        let deltaH = vecStart * magnitudeH
+        
+        let magnitudeV = self.rad * sin(deltaAngle)
+        let deltaV = vert * magnitudeV
+        
+        let jump = deltaH + deltaV
+        
+        let spot = self.ctr.offset(jump: jump)
         
         return spot
     }
@@ -271,7 +263,7 @@ open class Arc: PenCurve {
     }
     
     /// Plot the curve segment.  This will be called by the UIView 'drawRect' function
-    /// As opposed to calling the function of CGContext?
+    /// Useful for Arcs that are not in the XY plane
     public func drawOld(context: CGContext, tform: CGAffineTransform)  {
         
         var xCG: CGFloat = CGFloat(self.start.x)    // Convert to "CGFloat", and throw out Z coordinate
@@ -379,44 +371,9 @@ open class Arc: PenCurve {
     
     
     
-    /// Determine the range of angles covered by the arc
-    /// Separated out for testing
-    func findRange(useSmallAngle:  Bool) -> Double   {
-    
-        var vecStart = Vector3D.built(from: self.ctr, towards: self.start)
-        try! vecStart.normalize()
-        var vecFinish = Vector3D.built(from: self.ctr, towards: self.finish)
-        try! vecFinish.normalize()
-        
-        /// Larger of the possible ranges
-        var ccwSweep: Double
-        
-        let thetaStart = atan2(vecStart.j, vecStart.i)   // Between -M_PI and M_PI
-        var thetaFinish = atan2(vecFinish.j, vecFinish.i)
-        
-        if thetaFinish >= 0.0   {
-            ccwSweep = thetaFinish - thetaStart
-            if ccwSweep < 0.0   { ccwSweep += 2.0 * M_PI }
-        }  else  {
-            thetaFinish += 2.0 * M_PI
-            ccwSweep = thetaFinish - thetaStart
-        }
-        
-        if useSmallAngle && ccwSweep > M_PI   {
-            ccwSweep = -1.0 * (2.0 * M_PI - ccwSweep)   //2.0 * M_PI - ccwSweep
-        }
-        
-        if !useSmallAngle && ccwSweep < M_PI   {
-            ccwSweep = -1.0 * (2.0 * M_PI - ccwSweep)
-        }
-        
-        return ccwSweep
-    }
-    
-    
     /// Build the center of a circle from three points on the perimeter
     /// - Throws: ArcPointsError if there any coincident points in the inputs
-    open static func findCenter(_ larry: Point3D, curly: Point3D, moe: Point3D) throws -> Point3D   {
+    open static func findCenter(larry: Point3D, curly: Point3D, moe: Point3D) throws -> Point3D   {
         
         guard(Point3D.isThreeUnique(alpha: larry, beta: curly, gamma: moe))  else  { throw ArcPointsError(badPtA: larry, badPtB: curly, badPtC: moe)}
         

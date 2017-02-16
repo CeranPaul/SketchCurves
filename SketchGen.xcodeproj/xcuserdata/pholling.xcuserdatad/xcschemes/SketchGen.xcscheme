@@ -39,6 +39,9 @@
             </BuildableReference>
             <SkippedTests>
                <Test
+                  Identifier = "ArcTests/testErrorThrow()">
+               </Test>
+               <Test
                   Identifier = "SketchGenTests">
                </Test>
             </SkippedTests>
