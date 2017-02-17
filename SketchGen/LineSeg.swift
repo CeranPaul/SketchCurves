@@ -111,6 +111,7 @@ public class LineSeg: PenCurve {    // Can this be a struct, instead?
     
     
     /// Find the position of a point relative to the LineSeg
+    /// - Returns: Pair of vectors - one along the seg, other perp to it
     public func resolveNeighbor(speck: Point3D) -> (along: Vector3D, perp: Vector3D)   {
         
         /// Direction of the segment.  Is a unit vector.
@@ -176,13 +177,40 @@ public class LineSeg: PenCurve {    // Can this be a struct, instead?
         return freshSeg
     }
     
+    /// Check for possible intersection
+    /// - Returns: Intersection if it lies on segment
+    public func intersectLine(bowshot: Line) -> Point3D?   {
+        
+        let extended = try! Line(spot: self.endAlpha, arrow: self.getDirection())
+        let impact = try! Line.intersectTwo(straightA: extended, straightB: bowshot)
+        
+        let range = Point3D.dist(pt1: self.endAlpha, pt2: impact)
+        
+        if range > self.getLength()   {
+            return nil
+        }  else  {
+            var bridge = Vector3D.built(from: self.endAlpha, towards: impact)
+            try! bridge.normalize()
+            
+            let compliance = Vector3D.dotProduct(lhs: self.getDirection(), rhs: bridge)
+            
+            if compliance > 0.0   {
+                return impact
+            }  else  {
+                return nil
+            }
+        }
+    }
     
     /// See if another segment crosses this one
+    /// Used for seeing if a screen gesture cuts across the current seg
+    /// Unit tests would be good!
     public func isCrossing(chop: LineSeg) -> Bool   {
         
         let compsA = self.resolveNeighbor(speck: chop.endAlpha)
         let compsB = self.resolveNeighbor(speck: chop.endOmega)
         
+           // Should be negative if ends are on opposite sides
         let compliance = Vector3D.dotProduct(lhs: compsA.perp, rhs: compsB.perp)
         
         let flag1 = compliance < 0.0
@@ -196,6 +224,11 @@ public class LineSeg: PenCurve {    // Can this be a struct, instead?
     }
     
     /// Find the change in parameter that meets the crown requirement
+    /// - Parameters:
+    ///   - allowableCrown:  Acceptable deviation from curve
+    ///   - currentT:  Present value of the driving parameter
+    ///   - increasing:  Whether the change in parameter should be up or down
+    /// - Returns: New value for driving parameter
     public func findStep(allowableCrown: Double, currentT: Double, increasing: Bool) -> Double   {
         
         var trialT : Double

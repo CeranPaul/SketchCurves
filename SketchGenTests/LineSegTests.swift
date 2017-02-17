@@ -106,6 +106,8 @@ class LineSegTests: XCTestCase {
         XCTAssertEqual(alpha, stroke.getOtherEnd())
         XCTAssertEqual(beta, stroke.getOneEnd())
     }
+    
+    
     func testClipTo()   {
         
         let alpha = Point3D(x: 2.5, y: 2.5, z: 2.5)
@@ -159,7 +161,42 @@ class LineSegTests: XCTestCase {
         
         XCTAssert(flag1)
         
+    }
+    
+    func testIntersectLine()   {
         
+        let ptA = Point3D(x: 4.0, y: 2.0, z: 5.0)
+        let ptB = Point3D(x: 2.0, y: 4.0, z: 5.0)
+        
+        let plateau = try! LineSeg(end1: ptA, end2: ptB)
+        
+        var launcher = Point3D(x: 3.0, y: -1.0, z: 5.0)
+        var azimuth = Vector3D(i: 0.0, j: -1.0, k: 0.0)
+        
+        var shot = try! Line(spot: launcher, arrow: azimuth)
+        
+        let target = Point3D(x: 3.0, y: 3.0, z: 5.0)
+        
+        let crater = plateau.intersectLine(bowshot: shot)
+        
+        XCTAssertEqual(crater, target)
+        
+        launcher = Point3D(x: 1.0, y: -1.0, z: 5.0)
+        shot = try! Line(spot: launcher, arrow: azimuth)
+        
+        let crater2 = plateau.intersectLine(bowshot: shot)
+   
+        XCTAssert(crater2 == nil)
+        
+
+        launcher = Point3D(x: 1.0, y: -3.0, z: 5.0)
+        azimuth = Vector3D(i: -0.5, j: 0.866, k: 0.0)
+        shot = try! Line(spot: launcher, arrow: azimuth)
+        
+        let crater3 = plateau.intersectLine(bowshot: shot)
+        
+        XCTAssert(crater3 == nil)
+
     }
     
 }

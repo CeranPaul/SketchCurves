@@ -404,7 +404,7 @@ open class Arc: PenCurve {
             let pLineA = try Line(spot: midA, arrow: perpA)
             let pLineB = try Line(spot: midB, arrow: perpB)
             
-            ctr = try Line.intersectTwo(pLineA, straightB: pLineB)
+            ctr = try Line.intersectTwo(straightA: pLineA, straightB: pLineB)
             
         }  catch  {
             print("Finding the circle center didn't work out.")

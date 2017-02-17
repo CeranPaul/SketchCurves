@@ -60,7 +60,7 @@ class LineTests: XCTestCase {
             let flat = try Line(spot: flatOrig, arrow: flatDir)
             let pursuit = try Line(spot: P51Orig, arrow: P51Dir)
             
-            let crossroads = try Line.intersectTwo(flat, straightB: pursuit)
+            let crossroads = try Line.intersectTwo(straightA: flat, straightB: pursuit)
             
             XCTAssert(crossroads == target)
             
@@ -82,7 +82,7 @@ class LineTests: XCTestCase {
             let flat = try Line(spot: roofOrig, arrow: roofDir)
             let pursuit = try Line(spot: evelOrig, arrow: evelDir)
             
-            let crossroads = try Line.intersectTwo(flat, straightB: pursuit)
+            let crossroads = try Line.intersectTwo(straightA: flat, straightB: pursuit)
             
             print(crossroads)
             

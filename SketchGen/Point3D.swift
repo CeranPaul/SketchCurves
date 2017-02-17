@@ -6,7 +6,7 @@
 //  Copyright © 2016 Ceran Digital Media. All rights reserved.  See LICENSE.md
 //
 
-import Foundation
+import UIKit
 
 /// Simple representation of a position in space by the use of three orthogonal axes
 public struct  Point3D: Hashable {
@@ -196,6 +196,12 @@ public struct  Point3D: Hashable {
         let flag1 = try! Vector3D.isScaled(lhs: thisWay, rhs: thatWay)
         
         return flag1
+    }
+    
+    /// Throw away the Z value and convert
+    public static func makeCGPoint(pip: Point3D) -> CGPoint   {
+        
+        return CGPoint(x: pip.x, y: pip.y)
     }
     
 }

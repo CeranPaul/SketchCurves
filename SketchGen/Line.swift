@@ -153,7 +153,7 @@ public struct Line: Equatable {
     /// - Throws: CoincidentLinesError if the inputs are the same
     /// - Throws: ParallelLinesError if the inputs are parallel
     /// - Throws: NonCoPlanarLinesError if the inputs don't lie in the same plane
-    public static func intersectTwo (_ straightA: Line, straightB: Line) throws -> Point3D  {
+    public static func intersectTwo (straightA: Line, straightB: Line) throws -> Point3D  {
         
         guard !Line.isCoincident(straightA, straightB: straightB) else { throw CoincidentLinesError(enil: straightA)}
         
