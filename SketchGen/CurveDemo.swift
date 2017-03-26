@@ -32,7 +32,7 @@ class Roundy  {
         
         extent = OrthoVol(minX: -1.25, maxX: 1.25, minY: -1.25, maxY: 1.25, minZ: -1.25, maxZ: 1.25)   // A dummy value
         
-        let demoString = "box"
+        let demoString = "herm"
         
         switch demoString   {
             

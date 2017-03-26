@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import simd
 
 /// Curve defined by polynomials for each coordinate direction
 open class Cubic: PenCurve   {
@@ -29,7 +30,7 @@ open class Cubic: PenCurve   {
     var ptAlpha: Point3D
     var ptOmega: Point3D
     
-    var controlA: Point3D?
+    var controlA: Point3D?   // Since Bezier form is most useful for editing
     var controlB: Point3D?
     
     /// The enum that hints at the meaning of the curve
@@ -58,9 +59,10 @@ open class Cubic: PenCurve   {
         self.cz = cz
         self.dz = dz
         
-        ptAlpha = Point3D(x: dx, y: dy, z: dz)
+        ptAlpha = Point3D(x: dx, y: dy, z: dz)   // Create the beginning point from parameters
         
-        let sumX = self.ax + self.bx + self.cx + self.dx
+        
+        let sumX = self.ax + self.bx + self.cx + self.dx   // Create the end point from parameters
         let sumY = self.ay + self.by + self.cy + self.dy
         let sumZ = self.az + self.bz + self.cz + self.dz
         
@@ -77,6 +79,7 @@ open class Cubic: PenCurve   {
     }
     
     /// Build from two points and two slopes
+    /// This code always produces the Bezier form for ease of screen editing
     /// The assignment statements come from an algebraic manipulation of the equations
     /// in the Wikipedia article on Cubic Hermite spline
     /// There are checks here for input points that should be added!
@@ -108,6 +111,15 @@ open class Cubic: PenCurve   {
         
         self.extent = self.getExtent()
         
+            // Always convert to Bezier form for editing
+        var jump = slopeA * 0.3333
+        self.controlA = ptAlpha.offset(jump: jump)
+        
+        jump = slopeB * -0.3333
+        self.controlB = ptOmega.offset(jump: jump)
+        
+        parameterizeBezier()   // Generate the real coefficients
+        
     }
     
     
@@ -117,8 +129,6 @@ open class Cubic: PenCurve   {
     /// There are checks here for input points that should be added!
     /// - See: 'testSumsBezier' under CubicTests
     init(ptA: Point3D, controlA: Point3D, controlB: Point3D, ptB: Point3D)   {
-        
-        self.usage = PenTypes.ordinary
         
            // Dummy initial values
         self.ax = 0.0
@@ -136,18 +146,104 @@ open class Cubic: PenCurve   {
         self.cz = 0.0
         self.dz = 0.0
         
-        // Dummy assignment. Postpone the expensive calculation until after the guard statements
-        self.extent = OrthoVol(minX: -0.5, maxX: 0.5, minY: -0.5, maxY: 0.5, minZ: -0.5, maxZ: 0.5)
-        
         self.ptAlpha = ptA
         self.ptOmega = ptB
         
         self.controlA = controlA
         self.controlB = controlB
         
+        // Dummy assignment. Postpone the expensive calculation until after the guard statements
+        self.extent = OrthoVol(minX: -0.5, maxX: 0.5, minY: -0.5, maxY: 0.5, minZ: -0.5, maxZ: 0.5)
+        
+        self.usage = PenTypes.ordinary
+        
+        
         parameterizeBezier()   // Generate the real coefficients
         
         self.extent = self.getExtent()
+        
+    }
+    
+    /// Construct from four points.
+    /// - Parameters:
+    ///   - alpha: First point
+    ///   - beta: Second point
+    ///   - betaFraction: Portion along the curve for point beta
+    ///   - gamma: Third point
+    ///   - gammaFraction: Portion along the curve for point gamma
+    ///   - delta: Last point
+    init(alpha: Point3D, beta: Point3D, betaFraction: Double, gamma: Point3D, gammaFraction: Double, delta: Point3D)   {
+        
+        self.ptAlpha = alpha
+        self.ptOmega = delta
+        
+        // Rearrange coordinates into an array
+        let rowX = double4(alpha.x, beta.x, gamma.x, delta.x)
+        let rowY = double4(alpha.y, beta.y, gamma.y, delta.y)
+        let rowZ = double4(alpha.z, beta.z, gamma.z, delta.z)
+        
+        // Build a 4x4 of parameter values to various powers
+        let row1 = double4(0.0, 0.0, 0.0, 1.0)
+        
+        let betaFraction2 = betaFraction * betaFraction
+        let row2 = double4(betaFraction * betaFraction2, betaFraction2, betaFraction, 1.0)
+        
+        let gammaFraction2 = gammaFraction * gammaFraction
+        let row3 = double4(gammaFraction * gammaFraction2, gammaFraction2, gammaFraction, 1.0)
+        
+        let row4 = double4(1.0, 1.0, 1.0, 1.0)
+        
+        
+        /// Intermediate collection for building the matrix
+        var partial: [double4]
+        partial = [row1, row2, row3, row4]
+        
+        /// Matrix of t from several points raised to various powers
+        let tPowers = double4x4(partial)
+        
+        let trans = tPowers.transpose   // simd representation is different than what I had in college
+        
+        
+        /// Inverse of the above matrix
+        let nvers = trans.inverse
+        
+        let coeffX = nvers * rowX
+        let coeffY = nvers * rowY
+        let coeffZ = nvers * rowZ
+        
+        
+        // Set the curve coefficients
+        self.ax = coeffX[0]
+        self.bx = coeffX[1]
+        self.cx = coeffX[2]
+        self.dx = coeffX[3]
+        self.ay = coeffY[0]
+        self.by = coeffY[1]
+        self.cy = coeffY[2]
+        self.dy = coeffY[3]
+        self.az = coeffZ[0]
+        self.bz = coeffZ[1]
+        self.cz = coeffZ[2]
+        self.dz = coeffZ[3]
+        
+        
+        self.usage = PenTypes.ordinary
+        
+        // Dummy assignment. Postpone the expensive calculation until after the guard statements
+        self.extent = OrthoVol(minX: -0.5, maxX: 0.5, minY: -0.5, maxY: 0.5, minZ: -0.5, maxZ: 0.5)
+        
+        self.extent = self.getExtent()
+        
+        // Add control points for editing
+        let slopeA = self.tangentAt(t: 0.0)
+        var jump = slopeA * 0.3333
+        self.controlA = ptAlpha.offset(jump: jump)
+        
+        let slopeB = self.tangentAt(t: 1.0)
+        jump = slopeB * -0.3333
+        self.controlB = ptOmega.offset(jump: jump)
+        
+        parameterizeBezier()   // Generate in a form suitable for screen editing
         
     }
     
@@ -170,6 +266,8 @@ open class Cubic: PenCurve   {
         self.cz = 3.0 * self.controlA!.z - 3.0 * self.ptAlpha.z
         self.dz = self.ptAlpha.z
     }
+    
+    
     
     /// Attach new meaning to the curve
     public func setIntent(purpose: PenTypes)   {
@@ -488,6 +586,72 @@ open class Cubic: PenCurve   {
         }
         
         context.strokePath()
+        
+    }
+    
+    public func drawControls(context: CGContext, tform: CGAffineTransform)  {
+        
+        let boxDim = 8.0
+        let boxSize = CGSize(width: boxDim, height: boxDim)
+        
+        if controlA != nil   {
+            
+            var xCG = CGFloat(controlA!.x)
+            var yCG = CGFloat(controlA!.y)
+            var leader1 = CGPoint(x: xCG, y: yCG).applying(tform)
+            
+            context.move(to: leader1)
+            
+            xCG = CGFloat(ptAlpha.x)
+            yCG = CGFloat(ptAlpha.y)
+            var leader2 = CGPoint(x: xCG, y: yCG).applying(tform)
+            
+            context.addLine(to: leader2)
+            
+            
+            xCG = CGFloat(controlB!.x)
+            yCG = CGFloat(controlB!.y)
+            leader1 = CGPoint(x: xCG, y: yCG).applying(tform)
+            
+            context.move(to: leader1)
+            
+            xCG = CGFloat(ptOmega.x)
+            yCG = CGFloat(ptOmega.y)
+            leader2 = CGPoint(x: xCG, y: yCG).applying(tform)
+            context.addLine(to: leader2)
+            
+            context.strokePath()
+            
+            // Do these last, so that the box will obscure the leader end
+            xCG = CGFloat(controlA!.x)
+            yCG = CGFloat(controlA!.y)
+            var boxCenter = CGPoint(x: xCG, y: yCG).applying(tform)
+            var boxOrigin = CGPoint(x: boxCenter.x - CGFloat(boxDim / 2.0), y: boxCenter.y - CGFloat(boxDim / 2.0))
+            var controlBox = CGRect(origin: boxOrigin, size: boxSize)
+            context.fill(controlBox)
+            
+            xCG = CGFloat(controlB!.x)
+            yCG = CGFloat(controlB!.y)
+            boxCenter = CGPoint(x: xCG, y: yCG).applying(tform)
+            boxOrigin = CGPoint(x: boxCenter.x - CGFloat(boxDim / 2.0), y: boxCenter.y - CGFloat(boxDim / 2.0))
+            controlBox = CGRect(origin: boxOrigin, size: boxSize)
+            context.fill(controlBox)
+            
+            xCG = CGFloat(ptAlpha.x)
+            yCG = CGFloat(ptAlpha.y)
+            boxCenter = CGPoint(x: xCG, y: yCG).applying(tform)
+            boxOrigin = CGPoint(x: boxCenter.x - CGFloat(boxDim / 2.0), y: boxCenter.y - CGFloat(boxDim / 2.0))
+            controlBox = CGRect(origin: boxOrigin, size: boxSize)
+            context.fill(controlBox)
+            
+            xCG = CGFloat(ptOmega.x)
+            yCG = CGFloat(ptOmega.y)
+            boxCenter = CGPoint(x: xCG, y: yCG).applying(tform)
+            boxOrigin = CGPoint(x: boxCenter.x - CGFloat(boxDim / 2.0), y: boxCenter.y - CGFloat(boxDim / 2.0))
+            controlBox = CGRect(origin: boxOrigin, size: boxSize)
+            context.fill(controlBox)
+            
+        }
         
     }
     
