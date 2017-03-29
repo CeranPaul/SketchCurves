@@ -162,9 +162,9 @@ public struct  Point3D: Hashable {
         if vec1.i < 0.0   {
             
             if vec1.j < 0.0   {
-                ang = ang - M_PI
+                ang = ang - Double.pi
             }  else  {
-                ang = ang + M_PI
+                ang = ang + Double.pi
             }
         }
         

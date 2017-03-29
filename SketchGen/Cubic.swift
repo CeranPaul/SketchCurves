@@ -574,12 +574,15 @@ open class Cubic: PenCurve   {
         context.move(to: screenStart)
         
         
-        for g in 1...20   {
+        let pieces = 20
+        let step = 1.0 / Double(pieces)
+        
+        for g in 1...pieces   {
             
-            let stepU = Double(g) * 0.05   // Gee, this is brittle!
+            let stepU = Double(g) * step
             xCG = CGFloat(pointAt(t: stepU).x)
             yCG = CGFloat(pointAt(t: stepU).y)
-            //            print(String(describing: xCG) + "  " + String(describing: yCG))
+            
             let midPoint = CGPoint(x: xCG, y: yCG)
             let midScreen = midPoint.applying(tform)
             context.addLine(to: midScreen)

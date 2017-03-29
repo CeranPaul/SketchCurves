@@ -60,7 +60,7 @@ open class Arc: PenCurve {
         self.rad = Point3D.dist(pt1: self.ctr, pt2: self.start)
         
         self.isFull = false
-        if self.sweepAngle == 2.0 * M_PI   { self.isFull = true }
+        if self.sweepAngle == 2.0 * Double.pi   { self.isFull = true }
         
         self.usage = PenTypes.ordinary   // Use 'setIntent' to attach the desired value
         
@@ -134,7 +134,7 @@ open class Arc: PenCurve {
         self.sweepAngle = abs(thetaFinish - thetaStart)   // Angle for the shorter path
         
         if !useSmallAngle   {
-            self.sweepAngle = self.sweepAngle - 2.0 * M_PI
+            self.sweepAngle = self.sweepAngle - 2.0 * Double.pi
         }
         
         // Dummy assignment. Postpone the expensive calculation until after the guard statements

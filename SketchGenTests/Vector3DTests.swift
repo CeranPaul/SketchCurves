@@ -215,7 +215,7 @@ class Vector3DTests: XCTestCase {
         
         let orig = Vector3D(i: 0.866, j: 0.0, k: 0.5)
         
-        let t = Transform(rotationAxis: Axis.z, angleRad: M_PI / 4.0)
+        let t = Transform(rotationAxis: Axis.z, angleRad: Double.pi / 4.0)
         
         let swung = orig.transform(xirtam: t)
         
@@ -313,7 +313,7 @@ class Vector3DTests: XCTestCase {
         let thisWay = Vector3D(i: 1.0, j: 0.0, k: 0.0)
         let thatWay = Vector3D(i: 0.0, j: -1.0, k: 0.0)
         
-        let target = -M_PI_2
+        let target = -Double.pi / 2.0
         
         let trial = try! Vector3D.findAngle(baselineVec: thisWay, measureTo: thatWay, perp: rocket)
         
@@ -322,14 +322,14 @@ class Vector3DTests: XCTestCase {
 
         let thatWay2 = Vector3D(i: 0.866, j: -0.5, k: 0.0)
         let trial2 = try! Vector3D.findAngle(baselineVec: thisWay, measureTo: thatWay2, perp: rocket)
-        let target2 = -M_PI / 6.0
+        let target2 = -Double.pi / 6.0
         
         XCTAssertEqualWithAccuracy(trial2, target2, accuracy: Vector3D.EpsilonV)
 
         
         let thatWay3 = Vector3D(i: -1.0, j: 0.0, k: 0.0)
         let trial3 = try! Vector3D.findAngle(baselineVec: thisWay, measureTo: thatWay3, perp: rocket)
-        let target3 = M_PI
+        let target3 = Double.pi
         
         XCTAssertEqualWithAccuracy(trial3, target3, accuracy: Vector3D.EpsilonV)
         

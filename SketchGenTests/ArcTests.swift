@@ -67,7 +67,7 @@ class ArcTests: XCTestCase {
         
         let orbitXY = try! Arc(center: sun, end1: earth, end2: atlantis, useSmallAngle: true)
         
-        XCTAssert(orbitXY.getSweepAngle() == M_PI_2)
+        XCTAssert(orbitXY.getSweepAngle() == Double.pi / 2.0)
         
         
         /// Convenient values
@@ -80,7 +80,7 @@ class ArcTests: XCTestCase {
         // High to high
         let season = try! Arc(center: sun, end1: earth44, end2: atlantis, useSmallAngle: true)
         
-        let target = 1.0 * M_PI / 3.0
+        let target = 1.0 * Double.pi / 3.0
         let theta = season.getSweepAngle()
         
         XCTAssertEqualWithAccuracy(theta, target, accuracy: 0.001)
@@ -89,7 +89,7 @@ class ArcTests: XCTestCase {
         // High to high complement
         let season3 = try! Arc(center: sun, end1: earth44, end2: atlantis, useSmallAngle: false)
         
-        let target3 = -1.0 * (2.0 * M_PI - target)
+        let target3 = -1.0 * (2.0 * Double.pi - target)
         let theta3 = season3.getSweepAngle()
         
         XCTAssertEqualWithAccuracy(theta3, target3, accuracy: 0.001)
@@ -99,7 +99,7 @@ class ArcTests: XCTestCase {
         
         let season2 = try! Arc(center: sun, end1: earth2, end2: atlantis, useSmallAngle: true)
         
-        let target2 = 2.0 * M_PI / 3.0
+        let target2 = 2.0 * Double.pi / 3.0
         let theta2 = season2.getSweepAngle()
         
         XCTAssertEqualWithAccuracy(theta2, target2, accuracy: 0.001)
@@ -107,7 +107,7 @@ class ArcTests: XCTestCase {
         // Low to high complement
         let season4 = try! Arc(center: sun, end1: earth2, end2: atlantis, useSmallAngle: false)
         
-        let target4 = -1.0 * (2.0 * M_PI - target2)
+        let target4 = -1.0 * (2.0 * Double.pi - target2)
         let theta4 = season4.getSweepAngle()
         
         XCTAssertEqualWithAccuracy(theta4, target4, accuracy: 0.001)
@@ -120,7 +120,7 @@ class ArcTests: XCTestCase {
         
         let season5 = try! Arc(center: sun, end1: earth3, end2: atlantis5, useSmallAngle: false)
         
-        let target5 = -13.0 * M_PI / 12.0
+        let target5 = -13.0 * Double.pi / 12.0
         let theta5 = season5.getSweepAngle()
         
         XCTAssertEqualWithAccuracy(theta5, target5, accuracy: 0.001)
@@ -128,7 +128,7 @@ class ArcTests: XCTestCase {
         // High to low complement
         let season6 = try! Arc(center: sun, end1: earth3, end2: atlantis5, useSmallAngle: true)
         
-        let target6 = 11.0 * M_PI / 12.0
+        let target6 = 11.0 * Double.pi / 12.0
         let theta6 = season6.getSweepAngle()
         
         XCTAssertEqualWithAccuracy(theta6, target6, accuracy: 0.001)
@@ -137,7 +137,7 @@ class ArcTests: XCTestCase {
         // Low to low
         let season7 = try! Arc(center: sun, end1: earth2, end2: atlantis5, useSmallAngle: false)
         
-        let target7 = -17.0 * M_PI / 12.0
+        let target7 = -17.0 * Double.pi / 12.0
         let theta7 = season7.getSweepAngle()
         
         XCTAssertEqualWithAccuracy(theta7, target7, accuracy: 0.001)
@@ -145,7 +145,7 @@ class ArcTests: XCTestCase {
         let season8 = try! Arc(center: sun, end1: earth2, end2: atlantis5, useSmallAngle: true)
         
         // Low to low complement
-        let target8 = 7.0 * M_PI / 12.0
+        let target8 = 7.0 * Double.pi / 12.0
         let theta8 = season8.getSweepAngle()
         
         XCTAssertEqualWithAccuracy(theta8, target8, accuracy: 0.001)
@@ -182,8 +182,8 @@ class ArcTests: XCTestCase {
             var spot = grip.pointAt(t: 0.5)
             
             XCTAssert(spot.z == 0.0)
-            XCTAssert(spot.y == 6.0 + M_SQRT2)
-            XCTAssert(spot.x == 3.5 + M_SQRT2)
+            XCTAssert(spot.y == 6.0 + 2.squareRoot())
+            XCTAssert(spot.x == 3.5 + 2.squareRoot())
             
             spot = grip.pointAt(t: 0.0)
             
@@ -271,7 +271,7 @@ class ArcTests: XCTestCase {
         /// One quarter of a full circle - in quadrant I
         let shoulder = try! Arc(center: ctr, end1: green, end2: checker, useSmallAngle: true)
         
-        XCTAssertEqual(M_PI_2, shoulder.getSweepAngle())
+        XCTAssertEqual(Double.pi / 2.0, shoulder.getSweepAngle())
         
         var clock1 = Vector3D(i: 0.5, j: 0.866, k: 0.0)
         try! clock1.normalize()
@@ -331,7 +331,7 @@ class ArcTests: XCTestCase {
         let ctr = Point3D(x: 2.0, y: 1.0, z: 5.0)
         let e1 = Point3D(x: 4.5, y: 1.0, z: 5.0)
         
-        let shield = try! Arc(center: ctr, axis: axis, end1: e1, sweep: M_PI_4 + 0.15)
+        let shield = try! Arc(center: ctr, axis: axis, end1: e1, sweep: Double.pi / 4.0 + 0.15)
         
         let box = shield.extent
         

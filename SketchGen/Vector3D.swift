@@ -227,7 +227,7 @@ public struct Vector3D: Equatable {
     /// - Parameter: angle: Desired angle in degrees
     static func makeXZ(_ angle: Double) -> Vector3D  {
         
-        let angleRad = angle * (M_PI / 180.0)
+        let angleRad = angle * (Double.pi / 180.0)
         let myI = sin(angleRad)
         let myK = cos(angleRad)
         
