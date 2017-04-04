@@ -64,10 +64,6 @@ class Roundy  {
         
     }
     
-    /// Print unobscured by test results and multiple calls to target function
-    func ArcDebug() -> Void   {
-        
-    }
     
     /// Experiment with line - cubic intersections
     func chopCubic() -> Void   {
@@ -84,7 +80,7 @@ class Roundy  {
         displayCurves.append(target)
         
         let ptE = Point3D(x: 2.50, y: 1.30, z: 0.0)
-        let ptF = Point3D(x: 3.35, y: 2.10, z: 0.0)
+        let ptF = Point3D(x: 3.35, y: 2.20, z: 0.0)
         
         /// Line segment to test for intersection
         let arrow1 = try! LineSeg(end1: ptE, end2: ptF)

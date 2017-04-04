@@ -8,89 +8,69 @@
 
 import Foundation
 
-/// A 'brick' aligned with the coordinate axes that envelops some geometry.  Useful for scaling and intersections.
+/// A 'brick' aligned with the coordinate axes to envelop some geometry.  Useful for scaling and intersections.
+/// Does not allow 0.0 thicknesses
 public struct OrthoVol   {
     
-    fileprivate var origin: Point3D
-    
-    fileprivate var width: Double    // These are assumed to be always positive
-    fileprivate var height: Double
-    fileprivate var depth: Double
+    fileprivate var rangeX: ClosedRange<Double>
+    fileprivate var rangeY: ClosedRange<Double>
+    fileprivate var rangeZ: ClosedRange<Double>
     
     
     /// Rudimentary init
+    /// Does not check for positive ranges
     public init(minX : Double, maxX: Double, minY: Double, maxY: Double, minZ: Double, maxZ: Double)   {
         
         let deltaX = maxX - minX
+        
+        if deltaX < 0.0 {   // Reverse the ordering, if necessary
+            rangeX = ClosedRange(uncheckedBounds: (lower: maxX, upper: minX))
+        }  else  {
+            rangeX = ClosedRange(uncheckedBounds: (lower: minX, upper: maxX))
+        }
+        
         let skinnyX = (deltaX == 0)
         
+        
         let deltaY = maxY - minY
+        
+        if deltaY < 0.0 {
+            rangeY = ClosedRange(uncheckedBounds: (lower: maxY, upper: minY))
+        }  else  {
+            rangeY = ClosedRange(uncheckedBounds: (lower: minY, upper: maxY))
+        }
+        
         let skinnyY = (deltaY == 0)
         
+        
         let deltaZ = maxZ - minZ
+        
+        if deltaZ < 0.0 {
+            rangeZ = ClosedRange(uncheckedBounds: (lower: maxZ, upper: minZ))
+        }  else  {
+            rangeZ = ClosedRange(uncheckedBounds: (lower: minZ, upper: maxZ))
+        }
+        
         let skinnyZ = (deltaZ == 0)
-        
-        var smallX = minX
-        width = deltaX
-        
-        var smallY = minY
-        height = deltaY
-
-        var smallZ = minZ
-        depth = deltaZ
 
        
-        if skinnyX || skinnyY || skinnyZ   {  // One of the sizes = 0.0
+        if skinnyX || skinnyY || skinnyZ   {  // One or more of the sizes = 0.0
             
             let sep = sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ)
             let halfMin = sep / 10.0   // Used to keep the box from becoming a whisker
             
             if skinnyX   {
-                smallX = minX - halfMin
-                width = 2 * halfMin
-            }  else if deltaX < 0.0 {
-                smallX = maxX
-                width = abs(deltaX)
+                rangeX = ClosedRange(uncheckedBounds: (lower: minX - halfMin, upper: minX + halfMin))
             }
             
             if skinnyY   {
-                smallY = minY - halfMin
-                height = 2 * halfMin
-            }  else if deltaY < 0.0 {
-                smallY = maxY
-                height = abs(deltaY)
+                rangeY = ClosedRange(uncheckedBounds: (lower: minY - halfMin, upper: minY + halfMin))
             }
             
             if skinnyZ   {
-                smallZ = minZ - halfMin
-                depth = 2 * halfMin
-            }  else if deltaZ < 0.0 {
-                smallZ = maxZ
-                depth = abs(deltaZ)
+                rangeZ = ClosedRange(uncheckedBounds: (lower: minZ - halfMin, upper: minZ + halfMin))
             }
-            
-           
-        }  else  {    // No sizes of 0.0
-            
-            if deltaX < 0.0 {
-                smallX = maxX
-                width = abs(deltaX)
-            }
-            
-            if deltaY < 0.0 {
-                smallY = maxY
-                height = abs(deltaY)
-            }
-            
-            if deltaZ < 0.0 {
-                smallZ = maxZ
-                depth = abs(deltaZ)
-            }
-            
         }
-        
-        
-        self.origin = Point3D(x: smallX, y: smallY, z: smallZ)
         
     }
     
@@ -134,12 +114,11 @@ public struct OrthoVol   {
             leastZ = min(corner1.z, corner2.z)
             mostZ = max(corner1.z, corner2.z)
         }
+                
         
-        self.origin = Point3D(x: leastX, y: leastY, z: leastZ)
-        
-        self.width = mostX - leastX
-        self.height = mostY - leastY
-        self.depth = mostZ - leastZ
+        rangeX = ClosedRange(uncheckedBounds: (lower: leastX, upper: mostX))
+        rangeY = ClosedRange(uncheckedBounds: (lower: leastY, upper: mostY))
+        rangeZ = ClosedRange(uncheckedBounds: (lower: leastZ, upper: mostZ))
         
         // Because this is an 'init', a guard statement cannot be used at the top
         if corner1 == corner2 { throw CoincidentPointsError(dupePt: corner1)}
@@ -149,23 +128,34 @@ public struct OrthoVol   {
     
     /// Simple getter for starting corner
     func  getOrigin() -> Point3D  {
-        return self.origin
+        return Point3D(x: rangeX.lowerBound, y: rangeY.lowerBound, z: rangeZ.lowerBound)
     }
     
     /// Simple getter for the width
     func  getWidth() -> Double  {
-        return self.width
+        return rangeX.upperBound - rangeX.lowerBound
     }
     
     /// Simple getter for the height
     func  getHeight() -> Double  {
-        return self.height
+        return rangeY.upperBound - rangeY.lowerBound
     }
     
     /// Simple getter for the depth
     func  getDepth() -> Double  {
-        return self.depth
+        return rangeZ.upperBound - rangeZ.lowerBound
     }
+    
+    /// See whether the two volumes overlap
+    public static func isOverlapping(lhs: OrthoVol, rhs: OrthoVol) -> Bool   {
+        
+        let flagX = lhs.rangeX.overlaps(rhs.rangeX)
+        let flagY = lhs.rangeY.overlaps(rhs.rangeY)
+        let flagZ = lhs.rangeZ.overlaps(rhs.rangeZ)
+        
+        return flagX && flagY && flagZ
+    }
+    
     
 }   // End of definition for struct OrthoVol
 
@@ -173,17 +163,20 @@ public struct OrthoVol   {
 /// Construct a volume that combines the two input volumes
 func + (lhs: OrthoVol, rhs: OrthoVol) -> OrthoVol   {
     
-    let leastX = min(lhs.origin.x, rhs.origin.x)
-    let mostX = max(lhs.origin.x + lhs.width, rhs.origin.x + rhs.width)
+    let leastX = min(lhs.rangeX.lowerBound, rhs.rangeX.lowerBound)
+    let mostX = max(lhs.rangeX.upperBound, rhs.rangeX.upperBound)
     
-    let leastY = min(lhs.origin.y, rhs.origin.y)
-    let mostY = max(lhs.origin.y + lhs.height, rhs.origin.y + rhs.height)
+    let leastY = min(lhs.rangeY.lowerBound, rhs.rangeY.lowerBound)
+    let mostY = max(lhs.rangeY.upperBound, rhs.rangeY.upperBound)
     
-    let leastZ = min(lhs.origin.z, rhs.origin.z)
-    let mostZ = max(lhs.origin.z + lhs.depth, rhs.origin.z + rhs.depth)
+    let leastZ = min(lhs.rangeZ.lowerBound, rhs.rangeZ.lowerBound)
+    let mostZ = max(lhs.rangeZ.upperBound, rhs.rangeZ.upperBound)
 
     let combined = OrthoVol(minX: leastX, maxX: mostX, minY: leastY, maxY: mostY, minZ: leastZ, maxZ: mostZ)
+    
     return combined
 }
+
+
 
 

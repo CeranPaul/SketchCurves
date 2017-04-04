@@ -381,7 +381,7 @@ open class Cubic: PenCurve   {
     /// Increase the number of intermediate points as necessary
     public func getExtent() -> OrthoVol   {
         
-        let pieces = 10
+        let pieces = 15
         let step = 1.0 / Double(pieces)
         let limit = pieces - 1
         
