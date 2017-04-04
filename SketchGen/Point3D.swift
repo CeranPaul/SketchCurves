@@ -121,7 +121,7 @@ public struct  Point3D: Hashable {
     public static func intersectLinePlane(enil: Line, enalp: Plane) throws -> Point3D {
         
             // Bail if the line is parallel to the plane
-        guard !enalp.isParallel(enil) else {throw ParallelError(enil: enil, enalp: enalp)}
+        guard !enalp.isParallel(enil: enil) else {throw ParallelError(enil: enil, enalp: enalp)}
         
         if Plane.isCoincident(flat: enalp, pip: enil.getOrigin())  { return enil.getOrigin() }    // Shortcut!
         

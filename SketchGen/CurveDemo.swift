@@ -32,7 +32,7 @@ class Roundy  {
         
         extent = OrthoVol(minX: -1.25, maxX: 1.25, minY: -1.25, maxY: 1.25, minZ: -1.25, maxZ: 1.25)   // A dummy value
         
-        let demoString = "herm"
+        let demoString = "chop"
         
         switch demoString   {
             
@@ -54,6 +54,9 @@ class Roundy  {
             
         case "spline": firstSpline()
             
+        case "chop": chopCubic()
+            
+            
             
         default:  showBox()   // Demonstrate the boundary box for an Arc
             
@@ -65,6 +68,37 @@ class Roundy  {
     func ArcDebug() -> Void   {
         
     }
+    
+    /// Experiment with line - cubic intersections
+    func chopCubic() -> Void   {
+        
+        extent = OrthoVol(minX: 1.75, maxX: 3.5, minY: 1.0, maxY: 3.0, minZ: -1.0, maxZ: 1.0)   // Fixed value
+        arena = CGRect(x: 1.75, y: 1.0, width: 1.75, height: 2.0)
+        
+        let ptA = Point3D(x: 1.80, y: 1.40, z: 0.0)
+        let ptB = Point3D(x: 2.10, y: 1.95, z: 0.0)
+        let ptC = Point3D(x: 2.70, y: 2.30, z: 0.0)
+        let ptD = Point3D(x: 3.50, y: 2.05, z: 0.0)
+        
+        let target = Cubic(alpha: ptA, beta: ptB, betaFraction: 0.35, gamma: ptC, gammaFraction: 0.70, delta: ptD)
+        displayCurves.append(target)
+        
+        let ptE = Point3D(x: 2.50, y: 1.30, z: 0.0)
+        let ptF = Point3D(x: 3.35, y: 2.10, z: 0.0)
+        
+        /// Line segment to test for intersection
+        let arrow1 = try! LineSeg(end1: ptE, end2: ptF)
+        displayCurves.append(arrow1)
+        
+        /// Line made from the LineSeg
+        let ray = try! Line(spot: arrow1.getOneEnd(), arrow: arrow1.getDirection())
+        
+        
+        let spots = target.intersectLine(ray: ray, accuracy: 0.001)
+        
+        print(spots.first!)
+    }
+    
     
     /// Build and plot an entire ellipse
     func wholeEllipse()   {

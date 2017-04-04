@@ -539,11 +539,45 @@ open class Cubic: PenCurve   {
         
         let t2 = t * t
 
+           // This is the component matrix differentiated once
         let myI = 3.0 * ax * t2 + 2.0 * bx * t + cx
         let myJ = 3.0 * ay * t2 + 2.0 * by * t + cy
         let myK = 3.0 * az * t2 + 2.0 * bz * t + cz
         
         return Vector3D(i: myI, j: myJ, k: myK)    // Notice that this is not normalized!
+    }
+    
+    /// Create a plane if 21 points along the curve lie in it
+    /// This doesn't handle a failed plane well.
+    public func getPlane() -> Plane?   {
+        
+        /// Mid-point along the curve
+        let mid = self.pointAt(t: 0.5)
+        
+        /// A plane using the end points and a midpoint
+        let flat = try! Plane(alpha: self.ptAlpha, beta: mid, gamma: self.ptOmega)
+        
+        /// The return value
+        var flag = true
+        
+           // Check intermediate points to that plane
+        for g in 1...19   {
+            
+            let curT = Double(g) * 0.05
+            let pip = self.pointAt(t: curT)
+            
+            flag = Plane.isCoincident(flat: flat, pip: pip)
+            
+            if !flag   {
+                break
+            }
+        }
+        
+        if flag   {
+            return flat
+        }  else  {
+            return nil
+        }
     }
     
     
@@ -561,7 +595,90 @@ open class Cubic: PenCurve   {
     }
     
     
+    /// Intersection points with a line
+    func intersectLine(ray: Line, accuracy: Double) -> [Point3D] {
+        
+        /// The return array
+        var crossings = [Point3D]()
+        
+        let ref = Vector3D.built(from: ray.getOrigin(), towards: self.getOneEnd())
+        
+        let refComps = ray.resolveRelative(arrow: ref)
+        
+        /// Normalized vector in the direction from the Line origin to the curve start
+        var perpOneEnd = refComps.perp
+        try! perpOneEnd.normalize()
+        
+        
+        /// The independent variable
+        var t = 0.0
+        
+        /// Current step size.  Will get smaller as the search progresses
+        var deltaT = 0.2
+        
+        
+        /// Difference between the fresh value and previous one.  Start as a very small value
+//        var delta = -0.000001
+        
+        /// Value of the difference for the previous step
+//        var prevDelta: Double
+        
+        /// Prior value of the function
+        var previous: Double
+        
+        /// Must start positive.  The goal is to get this to 0.0 within +/- "accuracy"
+        var objective = refComps.perp.length()
+        
+        
+        /// Backstop for the outer loop
+        var outsideCount = 0   // Should this counter and check be replaced by an error call?
+        
+        repeat   {
+            
+            /// Backstop for the inner loop
+            var insideCount = 0   // Should this counter and check be replaced by an error call?
+            
+            repeat   {
+                
+                t += deltaT   // Generate another value for t
+//                prevDelta = delta
+                previous = objective
+                
+                
+                let slider = self.pointAt(t: t)
+                
+                let cast = Vector3D.built(from: ray.getOrigin(), towards: slider)
+                
+                let comps = ray.resolveRelative(arrow: cast)
+                
+                objective = Vector3D.dotProduct(lhs: perpOneEnd, rhs: comps.perp)
+//                delta = objective - previous
+//                print(String(t) + "  " + String(objective))
+                
+                // Prepare for further iterations
+                
+                insideCount += 1
+                
+            } while objective * previous > 0.0 && t <= 1.0  &&  insideCount < 8   // Loop until objective changes sign
+            
+            deltaT = deltaT / -5.0   // Decrease the step size
+//            delta *= -1.0   // Change the sign for the (previous) step, as well.
+            
+            outsideCount += 1
+            
+        } while abs(objective) > accuracy && abs(deltaT) > 0.001 && outsideCount < 10   // Iterate until a condition fails
+        
+           // This assumes that none of the loops have overrun
+        let pip = self.pointAt(t: t)
+        crossings.append(pip)
+        
+        print(t)
+        
+        return crossings
+    }
     
+    
+
     /// Plot the curve segment.  This will be called by the UIView 'drawRect' function
     public func draw(context: CGContext, tform: CGAffineTransform)  {
         
@@ -661,5 +778,7 @@ open class Cubic: PenCurve   {
     // What's the right way to check for equivalence?
     
     // TODO: Figure a way to do an offset curve
+    
+    
     
 }

@@ -84,6 +84,7 @@ public class LineSeg: PenCurve {    // Can this be a struct, instead?
     }
     
     /// Create a unit vector showing direction
+    /// - Returns: Normalized vector
     open func getDirection() -> Vector3D   {
         
         var along = Vector3D.built(from: self.endAlpha, towards: self.endOmega)

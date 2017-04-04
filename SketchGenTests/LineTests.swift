@@ -107,7 +107,7 @@ class LineTests: XCTestCase {
         let target = (targetA, targetP)
         
         let trial = Point3D(x: 0.0, y: 0.5, z: 0.0)
-        let comps = refLine.resolveRelative(trial)
+        let comps = refLine.resolveRelative(yonder: trial)
         
         XCTAssert(comps == target)
     }

@@ -8,7 +8,7 @@
 
 import Foundation
 
-/// A 'brick' aligned with the coordinate axes that envelops a curve.  Useful for scaling and intersections.
+/// A 'brick' aligned with the coordinate axes that envelops some geometry.  Useful for scaling and intersections.
 public struct OrthoVol   {
     
     fileprivate var origin: Point3D
