@@ -26,10 +26,10 @@ open class Perimeter {
         
         pieces = [PenCurve]()
         
-        closed = false
-        
         /// Each subset should be ordered
         cutouts = [Perimeter]()
+        
+        closed = false
         
     }
     

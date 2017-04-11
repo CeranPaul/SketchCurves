@@ -32,7 +32,7 @@ class Roundy  {
         
         extent = OrthoVol(minX: -1.25, maxX: 1.25, minY: -1.25, maxY: 1.25, minZ: -1.25, maxZ: 1.25)   // A dummy value
         
-        let demoString = "chop"
+        let demoString = "chop2"
         
         switch demoString   {
             
@@ -56,6 +56,7 @@ class Roundy  {
             
         case "chop": chopCubic()
             
+        case "chop2": chopCubic2()
             
             
         default:  showBox()   // Demonstrate the boundary box for an Arc
@@ -64,6 +65,50 @@ class Roundy  {
         
     }
     
+
+    /// Deal with a specific failure case
+    func chopCubic2() -> Void {
+        
+        let ax = 0.016
+        let bx = -0.108
+        let cx = -0.174
+        let dx = 0.571
+        let ay = -0.023
+        let by = 0.180
+        let cy = -0.291
+        let dy = 0.119
+        let az = 0.0
+        let bz = 0.0
+        let cz = 0.0
+        let dz = 0.0
+        
+        let bowl = Cubic(ax: ax, bx: bx, cx: cx, dx: dx, ay: ay, by: by, cy: cy, dy: dy, az: az, bz: bz, cz: cz, dz: dz)
+        displayCurves.append(bowl)
+        
+        
+        arena = CGRect(x: 0.0, y: -0.1, width: 0.6, height: 0.3)   // Empirical value for this case
+        
+        let ptA = Point3D(x: 0.02, y: 0.25, z: 0.0)
+        let ptB = Point3D(x: 0.59, y: 0.25, z: 0.0)
+        
+        let horizon1 = try!  LineSeg(end1: ptA, end2: ptB)
+
+        let ray1 = try! Line(spot: ptA, arrow: horizon1.getDirection())
+        
+        let ptC = Point3D(x: 0.02, y: 0.065, z: 0.0)
+        let ptD = Point3D(x: 0.59, y: 0.065, z: 0.0)
+        
+        let horizon2 = try!  LineSeg(end1: ptC, end2: ptD)
+        
+        let ray2 = try! Line(spot: ptC, arrow: horizon2.getDirection())
+        
+        displayCurves.append(horizon2)
+        
+        let pots = bowl.intersect(ray: ray2, accuracy: 0.001)
+        print(pots.count)
+        
+        
+    }
     
     /// Experiment with line - cubic intersections
     func chopCubic() -> Void   {
@@ -90,7 +135,7 @@ class Roundy  {
         let ray = try! Line(spot: arrow1.getOneEnd(), arrow: arrow1.getDirection())
         
         
-        let spots = target.intersectLine(ray: ray, accuracy: 0.001)
+        let spots = target.intersect(ray: ray, accuracy: 0.001)
         
         print(spots.first!)
     }

@@ -152,13 +152,13 @@ class CubicTests: XCTestCase {
         let ray = try! Line(spot: arrow1.getOneEnd(), arrow: arrow1.getDirection())
         
         
-        let spots = target.intersectLine(ray: ray, accuracy: 0.001)
+        let spots = target.intersect(ray: ray, accuracy: 0.001)
         
         let tnuoc = spots.count
         XCTAssertEqual(tnuoc, 1)
         
         let common = spots.first!
-        XCTAssertEqualWithAccuracy(common.x, 3.309, accuracy: 0.001)
+        XCTAssertEqualWithAccuracy(common.x, 3.312, accuracy: 0.001)
         XCTAssertEqualWithAccuracy(common.y, 2.161, accuracy: 0.001)
         XCTAssertEqualWithAccuracy(common.z, 0.0, accuracy: 0.001)
     }

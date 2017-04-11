@@ -268,6 +268,21 @@ open class Cubic: PenCurve   {
     }
     
     
+    /// Create a new curve translated, scaled, and rotated by the matrix
+    public func transform(xirtam: Transform) -> PenCurve   {
+        
+        let tAlpha = self.ptAlpha.transform(xirtam: xirtam)
+        let tOmega = self.ptOmega.transform(xirtam: xirtam)
+        
+        let tControlA = self.controlA!.transform(xirtam: xirtam)
+        let tControlB = self.controlB!.transform(xirtam: xirtam)
+        
+        let fresh = Cubic(ptA: tAlpha, controlA: tControlA, controlB: tControlB, ptB: tOmega)
+        fresh.setIntent(purpose: self.usage)   // Copy setting instead of having the default
+        
+        return fresh
+    }
+    
     
     /// Attach new meaning to the curve
     public func setIntent(purpose: PenTypes)   {
@@ -594,12 +609,117 @@ open class Cubic: PenCurve   {
         return (alongVector, perpVector)
     }
     
+    /// Find the range of the parameter where the curve crosses a line
+    /// This is part of finding the intersection
+    /// - Parameters:
+    ///   - ray:  The Line to be used in testing for a crossing
+    ///   - span:  A range of the curve parameter t in which to hunt
+    /// - Returns: A smaller ClosedRange<Double>
+    func crossing(ray: Line, span: ClosedRange<Double>) -> ClosedRange<Double>?   {
+        
+        /// Number of pieces to divide range
+        let chunks = 5
+        
+        /// The possible return value
+        var tighter: ClosedRange<Double>
+        
+        /// Point at the beginning of the range
+        let green = self.pointAt(t: span.lowerBound)
+        
+        /// Vector from start of Line to point at beginning of range
+        let bridgeVec = Vector3D.built(from: ray.getOrigin(), towards: green)
+        
+        /// Components of bridge along and perpendicular to the Line
+        let bridgeComps = ray.resolveRelative(arrow: bridgeVec)
+        
+        /// Normalized vector in the direction from the Line origin to the curve start
+        var ref = bridgeComps.perp
+        
+        if !ref.isZero()   {
+            try! ref.normalize()
+        }
+        
+        /// Parameter step
+        let parStep = (span.upperBound - span.lowerBound) / Double(chunks)
+        
+        /// Recent value of parameter
+        var previousT = span.lowerBound
+        
+        
+        for g in 1...chunks   {
+            
+            let freshT = span.lowerBound + Double(g) * parStep
+            
+            let pip = self.pointAt(t: freshT)
+            
+            let bridge = Vector3D.built(from: ray.getOrigin(), towards: pip)
+            
+            let components = ray.resolveRelative(arrow: bridge)
+            
+            /// Non-normalized vector in the direction from the Line origin to the current point
+            let hotStuff = components.perp
+
+            /// Length of "hotStuff" when projected to the reference vector
+            let projection = Vector3D.dotProduct(lhs: hotStuff, rhs: ref)
+            
+            if projection < 0.0   {   // Opposite of the reference, so a crossing was just passed
+                tighter = ClosedRange<Double>(uncheckedBounds: (lower: previousT, upper: freshT))
+                return tighter   // Bails after the first crossing found, even if there happen to be more
+            }  else  {
+                previousT = freshT   // Prepare for checking the next interval
+            }
+        }
+        
+        return nil
+    }
     
     /// Intersection points with a line
-    func intersectLine(ray: Line, accuracy: Double) -> [Point3D] {
+    public func intersect(ray: Line, accuracy: Double) -> [Point3D] {
         
         /// The return array
         var crossings = [Point3D]()
+        
+        /// Whether or not a crossing has been found
+        var crossed = false
+        
+        /// Separation in points for the given range of parameter t
+        var sep = self.findLength()
+        
+        var middle = Point3D(x: -1.0, y: -1.0, z: -1.0)
+        
+        
+        /// Interval in parameter space for hunting
+        var shebang = ClosedRange<Double>(uncheckedBounds: (lower: 0.0, upper: 1.0))
+        
+        repeat   {
+            
+            if let refined = self.crossing(ray: ray, span: shebang)   {
+                
+                let low = self.pointAt(t: refined.lowerBound)
+                let high = self.pointAt(t: refined.upperBound)
+                sep = Point3D.dist(pt1: low, pt2: high)
+                
+                middle = Point3D.midway(alpha: low, beta: high)
+                crossed = true
+                shebang = refined    // Make the checked range narrower
+                
+            }
+            
+        } while crossed  &&  sep > accuracy
+        
+        if sep <= accuracy   {
+            crossings.append(middle)
+        }
+        
+        return crossings
+    }
+    
+    /// Intersection points with a line
+    public func intersectOld(ray: Line, accuracy: Double) -> [Point3D] {
+        
+        /// The return array
+        var crossings = [Point3D]()
+        
         
         let ref = Vector3D.built(from: ray.getOrigin(), towards: self.getOneEnd())
         
@@ -610,18 +730,12 @@ open class Cubic: PenCurve   {
         try! perpOneEnd.normalize()
         
         
-        /// The independent variable
-        var t = 0.0
-        
         /// Current step size.  Will get smaller as the search progresses
         var deltaT = 0.2
         
+        /// The independent variable
+        var t = -deltaT
         
-        /// Difference between the fresh value and previous one.  Start as a very small value
-//        var delta = -0.000001
-        
-        /// Value of the difference for the previous step
-//        var prevDelta: Double
         
         /// Prior value of the function
         var previous: Double
@@ -641,7 +755,7 @@ open class Cubic: PenCurve   {
             repeat   {
                 
                 t += deltaT   // Generate another value for t
-//                prevDelta = delta
+                //                prevDelta = delta
                 previous = objective
                 
                 
@@ -652,23 +766,23 @@ open class Cubic: PenCurve   {
                 let comps = ray.resolveRelative(arrow: cast)
                 
                 objective = Vector3D.dotProduct(lhs: perpOneEnd, rhs: comps.perp)
-//                delta = objective - previous
-//                print(String(t) + "  " + String(objective))
+                //                delta = objective - previous
+                //                print(String(t) + "  " + String(objective))
                 
                 // Prepare for further iterations
                 
                 insideCount += 1
                 
-            } while objective * previous > 0.0 && t <= 1.0  &&  insideCount < 8   // Loop until objective changes sign
+            } while objective * previous > 0.0 && (t + deltaT) <= 1.0  &&  insideCount < 8   // Loop until objective changes sign
             
             deltaT = deltaT / -5.0   // Decrease the step size
-//            delta *= -1.0   // Change the sign for the (previous) step, as well.
+            //            delta *= -1.0   // Change the sign for the (previous) step, as well.
             
             outsideCount += 1
             
         } while abs(objective) > accuracy && abs(deltaT) > 0.001 && outsideCount < 10   // Iterate until a condition fails
         
-           // This assumes that none of the loops have overrun
+        // This assumes that none of the loops have overrun
         let pip = self.pointAt(t: t)
         crossings.append(pip)
         
