@@ -177,25 +177,25 @@ class LineSegTests: XCTestCase {
         
         let target = Point3D(x: 3.0, y: 3.0, z: 5.0)
         
-        let crater = plateau.intersectLine(bowshot: shot)
+        let crater = plateau.intersect(ray: shot)
         
-        XCTAssertEqual(crater, target)
+        XCTAssertEqual(crater.first!, target)
         
         launcher = Point3D(x: 1.0, y: -1.0, z: 5.0)
         shot = try! Line(spot: launcher, arrow: azimuth)
         
-        let crater2 = plateau.intersectLine(bowshot: shot)
+        let crater2 = plateau.intersect(ray: shot)
    
-        XCTAssert(crater2 == nil)
+        XCTAssert(crater2.isEmpty)
         
 
         launcher = Point3D(x: 1.0, y: -3.0, z: 5.0)
         azimuth = Vector3D(i: -0.5, j: 0.866, k: 0.0)
         shot = try! Line(spot: launcher, arrow: azimuth)
         
-        let crater3 = plateau.intersectLine(bowshot: shot)
+        let crater3 = plateau.intersect(ray: shot)
         
-        XCTAssert(crater3 == nil)
+        XCTAssert(crater3.isEmpty)
 
     }
     

@@ -674,7 +674,12 @@ open class Cubic: PenCurve   {
     }
     
     /// Intersection points with a line
-    public func intersect(ray: Line, accuracy: Double) -> [Point3D] {
+    /// - Parameters:
+    ///   - ray:  The Line to be used for intersecting
+    ///   - accuracy:  How close is close enough?
+    /// - Returns: Array of points common to both curves - though for now it will return only the first one
+    /// - SeeAlso:  crossing()
+    public func intersect(ray: Line, accuracy: Double = Point3D.Epsilon) -> [Point3D] {
         
         /// The return array
         var crossings = [Point3D]()
@@ -892,6 +897,8 @@ open class Cubic: PenCurve   {
     // What's the right way to check for equivalence?
     
     // TODO: Figure a way to do an offset curve
+    
+    // Clip from either end and re-parameterize
     
     
     

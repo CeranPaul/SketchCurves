@@ -16,7 +16,7 @@ public struct Vector3D: Equatable {
     var k: Double
     
     /// Difference limit between components in equality checks
-    public static let EpsilonV: Double = 0.001
+    public static let EpsilonV: Double = 0.0001
     
     /// The simplest constructor
     /// - See: 'testFidelity' under Vector3DTests

@@ -83,6 +83,11 @@ public class LineSeg: PenCurve {    // Can this be a struct, instead?
         self.endOmega = bubble
     }
     
+    /// Calculate the crown over a small segment
+    public func findCrown(smallerT: Double, largerT: Double) -> Double   {
+        return 0.0
+    }
+    
     /// Create a unit vector showing direction
     /// - Returns: Normalized vector
     open func getDirection() -> Vector3D   {
@@ -93,6 +98,17 @@ public class LineSeg: PenCurve {    // Can this be a struct, instead?
         return along   // I think it's weird that this has to be a separate line
     }
     
+    /// Return the tangent vector, which won't depend on the input parameter
+    /// Some notations show "t" as the parameter, instead of "u"
+    /// - Returns:
+    ///   - tan:  Non-normalized vector
+    /// Consider making this a member variable
+    public func tangentAt(t: Double) -> Vector3D   {
+        
+        let along = Vector3D.built(from: self.endAlpha, towards: self.endOmega)
+        return along
+    }
+    
     /// Calculate length
     func getLength() -> Double   {
         return Point3D.dist(pt1: self.endAlpha, pt2: self.endOmega)
@@ -100,7 +116,7 @@ public class LineSeg: PenCurve {    // Can this be a struct, instead?
     
     /// Move, rotate, and scale by a matrix
     /// - Throws: CoincidentPointsError if it was scaled to be very small
-    open func transform(_ xirtam: Transform) throws -> LineSeg {
+    open func transform(xirtam: Transform) throws -> LineSeg {
         
         let tAlpha = endAlpha.transform(xirtam: xirtam)
         let tOmega = endOmega.transform(xirtam: xirtam)
@@ -178,30 +194,59 @@ public class LineSeg: PenCurve {    // Can this be a struct, instead?
         return freshSeg
     }
     
-    /// Check for possible intersection
-    /// - Returns: Intersection if it lies on segment
-    public func intersectLine(bowshot: Line) -> Point3D?   {
+    /// Get the bounding box
+    public func getExtent() -> OrthoVol  {
         
-        let extended = try! Line(spot: self.endAlpha, arrow: self.getDirection())
-        let impact = try! Line.intersectTwo(straightA: extended, straightB: bowshot)
+        return try! OrthoVol(corner1: self.endAlpha, corner2: self.endOmega)
+    }
+    
+    /// Find possible intersection points with a line
+    /// - Parameters:
+    ///   - ray:  The Line to be used for intersecting
+    ///   - accuracy:  How close is close enough?
+    /// - Returns: Array of points common to both curves
+    public func intersect(ray: Line, accuracy: Double = Point3D.Epsilon) -> [Point3D] {
         
-        let range = Point3D.dist(pt1: self.endAlpha, pt2: impact)
+        /// The return array
+        var crossings = [Point3D]()
         
-        if range > self.getLength()   {
-            return nil
-        }  else  {
-            var bridge = Vector3D.built(from: self.endAlpha, towards: impact)
-            try! bridge.normalize()
+        /// Line built from this segment
+        let unbounded = try! Line(spot: self.getOneEnd(), arrow: self.getDirection())
+        
+        if Line.isParallel(straightA: unbounded, straightB: ray)   {   // Deal with parallel lines
             
-            let compliance = Vector3D.dotProduct(lhs: self.getDirection(), rhs: bridge)
+            if Line.isCoincident(straightA: unbounded, straightB: ray)   {   // Coincident lines
+                
+                crossings.append(self.getOneEnd())
+                crossings.append(self.getOtherEnd())
+                
+            }
             
-            if compliance > 0.0   {
-                return impact
-            }  else  {
-                return nil
+        }  else  {   // Not parallel lines
+            
+            /// Intersection of the two lines
+            let collision = try! Line.intersectTwo(straightA: unbounded, straightB: ray)
+            
+            /// Vector from segment origin towards intersection
+            var rescue = Vector3D.built(from: self.getOneEnd(), towards: collision)
+            try! rescue.normalize()
+            
+            let sameDir = Vector3D.dotProduct(lhs: self.getDirection(), rhs: rescue)
+            
+            if sameDir > 0.0   {
+                
+                let dist = Point3D.dist(pt1: self.getOneEnd(), pt2: collision)
+                
+                if dist <= self.getLength()   {
+                    
+                    crossings.append(collision)
+                }
             }
         }
+        
+        return crossings
     }
+    
     
     /// See if another segment crosses this one
     /// Used for seeing if a screen gesture cuts across the current seg

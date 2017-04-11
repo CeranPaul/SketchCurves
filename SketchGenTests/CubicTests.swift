@@ -162,4 +162,47 @@ class CubicTests: XCTestCase {
         XCTAssertEqualWithAccuracy(common.y, 2.161, accuracy: 0.001)
         XCTAssertEqualWithAccuracy(common.z, 0.0, accuracy: 0.001)
     }
+    
+    func testIntLine2()   {
+        
+        let ax = 0.016
+        let bx = -0.108
+        let cx = -0.174
+        let dx = 0.571
+        let ay = -0.023
+        let by = 0.180
+        let cy = -0.291
+        let dy = 0.119
+        let az = 0.0
+        let bz = 0.0
+        let cz = 0.0
+        let dz = 0.0
+        
+        let bowl = Cubic(ax: ax, bx: bx, cx: cx, dx: dx, ay: ay, by: by, cy: cy, dy: dy, az: az, bz: bz, cz: cz, dz: dz)
+        
+                
+        let ptA = Point3D(x: 0.02, y: 0.25, z: 0.0)
+        let ptB = Point3D(x: 0.59, y: 0.25, z: 0.0)
+        
+        let horizon1 = try!  LineSeg(end1: ptA, end2: ptB)
+        
+        let ray1 = try! Line(spot: ptA, arrow: horizon1.getDirection())
+        
+        let ptC = Point3D(x: 0.02, y: 0.065, z: 0.0)
+        let ptD = Point3D(x: 0.59, y: 0.065, z: 0.0)
+        
+        let horizon2 = try!  LineSeg(end1: ptC, end2: ptD)
+        
+        let ray2 = try! Line(spot: ptC, arrow: horizon2.getDirection())
+        
+        
+        var pots = bowl.intersect(ray: ray1, accuracy: Point3D.Epsilon)
+        XCTAssert(pots.isEmpty)
+        
+        pots = bowl.intersect(ray: ray2, accuracy: Point3D.Epsilon)
+        XCTAssertFalse(pots.isEmpty)
+        
+    }
+    
+    
 }

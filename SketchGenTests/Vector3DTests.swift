@@ -38,7 +38,7 @@ class Vector3DTests: XCTestCase {
     // Verify the original value for Epsilon
     func testEpsilonV()   {
         
-        let target = 0.001
+        let target = 0.0001
         XCTAssert(target == Vector3D.EpsilonV)
     }
     
