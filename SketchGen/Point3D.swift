@@ -8,32 +8,17 @@
 
 import UIKit
 
-/// Simple representation of a position in space by the use of three orthogonal axes
+/// Simple representation of a position in space by the use of three orthogonal coordinates
+/// The default initializer usually suffices
 public struct  Point3D: Hashable {
     
     var x: Double    // Eventually these should be set as private?
     var y: Double
     var z: Double
 
+    
     /// Threshhold of separation for equality checks
     static let Epsilon: Double = 0.0001
-    
-    /// Necessary for making Sets
-    public var hashValue: Int   {
-        
-        get  {
-            let divX = self.x / Point3D.Epsilon
-            let myX = Int(round(divX))
-            
-            let divY = self.y / Point3D.Epsilon
-            let myY = Int(round(divY))
-            
-            let divZ = self.z / Point3D.Epsilon
-            let myZ = Int(round(divZ))
-            
-            return myX.hashValue + myY.hashValue + myZ.hashValue
-        }
-    }
     
     
     
@@ -51,7 +36,9 @@ public struct  Point3D: Hashable {
         return Point3D(x: totalX, y: totalY, z: totalZ)
     }
     
-    /// Move and scale by a matrix
+    /// Move, rotate, and/or scale by a matrix
+    /// - Parameters:
+    ///   - xirtam:  Matrix for the intended transformation
     /// - SeeAlso:  offset
     public func transform(xirtam: Transform) -> Point3D {
         
@@ -61,7 +48,6 @@ public struct  Point3D: Hashable {
         let transformed = tniop4.toPoint()
         return transformed
     }
-    
     
     
     /// Calculate the distance between two of 'em
@@ -121,7 +107,7 @@ public struct  Point3D: Hashable {
     public static func intersectLinePlane(enil: Line, enalp: Plane) throws -> Point3D {
         
             // Bail if the line is parallel to the plane
-        guard !enalp.isParallel(enil: enil) else {throw ParallelError(enil: enil, enalp: enalp)}
+        guard !enalp.isParallel(enil: enil) else { throw ParallelError(enil: enil, enalp: enalp) }
         
         if Plane.isCoincident(flat: enalp, pip: enil.getOrigin())  { return enil.getOrigin() }    // Shortcut!
         
@@ -171,11 +157,12 @@ public struct  Point3D: Hashable {
         return ang
     }
     
-    /// See if three points are not duplicate  Useful for building triangles, or defining arcs
+    /// Check if three points are not duplicate.  Useful for building triangles, or defining arcs
     /// - Parameters:
     ///   - alpha:  A test point
     ///   - beta:  Another test point
     ///   - gamma:  The final test point
+    /// - See: 'testIsThreeUnique' under Point3DTests
     public static func  isThreeUnique(alpha: Point3D, beta: Point3D, gamma: Point3D) -> Bool   {
         
         let flag1 = alpha != beta
@@ -185,8 +172,13 @@ public struct  Point3D: Hashable {
         return flag1 && flag2 && flag3
     }
     
+    
     /// See if three points are all in a line
-    /// 'isThreeUnique' should be run and have a true result before running this
+    /// 'isThreeUnique' should pass before running this
+    /// - Parameters:
+    ///   - alpha:  A test point
+    ///   - beta:  Another test point
+    ///   - gamma:  The final test point
     /// - See: 'testIsThreeLinear' under Point3DTests
     public static func isThreeLinear(alpha: Point3D, beta: Point3D, gamma: Point3D) -> Bool   {
         
@@ -199,26 +191,39 @@ public struct  Point3D: Hashable {
     }
     
     /// Throw away the Z value and convert
+    /// Should this become a computed member variable?
     public static func makeCGPoint(pip: Point3D) -> CGPoint   {
         
         return CGPoint(x: pip.x, y: pip.y)
     }
     
-}
-
-/// Check to see that the distance between the two is less than Point3D.Epsilon
-public func == (lhs: Point3D, rhs: Point3D) -> Bool   {
-    
-    let separation = Point3D.dist(pt1: lhs, pt2: rhs)
+    /// Check to see that the distance between the two is less than Point3D.Epsilon
+    /// - See: 'testEqual' under Point3DTests
+    public static func == (lhs: Point3D, rhs: Point3D) -> Bool   {
         
-    return separation < Point3D.Epsilon
-}
-
-
-/// Verify that the two parameters are distinct points
-public func != (lhs: Point3D, rhs: Point3D) -> Bool   {
-    
-    let separation = Point3D.dist(pt1: lhs, pt2: rhs)
+        let separation = Point3D.dist(pt1: lhs, pt2: rhs)
         
-    return separation >= Point3D.Epsilon
+        return separation < Point3D.Epsilon
+    }
+    
+    
+    /// Necessary for making Sets
+    public var hashValue: Int   {
+        
+        get  {
+            let divX = self.x / Point3D.Epsilon
+            let myX = Int(round(divX))
+            
+            let divY = self.y / Point3D.Epsilon
+            let myY = Int(round(divY))
+            
+            let divZ = self.z / Point3D.Epsilon
+            let myZ = Int(round(divZ))
+            
+            return myX.hashValue + myY.hashValue + myZ.hashValue
+        }
+    }
+    
 }
+
+

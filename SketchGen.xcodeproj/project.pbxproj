@@ -69,6 +69,9 @@
 		81CDCC231C17E44B00060C8D /* Plane.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81CDCC221C17E44B00060C8D /* Plane.swift */; };
 		81CDCC251C17E4D200060C8D /* CoincidentPlanesError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81CDCC241C17E4D200060C8D /* CoincidentPlanesError.swift */; };
 		81CDCC271C17E4F000060C8D /* ParallelPlanesError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81CDCC261C17E4F000060C8D /* ParallelPlanesError.swift */; };
+		81F250A61EB1059100AED201 /* CoordinateSystemTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81F250A51EB1059100AED201 /* CoordinateSystemTests.swift */; };
+		81F250A71EB1068B00AED201 /* CoordinateSystem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8124968F1D0E0D8C0023A256 /* CoordinateSystem.swift */; };
+		81F250A81EB107CC00AED201 /* NonOrthogonalCSYSError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 812496911D0E0DFC0023A256 /* NonOrthogonalCSYSError.swift */; };
 		81F8D6CC1C51F65100A369CF /* PerimeterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81F8D6CB1C51F65000A369CF /* PerimeterTests.swift */; };
 		81FEAAA51C4348EE000F0E2A /* CoincidentLinesError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81FEAAA41C4348EE000F0E2A /* CoincidentLinesError.swift */; };
 		81FEAAA61C4348EE000F0E2A /* CoincidentLinesError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81FEAAA41C4348EE000F0E2A /* CoincidentLinesError.swift */; };
@@ -136,6 +139,7 @@
 		81CDCC221C17E44B00060C8D /* Plane.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Plane.swift; sourceTree = "<group>"; };
 		81CDCC241C17E4D200060C8D /* CoincidentPlanesError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoincidentPlanesError.swift; sourceTree = "<group>"; };
 		81CDCC261C17E4F000060C8D /* ParallelPlanesError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ParallelPlanesError.swift; sourceTree = "<group>"; };
+		81F250A51EB1059100AED201 /* CoordinateSystemTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoordinateSystemTests.swift; sourceTree = "<group>"; };
 		81F8D6CB1C51F65000A369CF /* PerimeterTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PerimeterTests.swift; sourceTree = "<group>"; };
 		81FEAAA41C4348EE000F0E2A /* CoincidentLinesError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoincidentLinesError.swift; sourceTree = "<group>"; };
 		81FEAAA71C4359B1000F0E2A /* ParallelLinesError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ParallelLinesError.swift; sourceTree = "<group>"; };
@@ -226,6 +230,7 @@
 				810328931C71A04400E6FA21 /* TransformTests.swift */,
 				814E0F5A1D3B359000200289 /* CubicTests.swift */,
 				814E0F5F1D3D65C900200289 /* SplineTests.swift */,
+				81F250A51EB1059100AED201 /* CoordinateSystemTests.swift */,
 			);
 			path = SketchGenTests;
 			sourceTree = "<group>";
@@ -418,13 +423,16 @@
 				8183F2621C18E2FF009CAF6B /* Line.swift in Sources */,
 				814F13431C153F1E004AB22B /* ArcPointsError.swift in Sources */,
 				814E0F591D39F3C000200289 /* IdenticalVectorError.swift in Sources */,
+				81F250A81EB107CC00AED201 /* NonOrthogonalCSYSError.swift in Sources */,
 				8106F0011C1A7F6B00C74FE6 /* Point3DTests.swift in Sources */,
+				81F250A61EB1059100AED201 /* CoordinateSystemTests.swift in Sources */,
 				814F133C1C153ED0004AB22B /* Point3D.swift in Sources */,
 				8183F26E1C1A672B009CAF6B /* LineTests.swift in Sources */,
 				814F13421C153F16004AB22B /* CoincidentPointsError.swift in Sources */,
 				810328941C71A04400E6FA21 /* TransformTests.swift in Sources */,
 				8183F2651C18E313009CAF6B /* CoincidentPlanesError.swift in Sources */,
 				81414B371C08CF8C00A9DE83 /* OrthoVolTests.swift in Sources */,
+				81F250A71EB1068B00AED201 /* CoordinateSystem.swift in Sources */,
 				8106F0041C1FA12C00C74FE6 /* Cubic.swift in Sources */,
 				81078A761C587848001C21CD /* Ellipse.swift in Sources */,
 				81FEAAA61C4348EE000F0E2A /* CoincidentLinesError.swift in Sources */,

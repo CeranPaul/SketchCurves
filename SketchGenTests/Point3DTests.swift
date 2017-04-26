@@ -10,16 +10,6 @@ import XCTest
 
 class Point3DTests: XCTestCase {
 
-    override func setUp() {
-        super.setUp()
-        // Put setup code here. This method is called before the invocation of each test method in the class.
-    }
-    
-    override func tearDown() {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
-        super.tearDown()
-    }
-
     /// Verify the fidelity of recording the inputs
     func testFidelity()  {
         
@@ -35,29 +25,6 @@ class Point3DTests: XCTestCase {
         
         let target = 0.0001
         XCTAssert(target == Point3D.Epsilon)
-    }
-    
-    func testEquals()   {
-        
-        let trial = Point3D(x: -3.1, y: 6.8 + 0.75 * Point3D.Epsilon, z: -1.4)
-        
-        let target = Point3D(x: -3.1, y: 6.8, z: -1.4)
-        
-        XCTAssert(trial == target)
-        
-        let trial2 = Point3D(x: -3.1 - 1.5 * Point3D.Epsilon, y: 6.8 + 0.75 * Point3D.Epsilon, z: -1.4)
-        
-        XCTAssertFalse(trial2 == target)
-        
-    }
-    
-    func testNotEquals()   {
-        
-        let trial = Point3D(x: -3.7, y: 6.1, z: 10.4)
-        
-        let target = Point3D(x: -3.7, y: 6.1, z: 9.4)
-        
-        XCTAssert(trial != target)
     }
     
     func testOffset()   {
@@ -97,6 +64,32 @@ class Point3DTests: XCTestCase {
         XCTAssertEqual(pbj, target)
     }
     
+    func testIsThreeUnique()   {
+        
+        let here = Point3D(x: -5.0, y: 5.0, z: 5.0)
+        var there = Point3D(x: -9.0, y: 9.0, z: 9.0)
+        var pastThere = Point3D(x: -15.0, y: 15.0, z: 15.0)
+        
+        XCTAssertTrue(Point3D.isThreeUnique(alpha: here, beta: there, gamma: pastThere))
+        
+           // Make the second point be a duplicate of the first
+        there = Point3D(x: -5.0, y: 5.0, z: 5.0)
+        
+        XCTAssertFalse(Point3D.isThreeUnique(alpha: here, beta: there, gamma: pastThere))
+        
+           // Make the third point be a duplicate of the second
+        there = Point3D(x: -9.0, y: 9.0, z: 9.0)
+        pastThere = Point3D(x: -9.0, y: 9.0, z: 9.0)
+        
+        XCTAssertFalse(Point3D.isThreeUnique(alpha: here, beta: there, gamma: pastThere))
+        
+           // Make the third point be a duplicate of the first
+        pastThere = Point3D(x: -5.0, y: 5.0, z: 5.0)
+        
+        XCTAssertFalse(Point3D.isThreeUnique(alpha: here, beta: there, gamma: pastThere))
+    }
+    
+    
     func testIsThreeLinear()   {
         
         let here = Point3D(x: -5.0, y: 5.0, z: 5.0)
@@ -113,9 +106,30 @@ class Point3DTests: XCTestCase {
         XCTAssert(Point3D.isThreeUnique(alpha: here, beta: missed, gamma: pastThere))
         
         XCTAssertFalse(Point3D.isThreeLinear(alpha: here, beta: missed, gamma: pastThere))
-        
     }
     
-    // TODO: Add tests for transform, isThreeCoincident and project
+    func testEqual()   {
+        
+        let trial = Point3D(x: -3.1, y: 6.8 + 0.75 * Point3D.Epsilon, z: -1.4)
+        
+        let target = Point3D(x: -3.1, y: 6.8, z: -1.4)
+        
+        XCTAssert(trial == target)
+        
+        let trial2 = Point3D(x: -3.1 - 1.5 * Point3D.Epsilon, y: 6.8 + 0.75 * Point3D.Epsilon, z: -1.4)
+        
+        XCTAssertFalse(trial2 == target)
+    }
+    
+    func testNotEqual()   {
+        
+        let trial = Point3D(x: -3.7, y: 6.1, z: 10.4)
+        
+        let target = Point3D(x: -3.7, y: 6.1, z: 9.4)
+        
+        XCTAssert(trial != target)
+    }
+    
+    // TODO: Add tests for transform, intersectLinePlane, angleAbout, makeCGPoint, and project
     
 }

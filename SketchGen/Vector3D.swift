@@ -17,8 +17,10 @@ public struct Vector3D: Equatable {
     
     /// Difference limit between components in equality checks
     public static let EpsilonV: Double = 0.0001
+
     
     /// The simplest constructor
+    /// I don't know why I can't use a default constructor
     /// - See: 'testFidelity' under Vector3DTests
     public init(i: Double, j: Double, k: Double)   {
         
@@ -27,22 +29,12 @@ public struct Vector3D: Equatable {
         self.k = k
     }
     
+    
     /// Copy constructor
     public init(model: Vector3D)   {
         self.i = model.i
         self.j = model.j
         self.k = model.k
-    }
-    
-    /// Check to see if the vector has zero length
-    /// - See: 'testIsZero' under Vector3DTests
-    public func isZero() -> Bool   {
-        
-        let flagI = abs(self.i)  < Vector3D.EpsilonV
-        let flagJ = abs(self.j)  < Vector3D.EpsilonV
-        let flagK = abs(self.k)  < Vector3D.EpsilonV
-        
-        return flagI && flagJ && flagK
     }
     
     /// Figure the combined length of all three components
@@ -65,6 +57,17 @@ public struct Vector3D: Equatable {
         i = self.i / denom
         j = self.j / denom
         k = self.k / denom
+    }
+    
+    /// Check to see if the vector has zero length
+    /// - See: 'testIsZero' under Vector3DTests
+    public func isZero() -> Bool   {
+        
+        let flagI = abs(self.i)  < Vector3D.EpsilonV
+        let flagJ = abs(self.j)  < Vector3D.EpsilonV
+        let flagK = abs(self.k)  < Vector3D.EpsilonV
+        
+        return flagI && flagJ && flagK
     }
     
     /// Check to see if this is a unit vector
@@ -175,7 +178,7 @@ public struct Vector3D: Equatable {
     /// Could be used before doing cross product
     /// - Throws: ZeroVectorError if either input is of zero length
     /// - SeeAlso:  isOpposite()
-    public static func  isScaled(lhs: Vector3D, rhs: Vector3D) throws -> Bool  {
+    public static func isScaled(lhs: Vector3D, rhs: Vector3D) throws -> Bool  {
         
         guard(!lhs.isZero()) else {  throw ZeroVectorError(dir: lhs)  }
         guard(!rhs.isZero()) else {  throw ZeroVectorError(dir: rhs)  }
@@ -225,7 +228,7 @@ public struct Vector3D: Equatable {
     
     /// Build a Vector3D in the XY plane
     /// - Parameter: angle: Desired angle in degrees
-    static func makeXZ(_ angle: Double) -> Vector3D  {
+    public static func makeXZ(angle: Double) -> Vector3D  {
         
         let angleRad = angle * (Double.pi / 180.0)
         let myI = sin(angleRad)
@@ -237,19 +240,19 @@ public struct Vector3D: Equatable {
         return direction
     }
     
+    /// Compare each component of the vector for equality
+    /// - See: 'testEquals' under Vector3DTests
+    public static func == (lhs: Vector3D, rhs: Vector3D) -> Bool   {
+        
+        let flagI = abs(rhs.i - lhs.i) < Vector3D.EpsilonV
+        let flagJ = abs(rhs.j - lhs.j) < Vector3D.EpsilonV
+        let flagK = abs(rhs.k - lhs.k) < Vector3D.EpsilonV
+        
+        return flagI && flagJ && flagK
+    }
+    
 }    // End of struct Vector3D definition
 
-
-/// Compare each component of the vector for equality
-/// - See: 'testEquals' under Vector3DTests
-public func == (lhs: Vector3D, rhs: Vector3D) -> Bool   {
-        
-    let flagI = abs(rhs.i - lhs.i) < Vector3D.EpsilonV
-    let flagJ = abs(rhs.j - lhs.j) < Vector3D.EpsilonV
-    let flagK = abs(rhs.k - lhs.k) < Vector3D.EpsilonV
-        
-    return flagI && flagJ && flagK
-}
 
 /// Construct a vector that is the sum of the two input vectors
 /// - See: 'testPlus' under Vector3DTests
