@@ -25,7 +25,7 @@ class LineTests: XCTestCase {
         
         let nexus = Point3D(x: -2.5, y: 1.5, z: 0.015)
         var horn = Vector3D(i: 12.0, j: 3.0, k: 4.0)
-        try! horn.normalize()
+        horn.normalize()
         
         do   {
             
@@ -51,7 +51,7 @@ class LineTests: XCTestCase {
         
         let P51Orig = Point3D(x: 3.0, y: 1.0, z: 0.0)
         var P51Dir = Vector3D(i: -0.707, j: 0.707, k: 0.0)
-        try! P51Dir.normalize()   // Safe by inspection
+        P51Dir.normalize()
         
         let target = Point3D(x: 1.0, y: 3.0, z: 0.0)
         
@@ -73,7 +73,7 @@ class LineTests: XCTestCase {
         
         let evelOrig = Point3D(x: -1.5, y: 0.0, z: 1.5)
         var evelDir = Vector3D(i: -0.707, j: 0.0, k: 0.707)
-        try! evelDir.normalize()   // Safe by inspection
+        evelDir.normalize()
         
         let target2 = Point3D(x: -3.85, y: 0.0, z: 3.85)
         

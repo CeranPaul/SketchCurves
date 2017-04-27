@@ -64,7 +64,7 @@ open class CoordinateSystem   {
     init(spot: Point3D, direction1: Vector3D, direction2: Vector3D, useFirst: Bool, verticalRef: Bool)   {
         
         var outOfPlane = try! Vector3D.crossProduct(lhs: direction1, rhs: direction2)
-        try! outOfPlane.normalize()
+        outOfPlane.normalize()
         
         self.axisZ = outOfPlane
         

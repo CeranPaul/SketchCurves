@@ -636,7 +636,7 @@ open class Cubic: PenCurve   {
         var ref = bridgeComps.perp
         
         if !ref.isZero()   {
-            try! ref.normalize()
+            ref.normalize()
         }
         
         /// Parameter step
@@ -732,7 +732,7 @@ open class Cubic: PenCurve   {
         
         /// Normalized vector in the direction from the Line origin to the curve start
         var perpOneEnd = refComps.perp
-        try! perpOneEnd.normalize()
+        perpOneEnd.normalize()
         
         
         /// Current step size.  Will get smaller as the search progresses

@@ -10,21 +10,6 @@ import XCTest
 
 class Vector3DTests: XCTestCase {
 
-    // Verify the fidelity of recording the inputs
-    func testFidelity()  {
-        
-        var trial = Vector3D(i: 3.0, j: 10.0, k: 12.0)
-        XCTAssert(trial.i == 3.0)
-        XCTAssert(trial.j == 10.0)
-        XCTAssert(trial.k == 12.0)
-        
-        trial = Vector3D(i: -1.0, j: -5.0, k: -2.5)
-        XCTAssert(trial.i == -1.0)
-        XCTAssert(trial.j == -5.0)
-        XCTAssert(trial.k == -2.5)
-        
-    }
-    
     // Verify the original value for Epsilon
     func testEpsilonV()   {
         
@@ -66,7 +51,7 @@ class Vector3DTests: XCTestCase {
         XCTAssertFalse(trial.isUnit())
         
         trial = Vector3D(i: -3.0, j: -4.0, k: -12.0)
-        try! trial.normalize()   // Safe by inspection
+        trial.normalize()   // Safe by inspection
         
         XCTAssert(trial.isUnit())
     }
@@ -93,21 +78,9 @@ class Vector3DTests: XCTestCase {
         var trial = Vector3D(i: 0.1, j: 0.25, k: 0.003)
         XCTAssertFalse(trial.length() == 1.0)
         
-        try! trial.normalize()   // Safe by inspection
-        XCTAssertEqualWithAccuracy (trial.length(), 1.0, accuracy: Vector3D.EpsilonV / 3.0, "")
+        trial.normalize()   // Safe by inspection
+        XCTAssertEqualWithAccuracy (trial.length(), 1.0, accuracy: Vector3D.EpsilonV / 3.0)
 
-        // Verify that the new guard statement works
-        var zeroTrial = Vector3D(i: 0.0, j: 0.0, k: 0.0)
-        XCTAssertThrowsError(try zeroTrial.normalize())
-        
-        // Verify that the new guard statement doesn't throw false errors
-        trial = Vector3D(i: 0.866, j: 0.0, k: -0.5)
-        
-        do   {
-           try trial.normalize()
-        } catch  {
-            XCTFail()
-        }
     }
     
     
@@ -263,21 +236,21 @@ class Vector3DTests: XCTestCase {
         let sqrt32 = sqrt(3.0) / 2.0
         
         var base = Vector3D(i: 2.5 * sqrt22, j: 2.5 * sqrt22, k: 0.0)
-        try! base.normalize()
+        base.normalize()
         
         var closer = Vector3D(i: -2.5 * sqrt32, j: -2.5 * 0.5, k: 0.0)
-        try! closer.normalize()
+        closer.normalize()
         
         var farther = Vector3D(i: -2.5 * 0.5, j: -2.5 * sqrt32, k: 0.0)
-        try! farther.normalize()
+        farther.normalize()
         
         var incoming = try! Vector3D.crossProduct(lhs: base, rhs: closer)
-        try! incoming.normalize()
+        incoming.normalize()
         print(incoming)
         XCTAssertEqualWithAccuracy(incoming.k, 1.0, accuracy: 0.0001)
         
         var outgoing = try! Vector3D.crossProduct(lhs: base, rhs: farther)
-        try! outgoing.normalize()
+        outgoing.normalize()
         print(outgoing)
         
         XCTAssertEqualWithAccuracy(outgoing.k, -1.0, accuracy: 0.0001)

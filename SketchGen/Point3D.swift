@@ -76,69 +76,6 @@ public struct  Point3D: Hashable {
         return Point3D(x: (alpha.x + beta.x) / 2.0, y: (alpha.y + beta.y) / 2.0, z: (alpha.z + beta.z) / 2.0)
     }
     
-    /// Drop the point in the direction opposite of the normal
-    /// - Parameters:
-    ///   - pip:  Point to be projected
-    ///   - enalp:  Flat surface to hit
-    public static func projectToPlane(pip: Point3D, enalp: Plane) -> Point3D  {
-        
-        if Plane.isCoincident(flat: enalp, pip: pip) {return pip }    // Shortcut!
-        
-        
-        let planeCenter = enalp.getLocation()   // Referred to multiple times
-        
-        let bridge = Vector3D.built(from: planeCenter, towards: pip)   // Not normalized
-
-             // This can be positive, or negative
-        let distanceOffPlane = Vector3D.dotProduct(lhs: bridge, rhs: enalp.getNormal())
-        
-            // Resolve "bridge" into components that are perpendicular to the plane and are parallel to it
-        let bridgeNormComponent = enalp.getNormal() * distanceOffPlane
-        let bridgeInPlaneComponent = bridge - bridgeNormComponent
-        
-        return planeCenter.offset(jump: bridgeInPlaneComponent)   // Ignore the component normal to the plane
-    }
-    
-    /// Generate a point by intersecting a line and a plane
-    /// - Parameters:
-    ///   - enil:  Line of interest
-    ///   - enalp:  Flat surface to hit
-    /// - Throws: ParallelError if the input Line is parallel to the plane
-    public static func intersectLinePlane(enil: Line, enalp: Plane) throws -> Point3D {
-        
-            // Bail if the line is parallel to the plane
-        guard !Plane.isParallel(flat: enalp, enil: enil) else { throw ParallelError(enil: enil, enalp: enalp) }
-        
-        if Plane.isCoincident(flat: enalp, pip: enil.getOrigin())  { return enil.getOrigin() }    // Shortcut!
-        
-        
-             // Resolve the line direction into components normal to the plane and in plane
-        let lineNormMag = Vector3D.dotProduct(lhs: enil.getDirection(), rhs: enalp.getNormal())
-        let lineNormComponent = enalp.getNormal() * lineNormMag
-        let lineInPlaneComponent = enil.getDirection() - lineNormComponent
-        
-        
-        let projectedLineOrigin = Point3D.projectToPlane(pip: enil.getOrigin(), enalp: enalp)
-        
-        var drop = Vector3D.built(from: enil.getOrigin(), towards: projectedLineOrigin)
-        try! drop.normalize()   // The shortcut above should keep the error from happening
-        
-        let closure = Vector3D.dotProduct(lhs: enil.getDirection(), rhs: drop)
-        
-        
-        let separation = Point3D.dist(pt1: projectedLineOrigin, pt2: enil.getOrigin())
-        
-        var factor = separation / lineNormComponent.length()
-        
-        if closure < 0.0 { factor = factor * -1.0 }   // Dependent on the line origin's position relative to
-                                                      //  the plane normal
-        
-        let inPlaneOffset = lineInPlaneComponent * factor
-        
-        return projectedLineOrigin.offset(jump: inPlaneOffset)
-    }
-    
-    
     /// Determine the angle (in radians) CCW from the positive X axis in the XY plane
     public static func angleAbout(ctr: Point3D, tniop: Point3D) -> Double  {
         

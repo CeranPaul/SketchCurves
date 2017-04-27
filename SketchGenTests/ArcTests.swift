@@ -209,7 +209,7 @@ class ArcTests: XCTestCase {
         
         
         var upRight = Vector3D(i: 1.0, j: 1.0, k: 0.0)
-        try! upRight.normalize()
+        upRight.normalize()
         
         /// Unit slope
         let ray = try! Line(spot: ctr, arrow: upRight)
@@ -227,7 +227,7 @@ class ArcTests: XCTestCase {
         let sunSetting = try! Arc(center: ctr, end1: checker, end2: green, useSmallAngle: true)
         
         var clock = Vector3D(i: 0.866, j: 0.5, k: 0.0)
-        try! clock.normalize()
+        clock.normalize()
         
         let ray2 = try! Line(spot: ctr, arrow: clock)
         
@@ -243,7 +243,7 @@ class ArcTests: XCTestCase {
         
         
         var clock2 = Vector3D(i: 0.0, j: -1.0, k: 0.0)
-        try! clock2.normalize()
+        clock2.normalize()
         
         var ray3 = try! Line(spot: ctr, arrow: clock2)
         
@@ -274,7 +274,7 @@ class ArcTests: XCTestCase {
         XCTAssertEqual(Double.pi / 2.0, shoulder.getSweepAngle())
         
         var clock1 = Vector3D(i: 0.5, j: 0.866, k: 0.0)
-        try! clock1.normalize()
+        clock1.normalize()
         
         let ray1 = try! Line(spot: ctr, arrow: clock1)
         
@@ -286,7 +286,7 @@ class ArcTests: XCTestCase {
         shoulder.reverse()
         
         var clock2 = Vector3D(i: 0.866, j: 0.5, k: 0.0)
-        try! clock2.normalize()
+        clock2.normalize()
         
         let ray2 = try! Line(spot: ctr, arrow: clock2)
         

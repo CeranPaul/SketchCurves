@@ -9,6 +9,7 @@
 import Foundation
 
 /// A direction built from three orthogonal components
+/// Default constructor suffices
 public struct Vector3D: Equatable {
     
     var i: Double
@@ -19,22 +20,19 @@ public struct Vector3D: Equatable {
     static let EpsilonV: Double = 0.0001
 
     
-    /// The simplest constructor
-    /// I don't know why I can't use a default constructor.  Because I happen to have a second constructor defined?
-    /// - See: 'testFidelity' under Vector3DTests
-    public init(i: Double, j: Double, k: Double)   {
+    
+    /// Destructively make this a unit vector
+    /// - See: 'testNormalize' under Vector3DTests
+    public mutating func normalize()   {
         
-        self.i = i
-        self.j = j
-        self.k = k
-    }
-    
-    
-    /// Copy constructor
-    public init(model: Vector3D)   {
-        self.i = model.i
-        self.j = model.j
-        self.k = model.k
+        if !self.isZero()   {
+        
+            let denom = self.length()
+            
+            i = self.i / denom
+            j = self.j / denom
+            k = self.k / denom
+        }
     }
     
     /// Figure the combined length of all three components
@@ -44,20 +42,6 @@ public struct Vector3D: Equatable {
         return sqrt(self.i * self.i + self.j * self.j + self.k * self.k)
     }
     
-    
-    /// Destructively change the vector length to 1.0
-    /// - Throws: ZeroVectorError if the Vector has zero length.  Is this appropriate?
-    /// - See: 'testNormalize' under Vector3DTests
-    public mutating func normalize() throws  {
-        
-        guard(!isZero()) else {throw ZeroVectorError(dir: self)}
-        
-        let denom = self.length()
-        
-        i = self.i / denom
-        j = self.j / denom
-        k = self.k / denom
-    }
     
     /// Check to see if the vector has zero length
     /// - See: 'testIsZero' under Vector3DTests
@@ -109,7 +93,7 @@ public struct Vector3D: Equatable {
         let perpStep = perp * sin(angleRad)
         
         var rotated = alongStep + perpStep
-        try! rotated.normalize()
+        rotated.normalize()
         
         return rotated
     }
@@ -127,11 +111,29 @@ public struct Vector3D: Equatable {
     
     /// Construct vector from first input point towards the second
     /// Does not check for a zero vector
-    /// Consider using "normalize" on the returned value
+    /// - Parameters:
+    ///   - from: Start point
+    ///   - towards: End point
+    ///   - unit: Whether or not the result should be a unit vector
     /// - See: 'testBuiltFrom' under Vector3DTests
-    public static func built(from: Point3D, towards: Point3D) -> Vector3D {
+    public static func built(from: Point3D, towards: Point3D, unit: Bool = false) -> Vector3D {
         
-        return Vector3D(i: towards.x - from.x, j: towards.y - from.y, k: towards.z - from.z)
+        var deltaX = towards.x - from.x
+        var deltaY = towards.y - from.y
+        var deltaZ = towards.z - from.z
+        
+        if unit   {
+            
+            let len = sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ)
+            
+            if len != Vector3D.EpsilonV   {
+                deltaX = deltaX / len
+                deltaY = deltaY / len
+                deltaZ = deltaZ / len
+            }
+        }
+        
+        return Vector3D(i: deltaX, j: deltaY, k: deltaZ)
     }
     
     /// Standard definition of dot product
@@ -183,11 +185,11 @@ public struct Vector3D: Equatable {
         guard(!lhs.isZero()) else {  throw ZeroVectorError(dir: lhs)  }
         guard(!rhs.isZero()) else {  throw ZeroVectorError(dir: rhs)  }
         
-        var leftNormalized = Vector3D(model: lhs)
-        try! leftNormalized.normalize()
+        var leftNormalized = Vector3D(i: lhs.i, j: lhs.j, k: lhs.k)
+        leftNormalized.normalize()
         
-        var rightNormalized = Vector3D(model: rhs)
-        try! rightNormalized.normalize()
+        var rightNormalized = Vector3D(i: rhs.i, j: rhs.j, k: rhs.k)
+        rightNormalized.normalize()
         
         let flag1 = leftNormalized == rightNormalized
         let flag2 = Vector3D.isOpposite(lhs: leftNormalized, rhs: rightNormalized)
@@ -216,7 +218,7 @@ public struct Vector3D: Equatable {
         
            // Should the angle be negated?
         var positiveVert = try! Vector3D.crossProduct(lhs: perp, rhs: baselineVec)
-        try! positiveVert.normalize()
+        positiveVert.normalize()
         
         let side = Vector3D.dotProduct(lhs: measureTo, rhs: positiveVert)        
         if side < 0.0   { angle = -1.0 * angle }
@@ -235,7 +237,7 @@ public struct Vector3D: Equatable {
         let myK = cos(angleRad)
         
         var direction = Vector3D(i: myI, j: 0.0, k: myK)
-        try! direction.normalize()
+        direction.normalize()
         
         return direction
     }

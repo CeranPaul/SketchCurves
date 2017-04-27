@@ -92,10 +92,8 @@ public class LineSeg: PenCurve {    // Can this be a struct, instead?
     /// - Returns: Normalized vector
     open func getDirection() -> Vector3D   {
         
-        var along = Vector3D.built(from: self.endAlpha, towards: self.endOmega)
-        try! along.normalize()   // The checks in the constructor should make this safe
+        return Vector3D.built(from: self.endAlpha, towards: self.endOmega, unit: true)
         
-        return along   // I think it's weird that this has to be a separate line
     }
     
     /// Return the tangent vector, which won't depend on the input parameter
@@ -156,7 +154,7 @@ public class LineSeg: PenCurve {    // Can this be a struct, instead?
         
         /// Across the segment
         var trans = try! Vector3D.crossProduct(lhs: thataway, rhs: upward)
-        try! trans.normalize()
+        trans.normalize()
         
         /// Vector going towards the inside
         var inward = trans
@@ -228,8 +226,7 @@ public class LineSeg: PenCurve {    // Can this be a struct, instead?
             let collision = try! Line.intersectTwo(straightA: unbounded, straightB: ray)
             
             /// Vector from segment origin towards intersection
-            var rescue = Vector3D.built(from: self.getOneEnd(), towards: collision)
-            try! rescue.normalize()
+            let rescue = Vector3D.built(from: self.getOneEnd(), towards: collision, unit: true)
             
             let sameDir = Vector3D.dotProduct(lhs: self.getDirection(), rhs: rescue)
             

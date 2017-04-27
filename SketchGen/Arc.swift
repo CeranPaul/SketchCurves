@@ -74,8 +74,7 @@ open class Arc: PenCurve {
         guard (self.ctr != self.start)  else  { throw CoincidentPointsError(dupePt: self.start)}
         
             
-        var horiz = Vector3D.built(from: self.ctr, towards: self.start)
-        try! horiz.normalize()   // The guard statement should keep this from being a zero vector
+        let horiz = Vector3D.built(from: self.ctr, towards: self.start, unit: true)
         
              // Check the dot product of this and the axis?
         
@@ -116,13 +115,12 @@ open class Arc: PenCurve {
         self.isFull = false
         self.usage = PenTypes.ordinary   // Use 'setIntent' to attach the desired value
         
-        var vecStart = Vector3D.built(from: center, towards: end1)
-        try! vecStart.normalize()
-        var vecFinish = Vector3D.built(from: center, towards: end2)
-        try! vecFinish.normalize()
+        let vecStart = Vector3D.built(from: center, towards: end1, unit: true)
+        
+        let vecFinish = Vector3D.built(from: center, towards: end2, unit: true)
         
         var spin = try! Vector3D.crossProduct(lhs: vecStart, rhs: vecFinish)   // The guard statement should keep this from failing
-        try! spin.normalize()
+        spin.normalize()
         
         self.axisDir = spin
         
@@ -190,8 +188,7 @@ open class Arc: PenCurve {
     /// - Returns: Point
     open func pointAt(t: Double) -> Point3D  {
         
-        var vecStart = Vector3D.built(from: self.ctr, towards: self.start)
-        try! vecStart.normalize()
+        let vecStart = Vector3D.built(from: self.ctr, towards: self.start, unit: true)
         
         let vert = try! Vector3D.crossProduct(lhs: self.axisDir, rhs: vecStart)   // Shouldn't need to be normalized
         
@@ -238,11 +235,8 @@ open class Arc: PenCurve {
         
         let thumbsUp = abs(dist1 - dist2) < Point3D.Epsilon
         
-        var vecStart = Vector3D.built(from: center, towards: end1)
-        try! vecStart.normalize()
-        
-        var vecFinish = Vector3D.built(from: center, towards: end2)
-        try! vecFinish.normalize()
+        let vecStart = Vector3D.built(from: center, towards: end1, unit: true)
+        let vecFinish = Vector3D.built(from: center, towards: end2, unit: true)
         
         let flag1 = Vector3D.isOpposite(lhs: vecStart, rhs: vecFinish)
         
@@ -349,12 +343,11 @@ open class Arc: PenCurve {
         
         if !self.isFull   {
             
-            var chord = Vector3D.built(from: start, towards: finish)
-            try! chord.normalize()   // Checks in the constructor should keep this from being a zero vector
+            let chord = Vector3D.built(from: start, towards: finish, unit: true)
         
             let up = Vector3D(i: 0.0, j: 0.0, k: 1.0)   // TODO: Make this not so brittle
             var split = try! Vector3D.crossProduct(lhs: up, rhs: chord)
-            try! split.normalize()   // Checks in the crossProduct should keep this from being a zero vector
+            split.normalize()   // Checks in the crossProduct should keep this from being a zero vector
         
             let discard = split
 //            if self.isClockwise   { discard = split.reverse()  }
@@ -398,22 +391,19 @@ open class Arc: PenCurve {
         /// The desired result to be returned
         var ctr = Point3D(x: 0.0, y: 0.0, z: 0.0)
         
-        var vecA = Vector3D.built(from: larry, towards: curly)
-        try! vecA.normalize()   // The guard statement above should keep this from being a zero vector
-        
-        var vecB = Vector3D.built(from: curly, towards: moe)
-        try! vecB.normalize()   // The guard statement above should keep this from being a zero vector
+        let vecA = Vector3D.built(from: larry, towards: curly, unit: true)
+        let vecB = Vector3D.built(from: curly, towards: moe, unit: true)
         
         var axle = try! Vector3D.crossProduct(lhs: vecA, rhs: vecB)   // The guard statement above should keep these from being zero vectors
-        try! axle.normalize()   // The crossProduct function should keep this from being a zero vector
+        axle.normalize()   // The crossProduct function should keep this from being a zero vector
         
         let midA = Point3D.midway(alpha: larry, beta: curly)
         var perpA = try! Vector3D.crossProduct(lhs: vecA, rhs: axle)
-        try! perpA.normalize()   // The crossProduct function should keep this from being a zero vector
+        perpA.normalize()   // The crossProduct function should keep this from being a zero vector
         
         let midB = Point3D.midway(alpha: curly, beta: moe)
         var perpB = try! Vector3D.crossProduct(lhs: vecB, rhs: axle)
-        try! perpB.normalize()   // The crossProduct function should keep this from being a zero vector
+        perpB.normalize()   // The crossProduct function should keep this from being a zero vector
         
         
         do   {

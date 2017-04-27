@@ -42,7 +42,7 @@ public struct Plane   {
     /// - Throws: CoincidentPointsError for duplicate or linear inputs
     init(alpha: Point3D, beta: Point3D, gamma: Point3D) throws   {
         
-        guard (Point3D.isThreeUnique(alpha: alpha, beta: beta, gamma: gamma)) else { throw CoincidentPointsError(dupePt: alpha) }
+        guard (Point3D.isThreeUnique(alpha: alpha, beta: beta, gamma: gamma))  else  { throw CoincidentPointsError(dupePt: alpha) }
         
         // TODO: Come up with a better error type
         guard (!Point3D.isThreeLinear(alpha: alpha, beta: beta, gamma: gamma))  else  { throw CoincidentPointsError(dupePt: alpha) }
@@ -54,7 +54,7 @@ public struct Plane   {
         let thatWay = Vector3D.built(from: alpha, towards: gamma)
         
         var perpTo = try! Vector3D.crossProduct(lhs: thisWay, rhs: thatWay)
-        try! perpTo.normalize()
+        perpTo.normalize()
         
         self.normal = perpTo
     }
@@ -74,8 +74,10 @@ public struct Plane   {
     }
     
     
-    
     /// Check to see that the line direction is perpendicular to the normal
+    /// - Parameters:
+    ///   - flat:  Plane for testing
+    ///   - enil:  Line for testing
     public static func isParallel(flat: Plane, enil: Line) -> Bool   {
         
         let perp = Vector3D.dotProduct(lhs: enil.getDirection(), rhs: flat.normal)
@@ -84,6 +86,9 @@ public struct Plane   {
     }
     
     /// Check to see that the line is parallel to the plane, and lies on it
+    /// - Parameters:
+    ///   - enalp:  Plane for testing
+    ///   - enil:  Line for testing
     public static func isCoincident(enalp: Plane, enil: Line) -> Bool  {
         
         return self.isParallel(flat: enalp, enil: enil) && Plane.isCoincident(flat: enalp, pip: enil.getOrigin())
@@ -91,6 +96,9 @@ public struct Plane   {
     
     
     /// Does the argument point lie on the plane?
+    /// - Parameters:
+    ///   - flat:  Plane for testing
+    ///   - pip:  Point for testing
     /// - See: 'testIsCoincident' under PlaneTests
     public static func isCoincident(flat: Plane, pip:  Point3D) -> Bool  {
         
@@ -169,6 +177,100 @@ public struct Plane   {
         return sparkle
     }
     
+    /// Generate a point by intersecting a line and a plane
+    /// - Parameters:
+    ///   - enil:  Line of interest
+    ///   - enalp:  Flat surface to hit
+    /// - Throws: ParallelError if the input Line is parallel to the plane
+    public static func intersectLinePlane(enil: Line, enalp: Plane) throws -> Point3D {
+        
+        // Bail if the line is parallel to the plane
+        guard !Plane.isParallel(flat: enalp, enil: enil) else { throw ParallelError(enil: enil, enalp: enalp) }
+        
+        if Plane.isCoincident(flat: enalp, pip: enil.getOrigin())  { return enil.getOrigin() }    // Shortcut!
+        
+        
+        // Resolve the line direction into components normal to the plane and in plane
+        let lineNormMag = Vector3D.dotProduct(lhs: enil.getDirection(), rhs: enalp.getNormal())
+        let lineNormComponent = enalp.getNormal() * lineNormMag
+        let lineInPlaneComponent = enil.getDirection() - lineNormComponent
+        
+        
+        let projectedLineOrigin = Plane.projectToPlane(pip: enil.getOrigin(), enalp: enalp)
+        
+        let drop = Vector3D.built(from: enil.getOrigin(), towards: projectedLineOrigin, unit: true)
+        
+        let closure = Vector3D.dotProduct(lhs: enil.getDirection(), rhs: drop)
+        
+        
+        let separation = Point3D.dist(pt1: projectedLineOrigin, pt2: enil.getOrigin())
+        
+        var factor = separation / lineNormComponent.length()
+        
+        if closure < 0.0 { factor = factor * -1.0 }   // Dependent on the line origin's position relative to
+        //  the plane normal
+        
+        let inPlaneOffset = lineInPlaneComponent * factor
+        
+        return projectedLineOrigin.offset(jump: inPlaneOffset)
+    }
+    
+    /// Construct a line by intersecting two planes
+    /// - Parameters:
+    ///   - flatA:  First plane
+    ///   - flatB:  Second plane
+    /// - Throws: ParallelPlanesError if the inputs are parallel
+    /// - Throws: CoincidentPlanesError if the inputs are coincident
+    public static func intersectPlanes(flatA: Plane, flatB: Plane) throws -> Line   {
+        
+        guard !Plane.isParallel(lhs: flatA, rhs: flatB)  else  { throw ParallelPlanesError(enalpA: flatA) }
+        
+        guard !Plane.isCoincident(lhs: flatA, rhs: flatB)  else  { throw CoincidentPlanesError(enalpA: flatA) }
+        
+        
+        /// Direction of the intersection line
+        var lineDir = try! Vector3D.crossProduct(lhs: flatA.getNormal(), rhs: flatB.getNormal())
+        lineDir.normalize()   // Checks in crossProduct should keep this from being a zero vector
+        
+        /// Vector on plane B that is perpendicular to the intersection line
+        var perpInB = try! Vector3D.crossProduct(lhs: lineDir, rhs: flatB.getNormal())
+        perpInB.normalize()   // Checks in crossProduct should keep this from being a zero vector
+        
+        // The ParallelPlanesError or CoincidentPlanesError should be avoided by the guard statements
+        
+        let lineFromCenterB =  try Line(spot: flatB.getLocation(), arrow: perpInB)  // Can be either towards flatA,
+        // or away from it
+        
+        let intersectionPoint = try Plane.intersectLinePlane(enil: lineFromCenterB, enalp: flatA)
+        let common = try Line(spot: intersectionPoint, arrow: lineDir)
+        
+        return common
+    }
+    
+    /// Drop the point in the direction opposite of the normal
+    /// - Parameters:
+    ///   - pip:  Point to be projected
+    ///   - enalp:  Flat surface to hit
+    /// - Returns: Closest point on plane
+    public static func projectToPlane(pip: Point3D, enalp: Plane) -> Point3D  {
+        
+        if Plane.isCoincident(flat: enalp, pip: pip) {return pip }    // Shortcut!
+        
+        
+        let planeCenter = enalp.getLocation()   // Referred to multiple times
+        
+        let bridge = Vector3D.built(from: planeCenter, towards: pip)   // Not normalized
+        
+        // This can be positive, or negative
+        let distanceOffPlane = Vector3D.dotProduct(lhs: bridge, rhs: enalp.getNormal())
+        
+        // Resolve "bridge" into components that are perpendicular to the plane and are parallel to it
+        let bridgeNormComponent = enalp.getNormal() * distanceOffPlane
+        let bridgeInPlaneComponent = bridge - bridgeNormComponent
+        
+        return planeCenter.offset(jump: bridgeInPlaneComponent)   // Ignore the component normal to the plane
+    }
+        
 }
 
 
