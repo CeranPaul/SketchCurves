@@ -2,15 +2,16 @@
 //  Spline.swift
 //  SketchCurves
 //
-//  Created by Paul H on 7/18/16.
+//  Created by Paul on 7/18/16.
 //  Copyright © 2016 Ceran Digital Media. All rights reserved.  See LICENSE.md
 //
 
 import Foundation
 
-// TODO: Explain this in a wiki page
+// TODO: Explain this in a blog page
 
 /// End-to-end Cubic curves in 3D
+/// This will eventually need to conform to protocol PenCurve
 /// Each piece is assumed to be parameterized from 0 to 1
 open class Spline   {
     

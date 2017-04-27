@@ -114,6 +114,20 @@ open class Ellipse: PenCurve {
         return y
     }
     
+    /// Move, rotate, and scale by a matrix
+    /// - Throws: CoincidentPointsError if it was scaled to be very small
+    open func transform(xirtam: Transform) -> PenCurve {
+        
+        let tAlpha = self.start.transform(xirtam: xirtam)
+        let tOmega = self.finish.transform(xirtam: xirtam)
+        let tCent = self.ctr.transform(xirtam: xirtam)
+        
+        let transformed = Ellipse(retnec: tCent, a: self.a, b: self.b, azimuth: self.azimuth, start: tAlpha, finish: tOmega)
+        
+        transformed.setIntent(self.usage)   // Copy setting instead of having the default
+        return transformed
+    }
+    
     /// Plot the curve segment.  This will be called by the UIView 'drawRect' function
     public func draw(context: CGContext, tform: CGAffineTransform)  {
         

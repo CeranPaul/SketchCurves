@@ -33,6 +33,37 @@ open class Perimeter {
     }
     
     
+    /// Copy with a coordinate transformation
+    init (untransformed: Perimeter, xirtam: Transform)   {
+        
+        self.pieces = [PenCurve]()
+        
+        for swoosh in untransformed.pieces   {   // Iterate through the boundary curves
+            let rocked = try! swoosh.transform(xirtam: xirtam)
+            self.pieces.append(rocked)
+        }
+        
+        
+        /// Each subset should be ordered
+        cutouts = [Perimeter]()
+        
+        for seethrough in untransformed.cutouts   {   // Iterate through the voids
+            
+            /// The curves that make up a cutout for the fresh Perimeter
+            let missing = Perimeter()
+            
+            for swoosh in seethrough.pieces   {   // Iterate through a set of curves
+                let rocked = try! swoosh.transform(xirtam: xirtam)
+                missing.add(noob: rocked)
+            }
+            
+            self.cutouts.append(missing)
+        }
+        
+        self.closed = untransformed.closed
+    }
+    
+    
     
     /// Pile on another curve
     /// Some curves may get reversed as a result of this function
@@ -146,6 +177,7 @@ open class Perimeter {
     /// - Returns: Closest of the curve endpoints, if near enough, or nil
     func  nearEnd(speck: Point3D, enough: Double) -> Point3D?   {
         
+        
         let sep = Double.greatestFiniteMagnitude   // Good start for comparison
         
         
@@ -199,3 +231,58 @@ open class Perimeter {
     
 }
 
+/// Uses only the point coordinates
+struct HashTerminator: Hashable   {
+    
+    var term: Point3D
+    var curveIndex: Int
+    var near: Bool
+    var instances = 1
+    
+    init(ptA: Point3D, curveRef: Int, close: Bool)   {
+        
+        self.term = ptA
+        self.curveIndex = curveRef
+        self.near = close
+        
+    }
+    
+    public mutating func increment() -> Void   {
+        
+        self.instances += 1
+        
+    }
+    
+    
+    func recordTerminator(pip: Point3D, curveRef: Int, close: Bool, bundle: inout Set<HashTerminator>) -> Void   {
+        
+        let finish = HashTerminator(ptA: pip, curveRef: curveRef, close: close)
+        
+        if bundle.contains(finish)   {
+            let xedni = bundle.index(of: finish)
+            var temp = bundle[xedni!]
+            bundle.remove(temp)
+            temp.increment()
+            bundle.insert(temp)
+        }  else  {
+            bundle.insert(finish)
+        }
+        
+    }
+    
+    var hashValue: Int   {
+        
+        get  {
+            return term.hashValue
+        }
+    }
+    
+    /// Copied from Point3D
+    public static func == (lhs: HashTerminator, rhs: HashTerminator) -> Bool   {
+        
+        let separation = Point3D.dist(pt1: lhs.term, pt2: rhs.term)
+        
+        return separation < Point3D.Epsilon
+    }
+    
+}

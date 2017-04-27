@@ -116,7 +116,7 @@ public class LineSeg: PenCurve {    // Can this be a struct, instead?
     
     /// Move, rotate, and scale by a matrix
     /// - Throws: CoincidentPointsError if it was scaled to be very small
-    open func transform(xirtam: Transform) throws -> LineSeg {
+    public func transform(xirtam: Transform) throws -> PenCurve {
         
         let tAlpha = endAlpha.transform(xirtam: xirtam)
         let tOmega = endOmega.transform(xirtam: xirtam)

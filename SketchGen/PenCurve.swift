@@ -29,6 +29,9 @@ public protocol PenCurve   {
     /// Change the direction in-place.  Useful for traversing a Perimeter
     func reverse() -> Void
     
+    /// Transform with a 4 x 4 matrix, not a CGAffineTransform
+    func transform(xirtam: Transform) throws -> PenCurve
+    
     /// Plot the curve.  Your classic example of polymorphism
     /// - SeeAlso:  drawControls() for a Cubic
     func draw(context: CGContext, tform: CGAffineTransform)

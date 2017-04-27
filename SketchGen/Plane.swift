@@ -22,28 +22,34 @@ public struct Plane   {
     /// - See: 'testFidelity' under PlaneTests
     init(spot: Point3D, arrow: Vector3D) throws  {
         
-        self.location = spot
-        self.normal = arrow        // TODO:  Include a test to verify that the errors get thrown correctly
-
+        guard (!arrow.isZero())  else  {throw ZeroVectorError(dir: arrow)}
+        guard (arrow.isUnit())  else  {throw NonUnitDirectionError(dir: arrow)}
         
-        // In an 'init', this cannot be done at the top
-        guard (!self.normal.isZero()) else  {throw ZeroVectorError(dir: self.normal)}
-        guard (self.normal.isUnit()) else  {throw NonUnitDirectionError(dir: self.normal)}
+        self.location = spot
+        self.normal = arrow
+        
+        // TODO:  Include tests to verify that the errors get thrown correctly
+
     }
     
-    /// Generate a vector from differences between the inputs
+    /// Generate a perpendicular vector from differences between the inputs
     /// Normal could be the opposite of what you hoped for
+    /// - Parameters:
+    ///   - alpha:  First input point and origin of the fresh plane
+    ///   - beta:  Second input point
+    ///   - gamma:  Third input point
+    /// - Returns: Fresh plane
     /// - Throws: CoincidentPointsError for duplicate or linear inputs
     init(alpha: Point3D, beta: Point3D, gamma: Point3D) throws   {
         
-        self.location = alpha
-        self.normal = Vector3D(i: 0.6, j: 0.6, k: 0.6)
-        
-        guard (Point3D.isThreeUnique(alpha: alpha, beta: beta, gamma: gamma)) else { throw CoincidentPointsError(dupePt: alpha)}
+        guard (Point3D.isThreeUnique(alpha: alpha, beta: beta, gamma: gamma)) else { throw CoincidentPointsError(dupePt: alpha) }
         
         // TODO: Come up with a better error type
-        guard (!Point3D.isThreeLinear(alpha: alpha, beta: beta, gamma: gamma))  else  {  throw CoincidentPointsError(dupePt: alpha)}
-            
+        guard (!Point3D.isThreeLinear(alpha: alpha, beta: beta, gamma: gamma))  else  { throw CoincidentPointsError(dupePt: alpha) }
+        
+        
+        self.location = alpha
+        
         let thisWay = Vector3D.built(from: alpha, towards: beta)
         let thatWay = Vector3D.built(from: alpha, towards: gamma)
         
@@ -68,6 +74,22 @@ public struct Plane   {
     }
     
     
+    
+    /// Check to see that the line direction is perpendicular to the normal
+    public static func isParallel(flat: Plane, enil: Line) -> Bool   {
+        
+        let perp = Vector3D.dotProduct(lhs: enil.getDirection(), rhs: flat.normal)
+        
+        return abs(perp) < Vector3D.EpsilonV
+    }
+    
+    /// Check to see that the line is parallel to the plane, and lies on it
+    public static func isCoincident(enalp: Plane, enil: Line) -> Bool  {
+        
+        return self.isParallel(flat: enalp, enil: enil) && Plane.isCoincident(flat: enalp, pip: enil.getOrigin())
+    }
+    
+    
     /// Does the argument point lie on the plane?
     /// - See: 'testIsCoincident' under PlaneTests
     public static func isCoincident(flat: Plane, pip:  Point3D) -> Bool  {
@@ -77,27 +99,10 @@ public struct Plane   {
         let bridge = Vector3D.built(from: flat.location, towards: pip)
         
         // This can be positive, negative, or zero
-        let distanceOffPlane = Vector3D.dotProduct(lhs: bridge, rhs: flat.normal)  
+        let distanceOffPlane = Vector3D.dotProduct(lhs: bridge, rhs: flat.normal)
         
         return  abs(distanceOffPlane) < Point3D.Epsilon
     }
-    
-    
-    /// Check to see that the line direction is perpendicular to the normal
-    func isParallel(enil: Line) -> Bool   {
-        
-        let perp = Vector3D.dotProduct(lhs: enil.getDirection(), rhs: self.normal)
-        
-        return abs(perp) < Vector3D.EpsilonV
-    }
-    
-    /// Check to see that the line is parallel to the plane, and lies on it
-    func isCoincident(enil: Line) -> Bool  {
-        
-        return self.isParallel(enil: enil) && Plane.isCoincident(flat: self, pip: enil.getOrigin())
-    }
-    
-    
     
     /// Are the normals either parallel or opposite?
     /// - SeeAlso:  isCoincident and ==
@@ -113,7 +118,16 @@ public struct Plane   {
         return Plane.isCoincident(flat: lhs, pip: rhs.location) && Plane.isParallel(lhs: lhs, rhs: rhs)
     }
     
+    
     /// Construct a parallel plane offset some distance
+    /// - Parameters:
+    ///   - base:  The reference plane
+    ///   - offset:  Desired separation
+    ///   - reverse:  Flip the normal, or not
+    /// - Returns: Fresh plane, with separation
+    /// - Throws:
+    ///   - ZeroVectorError if base somehow got corrupted
+    ///   - NonUnitDirectionError if base somehow got corrupted
     public static func buildParallel(base: Plane, offset: Double, reverse: Bool) throws -> Plane  {
     
         let jump = base.normal * offset    // offset can be a negative number
@@ -135,12 +149,24 @@ public struct Plane   {
     
     
     /// Construct a new plane perpendicular to an existing plane, and through a line on that plane
-    public static func buildPerpThruLine(_ enil:  Line, enalp: Plane) throws -> Plane   {
+    /// Normal could be the opposite of what you hoped for
+    /// - Parameters:
+    ///   - enil:  Location for a fresh plane
+    ///   - enalp:  The reference plane
+    /// - Returns: Fresh plane
+    /// - Throws:
+    ///   - ZeroVectorError if enalp somehow got corrupted
+    ///   - NonUnitDirectionError if enalp somehow got corrupted
+    public static func buildPerpThruLine(enil: Line, enalp: Plane) throws -> Plane   {
         
-        // TODO:  Ensure that the input line is in the plane
+        // TODO:  Better error type
+        guard (!Plane.isCoincident(enalp: enalp, enil: enil))  else  { throw CoincidentLinesError(enil: enil) }
+        
         let newDir = try! Vector3D.crossProduct(lhs: enil.getDirection(), rhs: enalp.normal)
         
-        return try Plane(spot: enil.getOrigin(), arrow: newDir)
+        let sparkle = try Plane(spot: enil.getOrigin(), arrow: newDir)
+        
+        return sparkle
     }
     
 }

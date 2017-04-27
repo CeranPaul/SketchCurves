@@ -18,16 +18,20 @@ public struct Line: Equatable {
     fileprivate var direction: Vector3D
     
     
-    // Force the direction vector to have unit length
-    /// - Throws: ZeroVectorError if the input Vector3D has no length
+    /// Build a fresh one - with error checking
+    /// - Parameters:
+    ///   - spot:  Origin for the fresh line
+    ///   - arrow:  Direction for the fresh line.  Must have unit length
+    /// - Throws: 
+    ///   - ZeroVectorError if the input Vector3D has no length
+    ///   - NonUnitDirectionError for a bad input Vector3D
     init (spot: Point3D, arrow: Vector3D) throws  {
+        
+        guard (!arrow.isZero()) else  {throw ZeroVectorError(dir: arrow)}
+        guard (arrow.isUnit()) else  {throw NonUnitDirectionError(dir: arrow)}
         
         self.origin = spot
         self.direction = arrow
-
-        // Because this is an 'init', this cannot be done at the top
-        guard (!self.direction.isZero()) else  {throw ZeroVectorError(dir: self.direction)}
-        guard (self.direction.isUnit()) else  {throw NonUnitDirectionError(dir: self.direction)}
     }
     
     /// Simple getter for the origin
@@ -45,10 +49,16 @@ public struct Line: Equatable {
     
     
     /// Find the position of a point relative to the line and its origin
+    /// The returned perp distance will always be positive
+    /// - Parameters:
+    ///   - yonder:  Trial point
+    /// - Returns: Tuple of distances
+    /// - SeeAlso:  'resolveRelative(Vector)'
     public func resolveRelative(yonder: Point3D) -> (along: Double, perp: Double)   {
         
         let bridge = Vector3D.built(from: self.origin, towards: yonder)
         let along = Vector3D.dotProduct(lhs: bridge, rhs: self.direction)
+        
         let alongVector = self.direction * along
         let perpVector = bridge - alongVector
         let perp = perpVector.length()
@@ -58,10 +68,13 @@ public struct Line: Equatable {
     
 
     /// Find the components of a vector relative to the line
+    /// - Parameters:
+    ///   - arrow:  Trial Vector
+    /// - Returns: Tuple of Vectors
+    /// - SeeAlso:  'resolveRelative(Point)'
     public func resolveRelative(arrow: Vector3D) -> (along: Vector3D, perp: Vector3D)   {
         
         let along = Vector3D.dotProduct(lhs: arrow, rhs: self.direction)
-        
         let alongVector = self.direction * along
         
         let perpVector = arrow - alongVector
@@ -71,6 +84,9 @@ public struct Line: Equatable {
     
     
     /// Project a point to the Line
+    /// - Parameters:
+    ///   - away:  Hanging point
+    /// - Returns: Nearest point on line
     public func dropPoint(away: Point3D) -> Point3D   {
         
         if Line.isCoincident(straightA: self, trial: away)   {  return away  }   // Shortcut!
@@ -114,6 +130,9 @@ public struct Line: Equatable {
     }
     
     /// Do two lines have the same direction, even with opposite sense?
+    /// - Parameters:
+    ///   - straightA:  First test line
+    ///   - straightB:  Second test line
     /// - SeeAlso:  Overloaded ==
     public static func isParallel(straightA: Line, straightB: Line) -> Bool   {
         
@@ -125,10 +144,14 @@ public struct Line: Equatable {
     
     
     /// Verify that lines are on the same plane
-    /// isCoincident should be run first
+    /// - Parameters:
+    ///   - straightA:  First test line
+    ///   - straightB:  Second test line
     /// - SeeAlso:  Overloaded ==
     /// - SeeAlso:  Line.isParallel()
-    public static func isCoPlanar(straightA: Line, straightB: Line) -> Bool   {
+    public static func isCoplanar(straightA: Line, straightB: Line) -> Bool   {
+        
+        if Line.isCoincident(straightA: straightA, straightB: straightB) { return true }
         
         var bridgeVector = Vector3D.built(from: straightA.getOrigin(), towards: straightB.getOrigin())
         
@@ -157,9 +180,9 @@ public struct Line: Equatable {
         
         guard !Line.isCoincident(straightA: straightA, straightB: straightB) else { throw CoincidentLinesError(enil: straightA)}
         
-        guard !Line.isParallel(straightA: straightA, straightB: straightB)  else { throw ParallelLinesError(enil: straightA)}
+        guard !Line.isParallel(straightA: straightA, straightB: straightB)  else { throw ParallelLinesError(enil: straightA) }
         
-        guard Line.isCoPlanar(straightA: straightA, straightB: straightB)  else { throw NonCoPlanarLinesError(enilA: straightA, enilB: straightB)}
+        guard Line.isCoplanar(straightA: straightA, straightB: straightB)  else { throw NonCoPlanarLinesError(enilA: straightA, enilB: straightB) }
         
         if Line.isCoincident(straightA: straightA, trial: straightB.getOrigin())   { return straightB.getOrigin() }
         if Line.isCoincident(straightA: straightB, trial: straightA.getOrigin())   { return straightA.getOrigin() }

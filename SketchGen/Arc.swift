@@ -262,6 +262,21 @@ open class Arc: PenCurve {
         return (alongVector, perpVector)
     }
     
+    /// Move, rotate, and scale by a matrix
+    /// - Throws: CoincidentPointsError if it was scaled to be very small
+    open func transform(xirtam: Transform) throws -> PenCurve {
+        
+        let tAlpha = self.start.transform(xirtam: xirtam)
+        let tCent = self.ctr.transform(xirtam: xirtam)
+        let tAxis = self.axisDir.transform(xirtam: xirtam)
+        
+        let transformed = try Arc(center: tCent, axis: tAxis, end1: tAlpha, sweep: self.sweepAngle)   // Will generate a new extent
+        
+        transformed.setIntent(purpose: self.usage)   // Copy setting instead of having the default
+        return transformed
+    }
+    
+    
     /// Plot the curve segment.  This will be called by the UIView 'drawRect' function
     /// Useful for Arcs that are not in the XY plane
     public func drawOld(context: CGContext, tform: CGAffineTransform)  {
