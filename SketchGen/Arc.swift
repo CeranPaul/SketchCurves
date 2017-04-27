@@ -293,7 +293,9 @@ open class Arc: PenCurve {
     
     /// Plot the arc segment.  This will be called by the UIView 'drawRect' function
     /// - Warning:  This only works in the XY plane
-    /// Notice that a model-to-display transform is applied
+    /// - Parameters:
+    ///   - context: In-use graphics framework
+    ///   - tform:  Model-to-display transform
     public func draw(context: CGContext, tform: CGAffineTransform)  {
         
         let centerCG = CGPoint(x: self.ctr.x, y: self.ctr.y)   // Throw out Z information

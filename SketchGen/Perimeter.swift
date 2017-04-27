@@ -12,14 +12,14 @@ import UIKit
 /// Interior voids have only been tested one deep
 open class Perimeter {
     
-    /// The display list
+    /// The component list
     var pieces: [PenCurve]
     
     /// Collection of interior voids
     /// This has not been tested with multiple circular holes
     var cutouts: [Perimeter]
     
-    /// Whether or not the perimeter has any gaps
+    /// Whether or not the perimeter has any gaps.  A candidate for lazy initialization.  Or replacement by "isClosed"
     var closed: Bool
     
     init () {
@@ -30,7 +30,6 @@ open class Perimeter {
         cutouts = [Perimeter]()
         
         closed = false
-        
     }
     
     
@@ -38,7 +37,8 @@ open class Perimeter {
     /// Pile on another curve
     /// Some curves may get reversed as a result of this function
     /// There are a whole bunch of checks that should be done as part of this process
-    func add(_ noob: PenCurve) -> Void   {
+    /// - See: 'testOrdering' under PerimeterTests
+    func add(noob: PenCurve) -> Void   {
         
         if self.pieces.isEmpty  {
             
@@ -92,7 +92,23 @@ open class Perimeter {
         
     }
     
+    /// Find the combined extent
+    /// What happens if this gets called before any curves have been added?
+    func getExtent() -> OrthoVol   {
+        
+        var box = self.pieces[0].extent
+        
+        for (index, stroke) in self.pieces.enumerated()   {
+            if index != 0   {
+                box = box + stroke.extent
+            }
+        }
+        
+        return box
+    }
+    
     /// Check to see that the chain is unbroken, ordered properly, and closes on itself
+    /// - See: 'testOrdering' under PerimeterTests
     func isClosed() -> Bool   {
         
         var closedFlag = true
@@ -120,12 +136,20 @@ open class Perimeter {
     }
     
     
-    
-    
-    /// See if the input screen point is near the end of any of the line segments
-    func  nearEnd(_ speck: Point3D, enough: Double) -> Point3D?   {
+    /// See if the input screen point is near an unconnected end of any curve
+    /// Ignore endpoints that are already connected
+    /// Choose closest if there is more than one hit
+    /// Probably blows up if no curves have been added
+    /// - Parameters:
+    ///   - speck:  Testing point in model coordinates
+    ///   - enough:  Acceptable closeness
+    /// - Returns: Closest of the curve endpoints, if near enough, or nil
+    func  nearEnd(speck: Point3D, enough: Double) -> Point3D?   {
         
-        for g in 0..<pieces.count  {
+        let sep = Double.greatestFiniteMagnitude   // Good start for comparison
+        
+        
+        for g in 0..<pieces.count  {   // Is this actually just a lengthy reduce?
             
             let wire = pieces[g]
             let sep = wire.resolveNeighbor(speck: speck)
@@ -136,6 +160,7 @@ open class Perimeter {
                 return wire.getOneEnd()
             }
             
+            /// Gee, this might not be the best idea for curves
             let htgnel = Point3D.dist(pt1: wire.getOneEnd(), pt2: wire.getOtherEnd())
             
             let far = sep.along.length() - htgnel
@@ -151,22 +176,11 @@ open class Perimeter {
         return nil   // A new way of doing things
     }
     
-    /// Find the combined extent
-    func getExtent() -> OrthoVol   {
-        
-        var box = self.pieces[0].extent
-        
-        for (index, stroke) in self.pieces.enumerated()   {
-            if index != 0   {
-                box = box + stroke.extent
-            }
-        }
-        
-        return box
-    }
     
-    /// Plot the boundaries.  This will be called by the UIView 'draw' function
-    /// Notice that a model-to-display transform is applied
+    /// Plot the boundary and cutout curves.  This will be called by the UIView 'draw' function
+    /// - Parameters:
+    ///   - context: In-use graphics framework
+    ///   - tform:  Model-to-display transform
     public func draw(context: CGContext, tform: CGAffineTransform)  {
         
         for stroke in self.pieces   {
@@ -182,7 +196,6 @@ open class Perimeter {
         }   // End of outer loop
         
     }   // End of function 'draw'
-    
     
 }
 

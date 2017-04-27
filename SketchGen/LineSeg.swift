@@ -290,7 +290,9 @@ public class LineSeg: PenCurve {    // Can this be a struct, instead?
     
 
     /// Plot the line segment.  This will be called by the UIView 'drawRect' function
-    /// Notice that a model-to-display transform is applied
+    /// - Parameters:
+    ///   - context: In-use graphics framework
+    ///   - tform:  Model-to-display transform
     public func draw(context: CGContext, tform: CGAffineTransform)  {
         
         context.beginPath()

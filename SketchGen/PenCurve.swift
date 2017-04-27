@@ -26,10 +26,11 @@ public protocol PenCurve   {
     /// Retrieve the finishing end
     func getOtherEnd() -> Point3D
     
-    /// Change the direction if traversing this curve
+    /// Change the direction in-place.  Useful for traversing a Perimeter
     func reverse() -> Void
     
     /// Plot the curve.  Your classic example of polymorphism
+    /// - SeeAlso:  drawControls() for a Cubic
     func draw(context: CGContext, tform: CGAffineTransform)
     
     /// Figure how far the point is off the curve, and how far along the curve it is.  Useful for picks  

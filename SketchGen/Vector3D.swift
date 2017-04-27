@@ -16,11 +16,11 @@ public struct Vector3D: Equatable {
     var k: Double
     
     /// Difference limit between components in equality checks
-    public static let EpsilonV: Double = 0.0001
+    static let EpsilonV: Double = 0.0001
 
     
     /// The simplest constructor
-    /// I don't know why I can't use a default constructor
+    /// I don't know why I can't use a default constructor.  Because I happen to have a second constructor defined?
     /// - See: 'testFidelity' under Vector3DTests
     public init(i: Double, j: Double, k: Double)   {
         
@@ -46,7 +46,7 @@ public struct Vector3D: Equatable {
     
     
     /// Destructively change the vector length to 1.0
-    /// - Throws: ZeroVectorError if the Vector has zero length
+    /// - Throws: ZeroVectorError if the Vector has zero length.  Is this appropriate?
     /// - See: 'testNormalize' under Vector3DTests
     public mutating func normalize() throws  {
         

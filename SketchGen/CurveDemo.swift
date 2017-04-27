@@ -88,12 +88,12 @@ class Roundy  {
         
         arena = CGRect(x: 0.0, y: -0.1, width: 0.6, height: 0.3)   // Empirical value for this case
         
-        let ptA = Point3D(x: 0.02, y: 0.25, z: 0.0)
-        let ptB = Point3D(x: 0.59, y: 0.25, z: 0.0)
+//        let ptA = Point3D(x: 0.02, y: 0.25, z: 0.0)
+//        let ptB = Point3D(x: 0.59, y: 0.25, z: 0.0)
         
-        let horizon1 = try!  LineSeg(end1: ptA, end2: ptB)
+//        let horizon1 = try!  LineSeg(end1: ptA, end2: ptB)
 
-        let ray1 = try! Line(spot: ptA, arrow: horizon1.getDirection())
+//        let ray1 = try! Line(spot: ptA, arrow: horizon1.getDirection())
         
         let ptC = Point3D(x: 0.02, y: 0.065, z: 0.0)
         let ptD = Point3D(x: 0.59, y: 0.065, z: 0.0)

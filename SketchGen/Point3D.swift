@@ -9,7 +9,7 @@
 import UIKit
 
 /// Simple representation of a position in space by the use of three orthogonal coordinates
-/// The default initializer usually suffices
+/// The default initializer suffices
 public struct  Point3D: Hashable {
     
     var x: Double    // Eventually these should be set as private?

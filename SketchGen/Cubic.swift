@@ -799,6 +799,9 @@ open class Cubic: PenCurve   {
     
 
     /// Plot the curve segment.  This will be called by the UIView 'drawRect' function
+    /// - Parameters:
+    ///   - context: In-use graphics framework
+    ///   - tform:  Model-to-display transform
     public func draw(context: CGContext, tform: CGAffineTransform)  {
         
         var xCG: CGFloat = CGFloat(self.dx)    // Convert to "CGFloat", and throw out Z coordinate
