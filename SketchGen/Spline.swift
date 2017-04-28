@@ -17,6 +17,10 @@ open class Spline   {
     
     var pieces: [Cubic]
     
+    /// The enum that hints at the meaning of the curve
+    open var usage: PenTypes
+    
+
     /// Build from an ordered array of points using finite differences
     /// See the Wikipedia article on Cubic Hermite splines
     init(pts: [Point3D])   {
@@ -59,7 +63,8 @@ open class Spline   {
         let veer = Cubic(ptA: pts[pts.count - 2], slopeA: slopePrior, ptB: pts[pts.count - 1], slopeB: slopeNext)
         pieces.append(veer)   // Final piece in the array
         
+        self.usage = PenTypes.ordinary
     }
     
-    
+    //TODO: Add all of the functions that will make this comply with PenCurve.  And the occasional test.
 }

@@ -127,11 +127,11 @@ open class Perimeter {
     /// What happens if this gets called before any curves have been added?
     func getExtent() -> OrthoVol   {
         
-        var box = self.pieces[0].extent
+        var box = self.pieces[0].getExtent()
         
         for (index, stroke) in self.pieces.enumerated()   {
             if index != 0   {
-                box = box + stroke.extent
+                box = box + stroke.getExtent()
             }
         }
         
@@ -184,7 +184,7 @@ open class Perimeter {
         for g in 0..<pieces.count  {   // Is this actually just a lengthy reduce?
             
             let wire = pieces[g]
-            let sep = wire.resolveNeighbor(speck: speck)
+            let sep = wire.resolveRelative(speck: speck)
             
             var distance = sqrt(sep.along.length() + sep.perp.length())
             

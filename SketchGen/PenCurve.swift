@@ -13,10 +13,6 @@ public protocol PenCurve   {
     /// The enum that hints at the meaning of the curve
     var usage: PenTypes   { get set }
     
-    /// Volume that encloses the curve
-    var extent: OrthoVol   { get }
-    
-    
     /// Supply the point on the curve for the input parameter value
     func pointAt(t: Double) -> Point3D
     
@@ -32,11 +28,17 @@ public protocol PenCurve   {
     /// Transform with a 4 x 4 matrix, not a CGAffineTransform
     func transform(xirtam: Transform) throws -> PenCurve
     
+    /// Figure the volume that encloses the curve
+    /// Must have finite thickness in all three axes
+    func getExtent() -> OrthoVol
+    
     /// Plot the curve.  Your classic example of polymorphism
     /// - SeeAlso:  drawControls() for a Cubic
     func draw(context: CGContext, tform: CGAffineTransform)
     
+       // getLength and intersect are near-term candidates for additional funcs
+    
     /// Figure how far the point is off the curve, and how far along the curve it is.  Useful for picks  
-    func resolveNeighbor(speck: Point3D) -> (along: Vector3D, perp: Vector3D)
+    func resolveRelative(speck: Point3D) -> (along: Vector3D, perp: Vector3D)
     
 }

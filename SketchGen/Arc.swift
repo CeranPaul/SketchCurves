@@ -13,32 +13,32 @@ import UIKit
 /// - SeeAlso:  Ellipse
 open class Arc: PenCurve {
     
-    /// Point around which the arc is swept
-    fileprivate var ctr: Point3D
-    
-    fileprivate var axisDir: Vector3D   // Needs to be a unit vector
+    /// Pivot line
+    /// Needs to be a unit vector
+    fileprivate var axisDir: Vector3D
     
     /// Beginning point
     fileprivate var start: Point3D
+    
+    /// Can be either positive or negative
+    /// Magnitude should be less than 2 pi
+    fileprivate var sweepAngle: Double
+    
+    /// The enum that hints at the meaning of the curve
+    open var usage: PenTypes
+    
+
+    
+    /// Point around which the arc is swept
+    fileprivate var ctr: Point3D
+    
     fileprivate var finish: Point3D
-    
-    fileprivate var sweepAngle: Double   // Can be either positive or negative
-                                         // Magnitude should be less that 2 pi
-                                         // Should this become a measurement?
-    
-    
     
     /// Derived radius of the Arc
     fileprivate var rad: Double
     
     /// Whether or not this is a complete circle
     open var isFull: Bool
-    
-    /// The enum that hints at the meaning of the curve
-    open var usage: PenTypes
-    
-    /// The box that contains the curve
-    open var extent: OrthoVol
     
     
     
@@ -64,8 +64,6 @@ open class Arc: PenCurve {
         
         self.usage = PenTypes.ordinary   // Use 'setIntent' to attach the desired value
         
-        // Dummy assignment. Postpone the expensive calculation until after the guard statements
-        self.extent = OrthoVol(minX: -0.5, maxX: 0.5, minY: -0.5, maxY: 0.5, minZ: -0.5, maxZ: 0.5)
         
         // In an 'init', this cannot be done at the top
         guard (!self.axisDir.isZero()) else  {throw ZeroVectorError(dir: self.axisDir)}
@@ -90,9 +88,6 @@ open class Arc: PenCurve {
         let jump = deltaH + deltaV
             
         self.finish = self.ctr.offset(jump: jump)
-        
-        
-        self.extent = figureExtent()    // Replace the dummy value
         
     }
     
@@ -135,15 +130,11 @@ open class Arc: PenCurve {
             self.sweepAngle = self.sweepAngle - 2.0 * Double.pi
         }
         
-        // Dummy assignment. Postpone the expensive calculation until after the guard statements
-        self.extent = OrthoVol(minX: -0.5, maxX: 0.5, minY: -0.5, maxY: 0.5, minZ: -0.5, maxZ: 0.5)
-        
         
         // See if an arc can actually be made from the three given inputs
         // This should go first and make this a failable initializer
         guard (Arc.isArcable(center: center, end1: end1, end2: end2))  else  { throw ArcPointsError(badPtA: center, badPtB: end1, badPtC: end2)}
         
-        self.extent = figureExtent()    // Replace the dummy value
     }
     
     
@@ -245,7 +236,7 @@ open class Arc: PenCurve {
     
     /// Figure how far the point is off the curve, and how far along the curve it is.  Useful for picks
     /// Not implemented
-    open func resolveNeighbor(speck: Point3D) -> (along: Vector3D, perp: Vector3D)   {
+    open func resolveRelative(speck: Point3D) -> (along: Vector3D, perp: Vector3D)   {
         
         // TODO: Make this return something besides dummy values
 //        let otherSpeck = speck
@@ -300,39 +291,9 @@ open class Arc: PenCurve {
     }
     
     
-    /// Plot the arc segment.  This will be called by the UIView 'drawRect' function
-    /// - Warning:  This only works in the XY plane
-    /// - Parameters:
-    ///   - context: In-use graphics framework
-    ///   - tform:  Model-to-display transform
-    public func draw(context: CGContext, tform: CGAffineTransform)  {
-        
-        let centerCG = CGPoint(x: self.ctr.x, y: self.ctr.y)   // Throw out Z information
-        let displayCenter = centerCG.applying(tform)
-        let radCG = CGFloat(self.rad) * tform.a   // This value should be the scale
-        
-        // Figure the start angle
-        let startDir = Vector3D.built(from: self.ctr, towards: self.start)
-        let thetaS = CGFloat(atan2(-1.0 * startDir.j, startDir.i))   // Because Y is positive downward on the screen
-        
-        // Figure the end angle
-        let finishDir = Vector3D.built(from: self.ctr, towards: self.finish)
-        let thetaF =  CGFloat(atan2(-1.0 * finishDir.j, finishDir.i))
-        
-        
-        let startCG = CGPoint(x: self.start.x, y: self.start.y)   // Throw out Z information
-        let displayStart = startCG.applying(tform)
-        
-        context.move(to: displayStart)
-        context.addArc(center: displayCenter, radius: radCG, startAngle: thetaS, endAngle: thetaF, clockwise: self.sweepAngle > 0.0)
-        
-        context.strokePath()
-        
-    }
-    
     /// Define the smallest aligned rectangle that encloses the arc
     /// Probably returns bad values half of the time in the current state
-    func figureExtent() -> OrthoVol  {
+    public func getExtent() -> OrthoVol  {
         
         let rad = Point3D.dist(pt1: self.ctr, pt2: self.start)
         
@@ -424,7 +385,7 @@ open class Arc: PenCurve {
     /// - Parameter: lhs: One Arc
     /// - Parameter: rhs: Another Arc
     /// - SeeAlso:  Overloaded ==
-    open static func isConcentric(_ lhs: Arc, rhs: Arc) -> Bool  {
+    open static func isConcentric(lhs: Arc, rhs: Arc) -> Bool  {
         
         let ctrFlag = lhs.ctr == rhs.ctr
         
@@ -435,6 +396,35 @@ open class Arc: PenCurve {
         return ctrFlag && axisFlag
     }
     
+    /// Plot the arc segment.  This will be called by the UIView 'drawRect' function
+    /// - Warning:  This only works in the XY plane
+    /// - Parameters:
+    ///   - context: In-use graphics framework
+    ///   - tform:  Model-to-display transform
+    public func draw(context: CGContext, tform: CGAffineTransform)  {
+        
+        let centerCG = CGPoint(x: self.ctr.x, y: self.ctr.y)   // Throw out Z information
+        let displayCenter = centerCG.applying(tform)
+        let radCG = CGFloat(self.rad) * tform.a   // This value should be the scale
+        
+        // Figure the start angle
+        let startDir = Vector3D.built(from: self.ctr, towards: self.start)
+        let thetaS = CGFloat(atan2(-1.0 * startDir.j, startDir.i))   // Because Y is positive downward on the screen
+        
+        // Figure the end angle
+        let finishDir = Vector3D.built(from: self.ctr, towards: self.finish)
+        let thetaF =  CGFloat(atan2(-1.0 * finishDir.j, finishDir.i))
+        
+        
+        let startCG = CGPoint(x: self.start.x, y: self.start.y)   // Throw out Z information
+        let displayStart = startCG.applying(tform)
+        
+        context.move(to: displayStart)
+        context.addArc(center: displayCenter, radius: radCG, startAngle: thetaS, endAngle: thetaF, clockwise: self.sweepAngle > 0.0)
+        
+        context.strokePath()
+        
+    }
     
     
 }    // End of definition for class Arc

@@ -6,7 +6,6 @@
 //  Copyright © 2016 Ceran Digital Media. All rights reserved.  See LICENSE.md
 //
 
-import Foundation
 import UIKit
 
 /// An elliptical arc, either whole, or a portion. More of a distorted circle rather than the path of an orbiting body
@@ -41,10 +40,6 @@ open class Ellipse: PenCurve {
     /// The enum that hints at the meaning of the curve
     open var usage: PenTypes
     
-    /// The box that contains the curve
-    /// - Warning:  The class currently has no way to figure a correct and useful value    
-    open var extent: OrthoVol
-    
     
     public init(retnec: Point3D, a: Double, b: Double, azimuth: Double, start: Point3D, finish: Point3D)   {
         
@@ -58,7 +53,6 @@ open class Ellipse: PenCurve {
         self.isFull = true
         self.isClockwise = true
         self.usage = PenTypes.ordinary
-        self.extent = OrthoVol(minX: -0.5, maxX: 0.5, minY: -1.0, maxY: 1.0, minZ: -0.2, maxZ: 0.2)
     }
     
     
@@ -95,6 +89,12 @@ open class Ellipse: PenCurve {
         let spot = Point3D(x: 0.0, y: 0.0, z: 0.0)
         
         return spot
+    }
+    
+    /// This currently returns a useless value
+    public func getExtent() -> OrthoVol  {
+        
+        return try! OrthoVol(corner1: self.start, corner2: self.finish)
     }
     
     /// Determine an X value from a given angle (in radians)
@@ -166,7 +166,7 @@ open class Ellipse: PenCurve {
     
     
     /// Figure how far the point is off the curve, and how far along the curve it is.  Useful for picks
-    open func resolveNeighbor(speck: Point3D) -> (along: Vector3D, perp: Vector3D)   {
+    open func resolveRelative(speck: Point3D) -> (along: Vector3D, perp: Vector3D)   {
         
         // TODO: Make this return something besides dummy values
 //        let otherSpeck = speck

@@ -97,7 +97,7 @@ class OrthoVolTests: XCTestCase {
         
         let lineB = try! LineSeg(end1: ptDelta, end2: ptGamma)
 
-        let flag = OrthoVol.isOverlapping(lhs: lineA.extent, rhs: lineB.extent)
+        let flag = OrthoVol.isOverlapping(lhs: lineA.getExtent(), rhs: lineB.getExtent())
         
         XCTAssertFalse(flag)
         
@@ -111,7 +111,7 @@ class OrthoVolTests: XCTestCase {
         
         let lineD = try! LineSeg(end1: ptDelta2, end2: ptGamma2)
         
-        let flag2 = OrthoVol.isOverlapping(lhs: lineC.extent, rhs: lineD.extent)
+        let flag2 = OrthoVol.isOverlapping(lhs: lineC.getExtent(), rhs: lineD.getExtent())
         
         XCTAssert(flag2)
     }

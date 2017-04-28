@@ -396,25 +396,25 @@ class Roundy  {
             
             if exDraw   {
                 
-                let boxX = bow.extent.getOrigin().x
-                let boxY = bow.extent.getOrigin().y
+                let boxX = bow.getExtent().getOrigin().x
+                let boxY = bow.getExtent().getOrigin().y
                 
                 let lowerLeft = Point3D(x: boxX, y: boxY, z: 0.0)
-                let upperLeft = Point3D(x: boxX, y: boxY + bow.extent.getHeight(), z: 0.0)
+                let upperLeft = Point3D(x: boxX, y: boxY + bow.getExtent().getHeight(), z: 0.0)
                 
                 var rail = try LineSeg(end1: lowerLeft, end2: upperLeft)
                 rail.setIntent(PenTypes.extent)
                 displayCurves.append(rail)
                 
                 
-                let upperRight = Point3D(x: boxX + bow.extent.getWidth(), y: boxY + bow.extent.getHeight(), z: 0.0)
+                let upperRight = Point3D(x: boxX + bow.getExtent().getWidth(), y: boxY + bow.getExtent().getHeight(), z: 0.0)
                 
                 rail = try LineSeg(end1: upperLeft, end2: upperRight)
                 rail.setIntent(PenTypes.extent)
                 displayCurves.append(rail)
                 
                 
-                let lowerRight = Point3D(x: boxX + bow.extent.getWidth(), y: boxY, z: 0.0)
+                let lowerRight = Point3D(x: boxX + bow.getExtent().getWidth(), y: boxY, z: 0.0)
                 
                 rail = try LineSeg(end1: upperRight, end2: lowerRight)
                 rail.setIntent(PenTypes.extent)
@@ -522,9 +522,10 @@ class Roundy  {
             
             // Build the extent for the figure   Is there a way to do this as a 'reduce' closure?
             
-            extent = displayCurves.first!.extent
+            extent = displayCurves.first!.getExtent()
+            
             for g in 1..<displayCurves.count  {
-                extent = extent + displayCurves[g].extent
+                extent = extent + displayCurves[g].getExtent()
             }
             
             arena = CGRect(x: extent.getOrigin().x, y: extent.getOrigin().y, width: extent.getWidth(), height: extent.getHeight())
@@ -626,51 +627,51 @@ class Roundy  {
             var stroke = try LineSeg(end1: ptA, end2: ptB)
             displayCurves.append(stroke)
             
-            self.extent = stroke.extent
+            self.extent = stroke.getExtent()
             
             stroke = try LineSeg(end1: ptB, end2: ptC)
             displayCurves.append(stroke)
-            self.extent = self.extent + stroke.extent
+            self.extent = self.extent + stroke.getExtent()
             
             stroke = try LineSeg(end1: ptC, end2: ptD)
             displayCurves.append(stroke)
-            self.extent = self.extent + stroke.extent
+            self.extent = self.extent + stroke.getExtent()
             
             stroke = try LineSeg(end1: ptD, end2: ptE)
             displayCurves.append(stroke)
-            self.extent = self.extent + stroke.extent
+            self.extent = self.extent + stroke.getExtent()
             
             stroke = try LineSeg(end1: ptE, end2: ptF)
             displayCurves.append(stroke)
-            self.extent = self.extent + stroke.extent
+            self.extent = self.extent + stroke.getExtent()
             
             stroke = try LineSeg(end1: ptF, end2: ptG)
             displayCurves.append(stroke)
-            self.extent = self.extent + stroke.extent
+            self.extent = self.extent + stroke.getExtent()
             
             stroke = try LineSeg(end1: ptG, end2: ptH)
             displayCurves.append(stroke)
-            self.extent = self.extent + stroke.extent
+            self.extent = self.extent + stroke.getExtent()
             
             stroke = try LineSeg(end1: ptH, end2: ptJ)
             displayCurves.append(stroke)
-            self.extent = self.extent + stroke.extent
+            self.extent = self.extent + stroke.getExtent()
             
             stroke = try LineSeg(end1: ptJ, end2: ptK)
             displayCurves.append(stroke)
-            self.extent = self.extent + stroke.extent
+            self.extent = self.extent + stroke.getExtent()
             
             stroke = try LineSeg(end1: ptK, end2: ptL)
             displayCurves.append(stroke)
-            self.extent = self.extent + stroke.extent
+            self.extent = self.extent + stroke.getExtent()
             
             stroke = try LineSeg(end1: ptL, end2: ptM)
             displayCurves.append(stroke)
-            self.extent = self.extent + stroke.extent
+            self.extent = self.extent + stroke.getExtent()
             
             stroke = try LineSeg(end1: ptM, end2: ptA)
             displayCurves.append(stroke)
-            self.extent = self.extent + stroke.extent
+            self.extent = self.extent + stroke.getExtent()
             
             arena = CGRect(x: extent.getOrigin().x, y: extent.getOrigin().y, width: extent.getWidth(), height: extent.getHeight())
             
@@ -705,17 +706,17 @@ class Roundy  {
             stroke = try Arc(center: ptA, end1: ptK, end2: ptC, useSmallAngle: false)
             displayCurves.append(stroke)
             
-            self.extent = stroke.extent
+            self.extent = stroke.getExtent()
 
             stroke = try LineSeg(end1: ptC, end2: ptD)
             displayCurves.append(stroke)
             
-            self.extent = self.extent + stroke.extent
+            self.extent = self.extent + stroke.getExtent()
             
             stroke = try LineSeg(end1: ptD, end2: ptE)
             displayCurves.append(stroke)
             
-            self.extent = self.extent + stroke.extent
+            self.extent = self.extent + stroke.getExtent()
             
             stroke = try LineSeg(end1: ptE, end2: ptF)
             displayCurves.append(stroke)
@@ -723,22 +724,22 @@ class Roundy  {
             stroke = try Arc(center: ptB, end1: ptF, end2: ptG, useSmallAngle: false)
             displayCurves.append(stroke)
             
-            self.extent = self.extent + stroke.extent
+            self.extent = self.extent + stroke.getExtent()
             
             stroke = try LineSeg(end1: ptG, end2: ptH)
             displayCurves.append(stroke)
             
-            self.extent = self.extent + stroke.extent
+            self.extent = self.extent + stroke.getExtent()
             
             stroke = try LineSeg(end1: ptH, end2: ptJ)
             displayCurves.append(stroke)
             
-            self.extent = self.extent + stroke.extent
+            self.extent = self.extent + stroke.getExtent()
             
             stroke = try LineSeg(end1: ptJ, end2: ptK)
             displayCurves.append(stroke)
  
-            self.extent = self.extent + stroke.extent
+            self.extent = self.extent + stroke.getExtent()
 
             arena = CGRect(x: extent.getOrigin().x, y: extent.getOrigin().y, width: extent.getWidth(), height: extent.getHeight())
             

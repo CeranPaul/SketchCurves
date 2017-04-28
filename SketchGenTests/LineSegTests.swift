@@ -134,7 +134,7 @@ class LineSegTests: XCTestCase {
         
         let pip = Point3D(x: 3.5, y: 3.0, z: 2.5)
         
-        let offset = stroke.resolveNeighbor(speck: pip)
+        let offset = stroke.resolveRelative(speck: pip)
         
         
         let targetA = Vector3D(i: 1.0, j: 0.0, k: 0.0)

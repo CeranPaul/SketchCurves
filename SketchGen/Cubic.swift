@@ -36,9 +36,6 @@ open class Cubic: PenCurve   {
     /// The enum that hints at the meaning of the curve
     public var usage: PenTypes
     
-    /// The box that contains the segment
-    public var extent: OrthoVol
-    
     
     
     /// Build from 12 individual parameters
@@ -71,11 +68,6 @@ open class Cubic: PenCurve   {
         
         self.usage = PenTypes.ordinary
         
-        // Dummy assignment. Postpone the expensive calculation until after the guard statements
-        self.extent = OrthoVol(minX: -0.5, maxX: 0.5, minY: -0.5, maxY: 0.5, minZ: -0.5, maxZ: 0.5)
-        
-        self.extent = self.getExtent()
-        
     }
     
     /// Build from two points and two slopes
@@ -104,19 +96,14 @@ open class Cubic: PenCurve   {
         self.cz = slopeA.k
         self.dz = ptA.z
         
-        self.usage = PenTypes.ordinary
-        
-        // Dummy assignment. Postpone the expensive calculation until after the guard statements
-        self.extent = OrthoVol(minX: -0.5, maxX: 0.5, minY: -0.5, maxY: 0.5, minZ: -0.5, maxZ: 0.5)
-        
-        self.extent = self.getExtent()
-        
             // Always convert to Bezier form for editing
         var jump = slopeA * 0.3333
         self.controlA = ptAlpha.offset(jump: jump)
         
         jump = slopeB * -0.3333
         self.controlB = ptOmega.offset(jump: jump)
+        
+        self.usage = PenTypes.ordinary
         
         parameterizeBezier()   // Generate the real coefficients
         
@@ -152,15 +139,11 @@ open class Cubic: PenCurve   {
         self.controlA = controlA
         self.controlB = controlB
         
-        // Dummy assignment. Postpone the expensive calculation until after the guard statements
-        self.extent = OrthoVol(minX: -0.5, maxX: 0.5, minY: -0.5, maxY: 0.5, minZ: -0.5, maxZ: 0.5)
+        
         
         self.usage = PenTypes.ordinary
         
-        
         parameterizeBezier()   // Generate the real coefficients
-        
-        self.extent = self.getExtent()
         
     }
     
@@ -229,10 +212,6 @@ open class Cubic: PenCurve   {
         
         self.usage = PenTypes.ordinary
         
-        // Dummy assignment. Postpone the expensive calculation until after the guard statements
-        self.extent = OrthoVol(minX: -0.5, maxX: 0.5, minY: -0.5, maxY: 0.5, minZ: -0.5, maxZ: 0.5)
-        
-        self.extent = self.getExtent()
         
         // Add control points for editing
         let slopeA = self.tangentAt(t: 0.0)
@@ -517,7 +496,7 @@ open class Cubic: PenCurve   {
         for g in 1...9   {
             
             let pip = self.pointAt(t: smallerT + Double(g) * delta / 10.0)
-            let diffs = wire.resolveNeighbor(speck: pip)
+            let diffs = wire.resolveRelative(speck: pip)
             
             let separation = diffs.perp.length()   // Always a positive value
             
@@ -531,6 +510,7 @@ open class Cubic: PenCurve   {
     }
     
     /// Supply the point on the curve for the input parameter value
+    /// Assumes 0 < t < 1
     /// Some notations show "t" as the parameter, instead of "u"
     public func pointAt(t: Double) -> Point3D   {
         
@@ -598,7 +578,7 @@ open class Cubic: PenCurve   {
     
     /// Find the position of a point relative to the line segment and its origin
     /// - Returns: Vector components relative to the origin
-    public func resolveNeighbor(speck: Point3D) -> (along: Vector3D, perp: Vector3D)   {
+    public func resolveRelative(speck: Point3D) -> (along: Vector3D, perp: Vector3D)   {
         
 //        let otherSpeck = speck
         

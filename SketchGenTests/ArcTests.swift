@@ -333,7 +333,7 @@ class ArcTests: XCTestCase {
         
         let shield = try! Arc(center: ctr, axis: axis, end1: e1, sweep: Double.pi / 4.0 + 0.15)
         
-        let box = shield.extent
+        let box = shield.getExtent()
         
 //        let target = 0.0
         
