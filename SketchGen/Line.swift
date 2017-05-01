@@ -27,8 +27,8 @@ public struct Line: Equatable {
     ///   - NonUnitDirectionError for a bad input Vector3D
     init (spot: Point3D, arrow: Vector3D) throws  {
         
-        guard (!arrow.isZero()) else  {throw ZeroVectorError(dir: arrow)}
-        guard (arrow.isUnit()) else  {throw NonUnitDirectionError(dir: arrow)}
+        guard !arrow.isZero() else  {throw ZeroVectorError(dir: arrow)}
+        guard arrow.isUnit() else  {throw NonUnitDirectionError(dir: arrow)}
         
         self.origin = spot
         self.direction = arrow

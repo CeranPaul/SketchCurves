@@ -9,16 +9,20 @@
 import UIKit
 
 /// A circular arc - either whole, or a portion
+/// The code compiles, but beware of the results!
 /// This DOES NOT handle the case of precisely half a circle
 /// - SeeAlso:  Ellipse
 open class Arc: PenCurve {
     
+    /// Point around which the arc is swept
+    fileprivate var ctr: Point3D
+    
     /// Pivot line
-    /// Needs to be a unit vector
     fileprivate var axisDir: Vector3D
     
     /// Beginning point
     fileprivate var start: Point3D
+    fileprivate var finish: Point3D
     
     /// Can be either positive or negative
     /// Magnitude should be less than 2 pi
@@ -27,12 +31,9 @@ open class Arc: PenCurve {
     /// The enum that hints at the meaning of the curve
     open var usage: PenTypes
     
+    open var parameterRange: ClosedRange<Double>
+    
 
-    
-    /// Point around which the arc is swept
-    fileprivate var ctr: Point3D
-    
-    fileprivate var finish: Point3D
     
     /// Derived radius of the Arc
     fileprivate var rad: Double
@@ -49,8 +50,21 @@ open class Arc: PenCurve {
     ///   - end1: Starting point
     ///   - sweep: Angle (in radians) in the CCW direction.  Can be positive or negative
     /// - Throws: ZeroVectorError, NonUnitDirectionError, CoincidentPointsError
-    /// This doesn't catch the case of a bad axis direction
     public init(center: Point3D, axis: Vector3D, end1: Point3D, sweep: Double) throws   {
+        
+        guard (!axis.isZero()) else  {throw ZeroVectorError(dir: axis)}
+        guard (axis.isUnit()) else  {throw NonUnitDirectionError(dir: axis)}
+        
+        guard (center != end1)  else  { throw CoincidentPointsError(dupePt: end1) }
+
+            // This is a misleading error type
+        guard (sweep != 0.0)  else  { throw CoincidentPointsError(dupePt: end1) }
+        
+        let horiz = Vector3D.built(from: center, towards: end1, unit: true)
+        
+           // This is another misleading error type
+        guard (Vector3D.dotProduct(lhs: axis, rhs: horiz) == 0.0)  else  { throw CoincidentPointsError(dupePt: end1) }
+        
         
         self.ctr = center
         self.axisDir = axis
@@ -59,23 +73,7 @@ open class Arc: PenCurve {
         
         self.rad = Point3D.dist(pt1: self.ctr, pt2: self.start)
         
-        self.isFull = false
-        if self.sweepAngle == 2.0 * Double.pi   { self.isFull = true }
-        
-        self.usage = PenTypes.ordinary   // Use 'setIntent' to attach the desired value
-        
-        
-        // In an 'init', this cannot be done at the top
-        guard (!self.axisDir.isZero()) else  {throw ZeroVectorError(dir: self.axisDir)}
-        guard (self.axisDir.isUnit()) else  {throw NonUnitDirectionError(dir: self.axisDir)}
-        
-        guard (self.ctr != self.start)  else  { throw CoincidentPointsError(dupePt: self.start)}
-        
             
-        let horiz = Vector3D.built(from: self.ctr, towards: self.start, unit: true)
-        
-             // Check the dot product of this and the axis?
-        
         /// A vector perpendicular to horiz in the plane of the circle
         let vert = try! Vector3D.crossProduct(lhs: self.axisDir, rhs: horiz)
             
@@ -89,35 +87,46 @@ open class Arc: PenCurve {
             
         self.finish = self.ctr.offset(jump: jump)
         
+        
+        self.usage = PenTypes.ordinary   // Use 'setIntent' to attach a different desired value
+        
+        self.parameterRange = ClosedRange<Double>(uncheckedBounds: (lower: 0.0, upper: 1.0))
+        
+        self.isFull = false
+        if self.sweepAngle == 2.0 * Double.pi   { self.isFull = true }   // What about the negative equivalent?
+        
     }
     
     
-    /// Build an arc from a center and two terminating points - perhaps tangent points
+    /// Build an arc from a center and two terminating points - perhaps tangent points.
     /// Direction is derived from the ordering of end1 and end2
-    /// Will fail for a half or full circle
+    /// - Warning: Will fail for a half or full circle
     /// - Parameters:
     ///   - center: Point3D used for pivoting
     ///   - end1: Point3D on the perimeter
     ///   - end2: Point3D on the perimeter
+    ///   - useSmallAngle: ???
     /// - Throws: ArcPointsError
     public init(center: Point3D, end1: Point3D, end2: Point3D, useSmallAngle: Bool) throws   {
+        
+        guard (Arc.isArcable(center: center, end1: end1, end2: end2))  else  { throw ArcPointsError(badPtA: center, badPtB: end1, badPtC: end2) }
         
         self.ctr = center
         self.start = end1
         self.finish = end2
         
-        self.rad = Point3D.dist(pt1: self.ctr, pt2: self.start)
-        self.isFull = false
-        self.usage = PenTypes.ordinary   // Use 'setIntent' to attach the desired value
-        
         let vecStart = Vector3D.built(from: center, towards: end1, unit: true)
-        
         let vecFinish = Vector3D.built(from: center, towards: end2, unit: true)
         
-        var spin = try! Vector3D.crossProduct(lhs: vecStart, rhs: vecFinish)   // The guard statement should keep this from failing
+        var spin = try! Vector3D.crossProduct(lhs: vecStart, rhs: vecFinish)
         spin.normalize()
         
         self.axisDir = spin
+        
+        
+        self.rad = Point3D.dist(pt1: self.ctr, pt2: self.start)
+        self.isFull = false
+        self.usage = PenTypes.ordinary   // Use 'setIntent' to attach a different desired value
         
         
         let thetaStart = atan2(vecStart.j, vecStart.i)   // Between -M_PI and M_PI
@@ -126,14 +135,11 @@ open class Arc: PenCurve {
         
         self.sweepAngle = abs(thetaFinish - thetaStart)   // Angle for the shorter path
         
+        self.parameterRange = ClosedRange<Double>(uncheckedBounds: (lower: 0.0, upper: 1.0))
+        
         if !useSmallAngle   {
             self.sweepAngle = self.sweepAngle - 2.0 * Double.pi
         }
-        
-        
-        // See if an arc can actually be made from the three given inputs
-        // This should go first and make this a failable initializer
-        guard (Arc.isArcable(center: center, end1: end1, end2: end2))  else  { throw ArcPointsError(badPtA: center, badPtB: end1, badPtC: end2)}
         
     }
     
@@ -171,13 +177,13 @@ open class Arc: PenCurve {
     
     
     
-    
-    
-    
     /// Find the point along this arc specified by the parameter 't'
     /// - Warning:  No checks are made for the value of t being inside some range
     /// - Returns: Point
-    open func pointAt(t: Double) -> Point3D  {
+    open func pointAt(t: Double) throws -> Point3D  {
+        
+           // Misuse of this error type
+        guard (self.parameterRange.contains(t))  else  { throw CoincidentPointsError(dupePt: self.ctr) }
         
         let vecStart = Vector3D.built(from: self.ctr, towards: self.start, unit: true)
         
@@ -278,8 +284,8 @@ open class Arc: PenCurve {
         for g in 1...20   {
             
             let stepU = Double(g) * 0.05   // Gee, this is brittle!
-            xCG = CGFloat(pointAt(t: stepU).x)
-            yCG = CGFloat(pointAt(t: stepU).y)
+            xCG = CGFloat(try! pointAt(t: stepU).x)
+            yCG = CGFloat(try! pointAt(t: stepU).y)
             //            print(String(describing: xCG) + "  " + String(describing: yCG))
             let midPoint = CGPoint(x: xCG, y: yCG)
             let midScreen = midPoint.applying(tform)

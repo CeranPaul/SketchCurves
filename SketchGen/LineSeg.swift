@@ -17,25 +17,28 @@ public class LineSeg: PenCurve {    // Can this be a struct, instead?
         
     /// The enum that hints at the meaning of the curve
     open var usage: PenTypes
-    
-    
+
+    open var parameterRange: ClosedRange<Double>
     
     /// Build a line segment from two points
     /// - Throws: CoincidentPointsError
     public init(end1: Point3D, end2: Point3D) throws {
         
-        guard (end1 != end2) else { throw CoincidentPointsError(dupePt: end1)}
+        guard end1 != end2 else { throw CoincidentPointsError(dupePt: end1)}
         
         self.endAlpha = end1
         self.endOmega = end2
         
-        self.usage = PenTypes.ordinary        
+        self.usage = PenTypes.ordinary
+        
+        self.parameterRange = ClosedRange<Double>(uncheckedBounds: (lower: 0.0, upper: 1.0))
+        
     }
     
     
     /// Find the point along this line segment specified by the parameter 't'
     /// Assumes 0 < t < 1
-    open func pointAt(t: Double) -> Point3D  {
+    open func pointAt(t: Double) throws -> Point3D  {
         
         let wholeVector = Vector3D.built(from: self.endAlpha, towards: self.endOmega, unit: false)
         

@@ -36,6 +36,8 @@ open class Cubic: PenCurve   {
     /// The enum that hints at the meaning of the curve
     public var usage: PenTypes
     
+    open var parameterRange: ClosedRange<Double>
+    
     
     
     /// Build from 12 individual parameters
@@ -67,6 +69,8 @@ open class Cubic: PenCurve   {
         
         
         self.usage = PenTypes.ordinary
+        
+        self.parameterRange = ClosedRange<Double>(uncheckedBounds: (lower: 0.0, upper: 1.0))
         
     }
     
@@ -105,6 +109,8 @@ open class Cubic: PenCurve   {
         
         self.usage = PenTypes.ordinary
         
+        self.parameterRange = ClosedRange<Double>(uncheckedBounds: (lower: 0.0, upper: 1.0))
+        
         parameterizeBezier()   // Generate the real coefficients
         
     }
@@ -142,6 +148,8 @@ open class Cubic: PenCurve   {
         
         
         self.usage = PenTypes.ordinary
+        
+        self.parameterRange = ClosedRange<Double>(uncheckedBounds: (lower: 0.0, upper: 1.0))
         
         parameterizeBezier()   // Generate the real coefficients
         
@@ -212,13 +220,15 @@ open class Cubic: PenCurve   {
         
         self.usage = PenTypes.ordinary
         
+        self.parameterRange = ClosedRange<Double>(uncheckedBounds: (lower: 0.0, upper: 1.0))
+        
         
         // Add control points for editing
-        let slopeA = self.tangentAt(t: 0.0)
+        let slopeA = try! self.tangentAt(t: 0.0)
         var jump = slopeA * 0.3333
         self.controlA = ptAlpha.offset(jump: jump)
         
-        let slopeB = self.tangentAt(t: 1.0)
+        let slopeB = try! self.tangentAt(t: 1.0)
         jump = slopeB * -0.3333
         self.controlB = ptOmega.offset(jump: jump)
         
@@ -355,13 +365,13 @@ open class Cubic: PenCurve   {
         let step = 1.0 / Double(pieces)
         let limit = pieces
         
-        var prevPoint = self.pointAt(t: 0.0)
+        var prevPoint = try! self.pointAt(t: 0.0)
         
         var length = 0.0
         
         for g in 1...limit   {
             
-            let pip = self.pointAt(t: Double(g) * step)
+            let pip = try! self.pointAt(t: Double(g) * step)
             let hop = Point3D.dist(pt1: prevPoint, pt2: pip)
             length += hop
             
@@ -382,7 +392,7 @@ open class Cubic: PenCurve   {
         var bucket = [Double]()
         
         for u in 1...limit   {
-            let pip = self.pointAt(t: Double(u) * step)
+            let pip = try! self.pointAt(t: Double(u) * step)
             bucket.append(pip.x)
         }
         
@@ -395,7 +405,7 @@ open class Cubic: PenCurve   {
         bucket = [Double]()   // Start with an empty array
         
         for u in 1...limit   {
-            let pip = self.pointAt(t: Double(u) * step)
+            let pip = try! self.pointAt(t: Double(u) * step)
             bucket.append(pip.y)
         }
         
@@ -407,7 +417,7 @@ open class Cubic: PenCurve   {
         bucket = [Double]()   // Start with an empty array
         
         for u in 1...limit   {
-            let pip = self.pointAt(t: Double(u) * step)
+            let pip = try! self.pointAt(t: Double(u) * step)
             bucket.append(pip.z)
         }
         
@@ -484,8 +494,8 @@ open class Cubic: PenCurve   {
     /// Calculate the crown over a small segment
     public func findCrown(smallerT: Double, largerT: Double) -> Double   {
         
-        let anchorA = self.pointAt(t: smallerT)
-        let anchorB = self.pointAt(t: largerT)
+        let anchorA = try! self.pointAt(t: smallerT)
+        let anchorB = try! self.pointAt(t: largerT)
         
         let wire = try! LineSeg(end1: anchorA, end2: anchorB)
         
@@ -495,7 +505,7 @@ open class Cubic: PenCurve   {
         
         for g in 1...9   {
             
-            let pip = self.pointAt(t: smallerT + Double(g) * delta / 10.0)
+            let pip = try! self.pointAt(t: smallerT + Double(g) * delta / 10.0)
             let diffs = wire.resolveRelative(speck: pip)
             
             let separation = diffs.perp.length()   // Always a positive value
@@ -512,7 +522,7 @@ open class Cubic: PenCurve   {
     /// Supply the point on the curve for the input parameter value
     /// Assumes 0 < t < 1
     /// Some notations show "t" as the parameter, instead of "u"
-    public func pointAt(t: Double) -> Point3D   {
+    public func pointAt(t: Double) throws -> Point3D   {
         
         let t2 = t * t
         let t3 = t2 * t
@@ -530,7 +540,7 @@ open class Cubic: PenCurve   {
     /// Some notations show "t" as the parameter, instead of "u"
     /// - Returns:
     ///   - tan:  Non-normalized vector
-    func tangentAt(t: Double) -> Vector3D   {
+    func tangentAt(t: Double) throws -> Vector3D   {
         
         let t2 = t * t
 
@@ -547,7 +557,7 @@ open class Cubic: PenCurve   {
     public func getPlane() -> Plane?   {
         
         /// Mid-point along the curve
-        let mid = self.pointAt(t: 0.5)
+        let mid = try! self.pointAt(t: 0.5)
         
         /// A plane using the end points and a midpoint
         let flat = try! Plane(alpha: self.ptAlpha, beta: mid, gamma: self.ptOmega)
@@ -559,7 +569,7 @@ open class Cubic: PenCurve   {
         for g in 1...19   {
             
             let curT = Double(g) * 0.05
-            let pip = self.pointAt(t: curT)
+            let pip = try! self.pointAt(t: curT)
             
             flag = Plane.isCoincident(flat: flat, pip: pip)
             
@@ -604,7 +614,7 @@ open class Cubic: PenCurve   {
         var tighter: ClosedRange<Double>
         
         /// Point at the beginning of the range
-        let green = self.pointAt(t: span.lowerBound)
+        let green = try! self.pointAt(t: span.lowerBound)
         
         /// Vector from start of Line to point at beginning of range
         let bridgeVec = Vector3D.built(from: ray.getOrigin(), towards: green)
@@ -630,7 +640,7 @@ open class Cubic: PenCurve   {
             
             let freshT = span.lowerBound + Double(g) * parStep
             
-            let pip = self.pointAt(t: freshT)
+            let pip = try! self.pointAt(t: freshT)
             
             let bridge = Vector3D.built(from: ray.getOrigin(), towards: pip)
             
@@ -680,8 +690,8 @@ open class Cubic: PenCurve   {
             
             if let refined = self.crossing(ray: ray, span: shebang)   {
                 
-                let low = self.pointAt(t: refined.lowerBound)
-                let high = self.pointAt(t: refined.upperBound)
+                let low = try! self.pointAt(t: refined.lowerBound)
+                let high = try! self.pointAt(t: refined.upperBound)
                 sep = Point3D.dist(pt1: low, pt2: high)
                 
                 middle = Point3D.midway(alpha: low, beta: high)
@@ -744,7 +754,7 @@ open class Cubic: PenCurve   {
                 previous = objective
                 
                 
-                let slider = self.pointAt(t: t)
+                let slider = try! self.pointAt(t: t)
                 
                 let cast = Vector3D.built(from: ray.getOrigin(), towards: slider)
                 
@@ -768,7 +778,7 @@ open class Cubic: PenCurve   {
         } while abs(objective) > accuracy && abs(deltaT) > 0.001 && outsideCount < 10   // Iterate until a condition fails
         
         // This assumes that none of the loops have overrun
-        let pip = self.pointAt(t: t)
+        let pip = try! self.pointAt(t: t)
         crossings.append(pip)
         
         print(t)
@@ -799,8 +809,8 @@ open class Cubic: PenCurve   {
         for g in 1...pieces   {
             
             let stepU = Double(g) * step
-            xCG = CGFloat(pointAt(t: stepU).x)
-            yCG = CGFloat(pointAt(t: stepU).y)
+            xCG = CGFloat(try! pointAt(t: stepU).x)
+            yCG = CGFloat(try! pointAt(t: stepU).y)
             
             let midPoint = CGPoint(x: xCG, y: yCG)
             let midScreen = midPoint.applying(tform)

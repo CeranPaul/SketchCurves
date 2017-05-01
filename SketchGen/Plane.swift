@@ -22,8 +22,8 @@ public struct Plane   {
     /// - See: 'testFidelity' under PlaneTests
     init(spot: Point3D, arrow: Vector3D) throws  {
         
-        guard (!arrow.isZero())  else  {throw ZeroVectorError(dir: arrow)}
-        guard (arrow.isUnit())  else  {throw NonUnitDirectionError(dir: arrow)}
+        guard !arrow.isZero()  else  { throw ZeroVectorError(dir: arrow) }
+        guard arrow.isUnit()  else  { throw NonUnitDirectionError(dir: arrow) }
         
         self.location = spot
         self.normal = arrow
@@ -42,10 +42,10 @@ public struct Plane   {
     /// - Throws: CoincidentPointsError for duplicate or linear inputs
     init(alpha: Point3D, beta: Point3D, gamma: Point3D) throws   {
         
-        guard (Point3D.isThreeUnique(alpha: alpha, beta: beta, gamma: gamma))  else  { throw CoincidentPointsError(dupePt: alpha) }
+        guard Point3D.isThreeUnique(alpha: alpha, beta: beta, gamma: gamma)  else  { throw CoincidentPointsError(dupePt: alpha) }
         
         // TODO: Come up with a better error type
-        guard (!Point3D.isThreeLinear(alpha: alpha, beta: beta, gamma: gamma))  else  { throw CoincidentPointsError(dupePt: alpha) }
+        guard !Point3D.isThreeLinear(alpha: alpha, beta: beta, gamma: gamma)  else  { throw CoincidentPointsError(dupePt: alpha) }
         
         
         self.location = alpha
@@ -168,7 +168,7 @@ public struct Plane   {
     public static func buildPerpThruLine(enil: Line, enalp: Plane) throws -> Plane   {
         
         // TODO:  Better error type
-        guard (!Plane.isCoincident(enalp: enalp, enil: enil))  else  { throw CoincidentLinesError(enil: enil) }
+        guard !Plane.isCoincident(enalp: enalp, enil: enil)  else  { throw CoincidentLinesError(enil: enil) }
         
         let newDir = try! Vector3D.crossProduct(lhs: enil.getDirection(), rhs: enalp.normal)
         

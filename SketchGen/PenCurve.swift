@@ -13,8 +13,10 @@ public protocol PenCurve   {
     /// The enum that hints at the meaning of the curve
     var usage: PenTypes   { get set }
     
+    var parameterRange: ClosedRange<Double>   { get set }
+    
     /// Supply the point on the curve for the input parameter value
-    func pointAt(t: Double) -> Point3D
+    func pointAt(t: Double) throws -> Point3D
     
     /// Retrieve the starting end
     func getOneEnd() -> Point3D

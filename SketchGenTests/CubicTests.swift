@@ -30,14 +30,14 @@ class CubicTests: XCTestCase {
         
         let bump = Cubic(ptA: alpha, slopeA: alSlope, ptB: beta, slopeB: betSlope)
         
-        let oneTrial = bump.pointAt(t: 0.0)
+        let oneTrial = try! bump.pointAt(t: 0.0)
         
            // Gee, this would be a grand place for an extension of XCTAssert that compares points
         let flag1 = Point3D.dist(pt1: oneTrial, pt2: alpha) < (Point3D.Epsilon / 3.0)
         
         if !flag1  {  XCTFail()  }
         
-        let otherTrial = bump.pointAt(t: 1.0)
+        let otherTrial = try! bump.pointAt(t: 1.0)
         let flag2 = Point3D.dist(pt1: otherTrial, pt2: beta) < (Point3D.Epsilon / 3.0)
         
         if !flag2  {  XCTFail()  }
@@ -58,14 +58,14 @@ class CubicTests: XCTestCase {
         
         let bump = Cubic(ptA: alpha, controlA: control1, controlB: control2, ptB: beta)
         
-        let oneTrial = bump.pointAt(t: 0.0)
+        let oneTrial = try! bump.pointAt(t: 0.0)
         
         // Gee, this would be a grand place for an extension of XCTAssert that compares points
         let flag1 = Point3D.dist(pt1: oneTrial, pt2: alpha) < (Point3D.Epsilon / 3.0)
         
         XCTAssert(flag1)
         
-        let otherTrial = bump.pointAt(t: 1.0)
+        let otherTrial = try! bump.pointAt(t: 1.0)
         let flag2 = Point3D.dist(pt1: otherTrial, pt2: beta) < (Point3D.Epsilon / 3.0)
         
         XCTAssert(flag2)

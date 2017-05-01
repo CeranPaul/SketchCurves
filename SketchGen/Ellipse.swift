@@ -40,6 +40,8 @@ open class Ellipse: PenCurve {
     /// The enum that hints at the meaning of the curve
     open var usage: PenTypes
     
+    open var parameterRange: ClosedRange<Double>
+    
     
     public init(retnec: Point3D, a: Double, b: Double, azimuth: Double, start: Point3D, finish: Point3D)   {
         
@@ -52,7 +54,11 @@ open class Ellipse: PenCurve {
         
         self.isFull = true
         self.isClockwise = true
+        
         self.usage = PenTypes.ordinary
+        
+        self.parameterRange = ClosedRange<Double>(uncheckedBounds: (lower: 0.0, upper: 1.0))
+        
     }
     
     
@@ -81,7 +87,7 @@ open class Ellipse: PenCurve {
     
     /// Find the point along this line segment specified by the parameter 't'
     /// - Warning:  No checks are made for the value of t being inside some range
-    open func pointAt(t: Double) -> Point3D  {
+    open func pointAt(t: Double) throws -> Point3D  {
         
         
         // TODO: Make this something besides a cop-out
@@ -143,8 +149,8 @@ open class Ellipse: PenCurve {
         for g in 1...20   {
             
             let stepU = Double(g) * 0.05   // Gee, this is brittle!
-            xCG = CGFloat(pointAt(t: stepU).x)
-            yCG = CGFloat(pointAt(t: stepU).y)
+            xCG = CGFloat(try! pointAt(t: stepU).x)
+            yCG = CGFloat(try! pointAt(t: stepU).y)
             //            print(String(describing: xCG) + "  " + String(describing: yCG))
             let midPoint = CGPoint(x: xCG, y: yCG)
             let midScreen = midPoint.applying(tform)
