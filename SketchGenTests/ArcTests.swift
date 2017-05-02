@@ -34,33 +34,18 @@ class ArcTests: XCTestCase {
             XCTAssert(orbit.getOneEnd() == earth)
             XCTAssert(orbit.getOtherEnd() == atlantis)
             
-        }  catch  {
-            print("Screwed up while testing a circle 1")
-        }
-        
-        do   {
-            let orbit = try Arc(center: sun, end1: earth, end2: atlantis, useSmallAngle: false)
-            
             XCTAssertFalse(orbit.isFull)
             
         }  catch  {
-            print("Screwed up while testing a circle 2")
+            print("Screwed up initializing while testing a circle 1")
         }
-        
-//        do   {
-//            let orbit = try Arc(center: sun, end1: earth, end2: earth, useSmallAngle: false)
-//            
-//            XCTAssert(orbit.isFull)   // Never gets to this test
-//            
-//        }  catch  {
-//            print("Screwed up while testing a circle 4")
-//        }
         
     }
 
        // Check the ability to figure sweep angle
     func testSweepAngle() {
         
+           // Simple case
         let sun = Point3D(x: 3.5, y: 6.0, z: 0.0)
         let earth = Point3D(x: 5.5, y: 6.0, z: 0.0)
         let atlantis = Point3D(x: 3.5, y: 8.0, z: 0.0)
@@ -77,7 +62,7 @@ class ArcTests: XCTestCase {
         
         let earth44 = Point3D(x: 3.5 + 2.0 * sqrt32, y: 6.0 + 2.0 * 0.5, z: 0.0)
         
-        // High to high
+           // High to high
         let season = try! Arc(center: sun, end1: earth44, end2: atlantis, useSmallAngle: true)
         
         let target = 1.0 * Double.pi / 3.0
@@ -86,7 +71,7 @@ class ArcTests: XCTestCase {
         XCTAssertEqualWithAccuracy(theta, target, accuracy: 0.001)
         
         
-        // High to high complement
+           // High to high complement
         let season3 = try! Arc(center: sun, end1: earth44, end2: atlantis, useSmallAngle: false)
         
         let target3 = -1.0 * (2.0 * Double.pi - target)
@@ -94,7 +79,7 @@ class ArcTests: XCTestCase {
         
         XCTAssertEqualWithAccuracy(theta3, target3, accuracy: 0.001)
         
-        // Low to high
+           // Low to high
         let earth2 = Point3D(x: 3.5 + 2.0 * sqrt32, y: 6.0 - 2.0 * 0.5, z: 0.0)
         
         let season2 = try! Arc(center: sun, end1: earth2, end2: atlantis, useSmallAngle: true)
@@ -104,7 +89,7 @@ class ArcTests: XCTestCase {
         
         XCTAssertEqualWithAccuracy(theta2, target2, accuracy: 0.001)
         
-        // Low to high complement
+           // Low to high complement
         let season4 = try! Arc(center: sun, end1: earth2, end2: atlantis, useSmallAngle: false)
         
         let target4 = -1.0 * (2.0 * Double.pi - target2)
@@ -113,10 +98,10 @@ class ArcTests: XCTestCase {
         XCTAssertEqualWithAccuracy(theta4, target4, accuracy: 0.001)
         
         
-        // High to low
+           // High to low
         let earth3 = Point3D(x: 3.5 + 2.0 * sqrt32, y: 6.0 + 2.0 * 0.5, z: 0.0)
         
-       let atlantis5 = Point3D(x: 3.5 - 2.0 * sqrt22, y: 6.0 - 2.0 * sqrt22, z: 0.0)
+        let atlantis5 = Point3D(x: 3.5 - 2.0 * sqrt22, y: 6.0 - 2.0 * sqrt22, z: 0.0)
         
         let season5 = try! Arc(center: sun, end1: earth3, end2: atlantis5, useSmallAngle: false)
         
@@ -125,7 +110,7 @@ class ArcTests: XCTestCase {
         
         XCTAssertEqualWithAccuracy(theta5, target5, accuracy: 0.001)
         
-        // High to low complement
+           // High to low complement
         let season6 = try! Arc(center: sun, end1: earth3, end2: atlantis5, useSmallAngle: true)
         
         let target6 = 11.0 * Double.pi / 12.0
@@ -134,7 +119,7 @@ class ArcTests: XCTestCase {
         XCTAssertEqualWithAccuracy(theta6, target6, accuracy: 0.001)
         
         
-        // Low to low
+           // Low to low
         let season7 = try! Arc(center: sun, end1: earth2, end2: atlantis5, useSmallAngle: false)
         
         let target7 = -17.0 * Double.pi / 12.0
@@ -152,6 +137,7 @@ class ArcTests: XCTestCase {
         
     }
     
+    /// Also tests YZ plane
     func testFindAxis()   {
         
         let sqrt32 = sqrt(3.0) / 2.0
@@ -313,6 +299,7 @@ class ArcTests: XCTestCase {
         
     }
     
+    /// Look for CoincidentPointErrors
     func testErrorThrow()  {
         
         let ctr = Point3D(x: 2.0, y: 1.0, z: 5.0)
@@ -323,7 +310,25 @@ class ArcTests: XCTestCase {
         XCTAssertThrowsError(try Arc(center: ctr, end1: e2, end2: ctr, useSmallAngle: false))
 
         
+        let sun = Point3D(x: 3.5, y: 6.0, z: 0.0)
+        let earth = Point3D(x: 5.5, y: 6.0, z: 0.0)
+        let atlantis = Point3D(x: 3.5, y: 8.0, z: 0.0)
+        
+        do   {
+            let orbit = try Arc(center: sun, end1: earth, end2: earth, useSmallAngle: false)
+            
+            XCTAssert(orbit.isFull)   // Presumably never gets to this test
+            
+        }  catch is CoincidentPointsError  {
+            XCTAssert(true)
+        }  catch  {
+            print("Screwed up while testing a circle 2")
+        }
+        
+        XCTAssertThrowsError(try Arc(center: sun, end1: sun, end2: atlantis, useSmallAngle: false))
     }
+    
+    
     func testExtent()   {
         
         let axis = Vector3D(i: 0.0, j: 0.0, k: 1.0)

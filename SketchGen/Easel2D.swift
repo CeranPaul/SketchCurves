@@ -1,5 +1,6 @@
 //
-//  Easel.swift
+//  Easel2D.swift
+//  SketchCurves
 //
 
 import UIKit
@@ -9,7 +10,7 @@ import UIKit
 /// - Requires: A global parameter named modelGeo that contains curves to be drawn
 class Easel2D: UIView {
     
-    // Declare pen properties
+       // Declare pen properties
     var black: CGColor
     var blue: CGColor
     var green: CGColor
@@ -17,7 +18,7 @@ class Easel2D: UIView {
     var orange: CGColor
     var brown: CGColor
     
-    // Prepare pen widths
+       // Prepare pen widths
     let thick = CGFloat(4.0)
     let standard = CGFloat(3.0)
     let thin = CGFloat(1.5)
@@ -28,7 +29,7 @@ class Easel2D: UIView {
     /// Do some of the setup only one time
     required init(coder aDecoder: NSCoder)  {
         
-        // Prepare colors
+           // Prepare colors
         let colorSpace = CGColorSpaceCreateDeviceRGB()
         
         let blackComponents: [CGFloat] = [0.0, 0.0, 0.0, 1.0]
@@ -47,17 +48,35 @@ class Easel2D: UIView {
         
         super.init(coder: aDecoder)!   // Done here to be able to use "self.bounds" for scaling below
         
-        // Set up transforms to and from model coordinates
-        let tforms = findScaleAndCenter(displayRect: self.bounds, subjectRect: modelGeo.arena)
+        guard !modelGeo.displayCurves.isEmpty else {    // Bail if there isn't anything to plot
+            print("Nothing to scale!")
+            return
+        }
+        
+        var brick = modelGeo.displayCurves.first!.getExtent()
+        
+        for (xedni, wire) in modelGeo.displayCurves.enumerated()  {
+            
+            if xedni > 0   {
+                brick = brick + wire.getExtent()
+            }
+        }
+        
+        /// Bounding area for play
+        let arena = CGRect(x: brick.getOrigin().x, y: brick.getOrigin().y, width: brick.getWidth(), height: brick.getHeight())
+        
+        /// Transforms to and from model coordinates
+        let tforms = findScaleAndCenter(displayRect: self.bounds, subjectRect: arena)
         
         modelToDisplay = tforms.toDisplay
         displayToModel = tforms.toModel
     }
     
+    
+    /// Perform the plotting
     override func draw(_ rect: CGRect) {
         
         guard !modelGeo.displayCurves.isEmpty else {    // Bail if there isn't anything to plot
-            print("Nothing to plot!")
             return
         }
         
@@ -118,6 +137,7 @@ class Easel2D: UIView {
     /// - Parameter: displayRect: Bounds of the plotting area
     /// - Parameter: subjectRect: A CGRect that bounds the model space used
     /// - Returns: A tuple containing transforms between model and display space
+    /// - Makes no checks to see that the CGRects are non-zero
     func  findScaleAndCenter(displayRect: CGRect, subjectRect: CGRect) -> (toDisplay: CGAffineTransform, toModel: CGAffineTransform)   {
         
         let rangeX = subjectRect.width
@@ -152,9 +172,5 @@ class Easel2D: UIView {
         
         return (modelToDisplay, displayToModel)
     }
-    
-    
-    
-    
     
 }

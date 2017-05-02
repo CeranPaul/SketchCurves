@@ -31,6 +31,7 @@ open class Arc: PenCurve {
     /// The enum that hints at the meaning of the curve
     open var usage: PenTypes
     
+    ///Requirement of PenCurve?
     open var parameterRange: ClosedRange<Double>
     
 
@@ -50,6 +51,8 @@ open class Arc: PenCurve {
     ///   - end1: Starting point
     ///   - sweep: Angle (in radians) in the CCW direction.  Can be positive or negative
     /// - Throws: ZeroVectorError, NonUnitDirectionError, CoincidentPointsError
+    /// - SeeAlso:  The other initializer
+    /// - See: 'testFidelity', and 'testFindAxis' under ArcTests
     public init(center: Point3D, axis: Vector3D, end1: Point3D, sweep: Double) throws   {
         
         guard (!axis.isZero()) else  {throw ZeroVectorError(dir: axis)}
@@ -93,7 +96,7 @@ open class Arc: PenCurve {
         self.parameterRange = ClosedRange<Double>(uncheckedBounds: (lower: 0.0, upper: 1.0))
         
         self.isFull = false
-        if self.sweepAngle == 2.0 * Double.pi   { self.isFull = true }   // What about the negative equivalent?
+        if abs(self.sweepAngle) == 2.0 * Double.pi   { self.isFull = true }
         
     }
     
@@ -105,11 +108,13 @@ open class Arc: PenCurve {
     ///   - center: Point3D used for pivoting
     ///   - end1: Point3D on the perimeter
     ///   - end2: Point3D on the perimeter
-    ///   - useSmallAngle: ???
-    /// - Throws: ArcPointsError
+    ///   - useSmallAngle: Use the smaller of two possible sweeps
+    /// - Throws: ArcPointsError for two different cases
+    /// - SeeAlso:  The other initializer
     public init(center: Point3D, end1: Point3D, end2: Point3D, useSmallAngle: Bool) throws   {
         
-        guard (Arc.isArcable(center: center, end1: end1, end2: end2))  else  { throw ArcPointsError(badPtA: center, badPtB: end1, badPtC: end2) }
+        guard  Arc.isArcable(center: center, end1: end1, end2: end2)  else  { throw ArcPointsError(badPtA: center, badPtB: end1, badPtC: end2) }
+                
         
         self.ctr = center
         self.start = end1
@@ -140,7 +145,7 @@ open class Arc: PenCurve {
         if !useSmallAngle   {
             self.sweepAngle = self.sweepAngle - 2.0 * Double.pi
         }
-        
+
     }
     
     
@@ -209,6 +214,7 @@ open class Arc: PenCurve {
     
     
     /// Change the traversal direction of the curve so it can be aligned with other members of Perimeter
+    /// - See: 'testReverse' under ArcTests
     open func reverse() {
         
         let bubble = self.start
@@ -217,28 +223,6 @@ open class Arc: PenCurve {
         self.sweepAngle = -1.0 * self.sweepAngle
     }
     
-    
-    /// Check three points to see if they fit the pattern for defining an Arc
-    /// - Parameters:
-    ///   - center: Point3D used for pivoting
-    ///   - end1: Point3D on the perimeter
-    ///   - end2: Point3D on the perimeter
-    open static func isArcable(center: Point3D, end1: Point3D, end2: Point3D) -> Bool  {
-        
-        if !Point3D.isThreeUnique(alpha: center, beta: end1, gamma: end2)  { return false }
-        
-        let dist1 = Point3D.dist(pt1: center, pt2: end1)
-        let dist2 = Point3D.dist(pt1: center, pt2: end2)
-        
-        let thumbsUp = abs(dist1 - dist2) < Point3D.Epsilon
-        
-        let vecStart = Vector3D.built(from: center, towards: end1, unit: true)
-        let vecFinish = Vector3D.built(from: center, towards: end2, unit: true)
-        
-        let flag1 = Vector3D.isOpposite(lhs: vecStart, rhs: vecFinish)
-        
-        return thumbsUp && !flag1
-    }
     
     /// Figure how far the point is off the curve, and how far along the curve it is.  Useful for picks
     /// Not implemented
@@ -261,7 +245,7 @@ open class Arc: PenCurve {
         let tCent = self.ctr.transform(xirtam: xirtam)
         let tAxis = self.axisDir.transform(xirtam: xirtam)
         
-        let transformed = try Arc(center: tCent, axis: tAxis, end1: tAlpha, sweep: self.sweepAngle)   // Will generate a new extent
+        let transformed = try Arc(center: tCent, axis: tAxis, end1: tAlpha, sweep: self.sweepAngle)
         
         transformed.setIntent(purpose: self.usage)   // Copy setting instead of having the default
         return transformed
@@ -348,9 +332,35 @@ open class Arc: PenCurve {
     
     
     
+    /// Check three points to see if they fit the pattern for defining an Arc
+    /// - Parameters:
+    ///   - center: Point3D used for pivoting
+    ///   - end1: Point3D on the perimeter
+    ///   - end2: Point3D on the perimeter
+    public static func isArcable(center: Point3D, end1: Point3D, end2: Point3D) -> Bool  {
+        
+        if !Point3D.isThreeUnique(alpha: center, beta: end1, gamma: end2)  { return false }
+        
+        if Point3D.isThreeLinear(alpha: center, beta: end1, gamma: end2)  { return false }
+
+        
+        let dist1 = Point3D.dist(pt1: center, pt2: end1)
+        let dist2 = Point3D.dist(pt1: center, pt2: end2)
+        
+        let thumbsUp = abs(dist1 - dist2) < Point3D.Epsilon
+        
+        let vecStart = Vector3D.built(from: center, towards: end1, unit: true)
+        let vecFinish = Vector3D.built(from: center, towards: end2, unit: true)
+        
+        let flag1 = Vector3D.isOpposite(lhs: vecStart, rhs: vecFinish)
+        
+        return thumbsUp && !flag1
+    }
+    
+
     /// Build the center of a circle from three points on the perimeter
     /// - Throws: ArcPointsError if there any coincident points in the inputs
-    open static func findCenter(larry: Point3D, curly: Point3D, moe: Point3D) throws -> Point3D   {
+    public static func findCenter(larry: Point3D, curly: Point3D, moe: Point3D) throws -> Point3D   {
         
         guard(Point3D.isThreeUnique(alpha: larry, beta: curly, gamma: moe))  else  { throw ArcPointsError(badPtA: larry, badPtB: curly, badPtC: moe)}
         
@@ -391,7 +401,7 @@ open class Arc: PenCurve {
     /// - Parameter: lhs: One Arc
     /// - Parameter: rhs: Another Arc
     /// - SeeAlso:  Overloaded ==
-    open static func isConcentric(lhs: Arc, rhs: Arc) -> Bool  {
+    public static func isConcentric(lhs: Arc, rhs: Arc) -> Bool  {
         
         let ctrFlag = lhs.ctr == rhs.ctr
         
