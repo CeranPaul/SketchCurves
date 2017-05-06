@@ -103,13 +103,15 @@ open class Arc: PenCurve {
     
     /// Build an arc from a center and two terminating points - perhaps tangent points.
     /// Direction is derived from the ordering of end1 and end2
-    /// - Warning: Will fail for a half or full circle
+    /// - Warning: Use the other initializer for a half or full circle
     /// - Parameters:
     ///   - center: Point3D used for pivoting
     ///   - end1: Point3D on the perimeter
     ///   - end2: Point3D on the perimeter
     ///   - useSmallAngle: Use the smaller of two possible sweeps
-    /// - Throws: ArcPointsError for two different cases
+    /// - Throws:
+    ///   - ArcPointsError for two different cases
+    ///   - IdenticalVectorError for attempted half or whole arcs
     /// - SeeAlso:  The other initializer
     public init(center: Point3D, end1: Point3D, end2: Point3D, useSmallAngle: Bool) throws   {
         
@@ -123,7 +125,7 @@ open class Arc: PenCurve {
         let vecStart = Vector3D.built(from: center, towards: end1, unit: true)
         let vecFinish = Vector3D.built(from: center, towards: end2, unit: true)
         
-        var spin = try! Vector3D.crossProduct(lhs: vecStart, rhs: vecFinish)
+        var spin = try! Vector3D.crossProduct(lhs: vecStart, rhs: vecFinish)   // Guard statement should protect this
         spin.normalize()
         
         self.axisDir = spin
@@ -182,8 +184,11 @@ open class Arc: PenCurve {
     
     
     
-    /// Find the point along this arc specified by the parameter 't'
-    /// - Warning:  No checks are made for the value of t being inside some range
+    /// Find the point specified by the parameter 't'
+    /// - Parameters:
+    ///   - t: Independent parameter between 0.0 and 1.0
+    /// - Throws:
+    ///   - CoincidentPointsError for out-of-range parameter value
     /// - Returns: Point
     open func pointAt(t: Double) throws -> Point3D  {
         
@@ -192,6 +197,7 @@ open class Arc: PenCurve {
         
         let vecStart = Vector3D.built(from: self.ctr, towards: self.start, unit: true)
         
+        /// Axis perpendicular to the line towards the start point
         let vert = try! Vector3D.crossProduct(lhs: self.axisDir, rhs: vecStart)   // Shouldn't need to be normalized
         
         let deltaAngle = t * self.sweepAngle    // Implies that 0 < t < 1
@@ -204,9 +210,9 @@ open class Arc: PenCurve {
         
         let jump = deltaH + deltaV
         
-        let spot = self.ctr.offset(jump: jump)
+        let freshPt = self.ctr.offset(jump: jump)
         
-        return spot
+        return freshPt
     }
     
     
@@ -225,7 +231,7 @@ open class Arc: PenCurve {
     
     
     /// Figure how far the point is off the curve, and how far along the curve it is.  Useful for picks
-    /// Not implemented
+    /// - Warning: Not implemented
     open func resolveRelative(speck: Point3D) -> (along: Vector3D, perp: Vector3D)   {
         
         // TODO: Make this return something besides dummy values
@@ -238,6 +244,8 @@ open class Arc: PenCurve {
     }
     
     /// Move, rotate, and scale by a matrix
+    /// - Parameters:
+    ///   - xirtam:  Matrix for the intended transformation
     /// - Throws: CoincidentPointsError if it was scaled to be very small
     open func transform(xirtam: Transform) throws -> PenCurve {
         
@@ -280,17 +288,25 @@ open class Arc: PenCurve {
         
     }
     
+    /// Define the smallest aligned rectangle that encloses the arc
+    public func getExtent() -> OrthoVol {
+        
+        return try! OrthoVol(corner1: self.getOneEnd(), corner2: getOtherEnd())
+    }
+    
+    
     
     /// Define the smallest aligned rectangle that encloses the arc
     /// Probably returns bad values half of the time in the current state
-    public func getExtent() -> OrthoVol  {
+    /// - Warning: This routine assumes that the circle is in the XY plane
+    public func getExtentOld() -> OrthoVol  {
         
-        let rad = Point3D.dist(pt1: self.ctr, pt2: self.start)
+//        let rad = Point3D.dist(pt1: self.ctr, pt2: self.start)
         
-        var mostY = ctr.y + rad
-        var mostX = ctr.x + rad
-        var leastY = ctr.y - rad
-        var leastX = ctr.x - rad
+        var mostY = ctr.y + self.rad
+        var mostX = ctr.x + self.rad
+        var leastY = ctr.y - self.rad
+        var leastX = ctr.x - self.rad
         
         if !self.isFull   {
             

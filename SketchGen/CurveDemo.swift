@@ -20,7 +20,7 @@ class DemoPool  {
     /// Call a demonstration routine
     init()   {
         
-        let demoString = "spline"   // Change this to one of the case names
+        let demoString = "jout"   // Change this to one of the case names
         
         switch demoString   {
             
@@ -38,6 +38,8 @@ class DemoPool  {
             
         case "herm": demoHermite()   // Single swoopy curve
             
+            case "jout": jsOut()   // A bit of text
+            
         case "segs": makeSegs()   // Bad arc points, I think.  Try both values for "useSmallAngle"
             
         case "spline": demoSpline()   // Single curve with multiple kinks
@@ -53,8 +55,64 @@ class DemoPool  {
         
     }
     
+    /// Experiment with creating JS
+    func jsOut() -> Void   {
+        
+        let ptG = Point3D(x: 1.80, y: 1.40, z: 0.0)
+        let ptW = Point3D(x: 2.10, y: 1.95, z: 0.0)
+        
+        /// Line segment to test output generation
+        let arrow1 = try! LineSeg(end1: ptG, end2: ptW)   // Should be fine with those explicit values
+        displayCurves.append(arrow1)
+        
+        let tform = Transform(scaleX: 10.0, scaleY: 10.0, scaleZ: 10.0)
+        var jsline = arrow1.jsDraw(xirtam: tform)
+        
+        print(jsline)
+        
+        
+        let ptA = Point3D(x: 1.80, y: 1.40, z: 0.0)
+        let ptB = Point3D(x: 2.10, y: 1.95, z: 0.0)
+        let ptC = Point3D(x: 2.70, y: 2.30, z: 0.0)
+        let ptD = Point3D(x: 3.50, y: 2.05, z: 0.0)
+        
+        let target = Cubic(alpha: ptA, beta: ptB, betaFraction: 0.35, gamma: ptC, gammaFraction: 0.70, delta: ptD)
+        displayCurves.append(target)
+                
+        jsline = target.jsDraw(xirtam: tform)
+        
+        print(jsline)
+        
+    }
 
-    /// Deal with a specific failure case
+    /// Experiment with line - cubic intersections
+    func chopCubic() -> Void   {
+        
+        let ptA = Point3D(x: 1.80, y: 1.40, z: 0.0)
+        let ptB = Point3D(x: 2.10, y: 1.95, z: 0.0)
+        let ptC = Point3D(x: 2.70, y: 2.30, z: 0.0)
+        let ptD = Point3D(x: 3.50, y: 2.05, z: 0.0)
+        
+        let target = Cubic(alpha: ptA, beta: ptB, betaFraction: 0.35, gamma: ptC, gammaFraction: 0.70, delta: ptD)
+        displayCurves.append(target)
+        
+        let ptE = Point3D(x: 2.50, y: 1.30, z: 0.0)
+        let ptF = Point3D(x: 3.35, y: 2.20, z: 0.0)
+        
+        /// Line segment to test for intersection
+        let arrow1 = try! LineSeg(end1: ptE, end2: ptF)   // Should be fine with those explicit values
+        displayCurves.append(arrow1)
+        
+        /// Line made from the LineSeg
+        let ray = try! Line(spot: arrow1.getOneEnd(), arrow: arrow1.getDirection())   // No worries with this vector
+        
+        let spots = target.intersect(ray: ray, accuracy: 0.001)
+        
+        print("Location of intersections: " +  String(describing: spots.first!))
+    }
+    
+    
+    /// Different Line / Cubic intersection case
     func chopCubic2() -> Void {
         
         let ax = 0.016
@@ -74,13 +132,12 @@ class DemoPool  {
         displayCurves.append(bowl)
         
         
-        
         let ptC = Point3D(x: 0.02, y: 0.065, z: 0.0)
         let ptD = Point3D(x: 0.59, y: 0.065, z: 0.0)
         
-        let horizon2 = try!  LineSeg(end1: ptC, end2: ptD)
+        let horizon2 = try! LineSeg(end1: ptC, end2: ptD)   // Should be fine with those explicit values
         
-        let ray2 = try! Line(spot: ptC, arrow: horizon2.getDirection())
+        let ray2 = try! Line(spot: ptC, arrow: horizon2.getDirection())   // No worries with this vector
         
         displayCurves.append(horizon2)
         
@@ -90,34 +147,9 @@ class DemoPool  {
     }
     
     
-    /// Experiment with line - cubic intersections
-    func chopCubic() -> Void   {
-        
-        let ptA = Point3D(x: 1.80, y: 1.40, z: 0.0)
-        let ptB = Point3D(x: 2.10, y: 1.95, z: 0.0)
-        let ptC = Point3D(x: 2.70, y: 2.30, z: 0.0)
-        let ptD = Point3D(x: 3.50, y: 2.05, z: 0.0)
-        
-        let target = Cubic(alpha: ptA, beta: ptB, betaFraction: 0.35, gamma: ptC, gammaFraction: 0.70, delta: ptD)
-        displayCurves.append(target)
-        
-        let ptE = Point3D(x: 2.50, y: 1.30, z: 0.0)
-        let ptF = Point3D(x: 3.35, y: 2.20, z: 0.0)
-        
-        /// Line segment to test for intersection
-        let arrow1 = try! LineSeg(end1: ptE, end2: ptF)
-        displayCurves.append(arrow1)
-        
-        /// Line made from the LineSeg
-        let ray = try! Line(spot: arrow1.getOneEnd(), arrow: arrow1.getDirection())
-        
-        let spots = target.intersect(ray: ray, accuracy: 0.001)
-        
-        print("Location of intersections: " +  String(describing: spots.first!))
-    }
-    
-    
-    /// Build and plot an entire ellipse
+    /// Build and plot one quarter of an ellipse
+    /// Kink near the X-axis?
+    /// Needs to be modified to use its own 'draw' function
     func wholeEllipse()   {
         
         let a = 50.0
@@ -163,7 +195,7 @@ class DemoPool  {
         
     }
     
-    /// Build and plot a trial cubic curve
+    /// Build and plot a cubic curve entirely from the matrix coefficients
     func demoMatCubic()   {
         
         let ax = 0.0;
@@ -228,7 +260,6 @@ class DemoPool  {
                 print("Some other error while adding a segment of cubic curve")
             }
             
-
         }
         
     }
@@ -382,7 +413,7 @@ class DemoPool  {
                 
             }
             
-        }  catch let error as CoincidentPointsError  {
+        }  catch let error as CoincidentPointsError   {
             print(error.description)
         }  catch let error as ArcPointsError  {
             print(error.description)

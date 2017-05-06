@@ -887,6 +887,37 @@ open class Cubic: PenCurve   {
         
     }
     
+    /// Create a String that is suitable JavaScript to draw the Cubic
+    /// Assumes that the context has a plot location of the starting point for the Cubic
+    /// - Parameters:
+    ///   - xirtam:  Model-to-display transform
+    /// - Returns: String consisting of JavaScript to plot
+    public func jsDraw(xirtam: Transform) -> String {
+        
+        /// The output line
+        var singleLine: String
+        
+        let plotCtrlA = controlA!.transform(xirtam: xirtam)
+        
+        let ctrlAX = Int(plotCtrlA.x + 0.5)   // The default is to round towards zero
+        let ctrlAY = Int(plotCtrlA.y + 0.5)
+        
+        let plotCtrlB = controlB!.transform(xirtam: xirtam)
+        
+        let ctrlBX = Int(plotCtrlB.x + 0.5)   // The default is to round towards zero
+        let ctrlBY = Int(plotCtrlB.y + 0.5)
+        
+        
+        let plotEnd = ptOmega.transform(xirtam: xirtam)
+        
+        let endX = Int(plotEnd.x + 0.5)   // The default is to round towards zero
+        let endY = Int(plotEnd.y + 0.5)
+        
+        singleLine = "ctx.bezierCurveTo(" + String(ctrlAX) + ", " + String(ctrlAY) + ", " + String(ctrlBX) + ", " + String(ctrlBY) + ", " + String(endX) + ", " + String(endY) + ");\n"
+        
+        return singleLine
+    }
+    
     // What's the right way to check for equivalence?
     
     // TODO: Figure a way to do an offset curve

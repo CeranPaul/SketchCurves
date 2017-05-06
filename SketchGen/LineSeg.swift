@@ -115,7 +115,25 @@ public class LineSeg: PenCurve {    // Can this be a struct, instead?
         context.strokePath()
     }
     
-    
+    /// Create a String that is suitable JavaScript to draw the LineSeg
+    /// Assumes that the context has a plot location of the starting point for the LineSeg
+    /// - Parameters:
+    ///   - xirtam:  Model-to-display transform
+    /// - Returns: String consisting of JavaScript to plot
+    public func jsDraw(xirtam: Transform) -> String {
+        
+        /// The output line
+        var singleLine: String
+        
+        let plotEnd = self.getOtherEnd().transform(xirtam: xirtam)
+        
+        let endX = Int(plotEnd.x + 0.5)   // The default is to round towards zero
+        let endY = Int(plotEnd.y + 0.5)
+        
+        singleLine = "ctx.lineTo(" + String(endX) + ", " + String(endY) + ");\n"
+        
+        return singleLine
+    }
     
     /// Create a unit vector showing direction
     /// - Returns: Unit vector to indicate direction
