@@ -229,6 +229,30 @@ open class Perimeter {
         
     }   // End of function 'draw'
     
+    /// Create a String that is suitable JavaScript to draw the Cubic
+    /// Assumes that the context has a plot location of the starting point for the Cubic
+    /// - Parameters:
+    ///   - xirtam:  Model-to-display transform
+    /// - Returns: String consisting of JavaScript to plot
+    public func jsDraw(xirtam: Transform) -> String {
+        
+        var largeString = "context.save();\n"
+        
+        let firstStroke = self.pieces.first!
+        let startPoint = firstStroke.getOneEnd()
+        
+        let movePoint = startPoint.transform(xirtam: xirtam)
+        
+        let endX = Int(movePoint.x + 0.5)   // The default is to round towards zero
+        let endY = Int(movePoint.y + 0.5)
+        
+        largeString += "context.moveTo(" + String(endX) + ", " + String(endY) + ");\n"
+
+        largeString += "context.restore();\n"
+        
+        return largeString
+    }
+    
 }
 
 /// Uses only the point coordinates

@@ -10,16 +10,32 @@ import XCTest
 
 class TransformPlusTests: XCTestCase {
 
-    override func setUp() {
-        super.setUp()
-        // Put setup code here. This method is called before the invocation of each test method in the class.
+    
+    func testIdentity()   {
+        
+        let noChange = Transform()
+        
+        XCTAssertEqual(noChange.a, 1.0)
+        XCTAssertEqual(noChange.b, 0.0)
+        XCTAssertEqual(noChange.c, 0.0)
+        XCTAssertEqual(noChange.d, 0.0)
+
+        XCTAssertEqual(noChange.e, 0.0)
+        XCTAssertEqual(noChange.f, 1.0)
+        XCTAssertEqual(noChange.g, 0.0)
+        XCTAssertEqual(noChange.h, 0.0)
+
+        XCTAssertEqual(noChange.j, 0.0)
+        XCTAssertEqual(noChange.k, 0.0)
+        XCTAssertEqual(noChange.m, 1.0)
+        XCTAssertEqual(noChange.n, 0.0)
+
+        XCTAssertEqual(noChange.p, 0.0)
+        XCTAssertEqual(noChange.r, 0.0)
+        XCTAssertEqual(noChange.s, 0.0)
+        XCTAssertEqual(noChange.t, 1.0)
     }
     
-    override func tearDown() {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
-        super.tearDown()
-    }
-
     func testSingleRotations() {
 
         let fodder = Point3D(x: 2.0, y: 0.0, z: 0.0)

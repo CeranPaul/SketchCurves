@@ -59,16 +59,14 @@ class DemoPool  {
     func jsOut() -> Void   {
         
         let ptG = Point3D(x: 1.80, y: 1.40, z: 0.0)
-        let ptW = Point3D(x: 2.10, y: 1.95, z: 0.0)
+        let ptW = Point3D(x: 2.10, y: 1.55, z: 0.0)
         
         /// Line segment to test output generation
         let arrow1 = try! LineSeg(end1: ptG, end2: ptW)   // Should be fine with those explicit values
         displayCurves.append(arrow1)
         
         let tform = Transform(scaleX: 10.0, scaleY: 10.0, scaleZ: 10.0)
-        var jsline = arrow1.jsDraw(xirtam: tform)
-        
-        print(jsline)
+        let jsline = arrow1.jsDraw(xirtam: tform)
         
         
         let ptA = Point3D(x: 1.80, y: 1.40, z: 0.0)
@@ -78,10 +76,10 @@ class DemoPool  {
         
         let target = Cubic(alpha: ptA, beta: ptB, betaFraction: 0.35, gamma: ptC, gammaFraction: 0.70, delta: ptD)
         displayCurves.append(target)
-                
-        jsline = target.jsDraw(xirtam: tform)
         
-        print(jsline)
+        let jsline2 = target.jsDraw(xirtam: tform)
+        
+        print(jsline + jsline2)
         
     }
 

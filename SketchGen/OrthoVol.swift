@@ -156,6 +156,59 @@ public struct OrthoVol   {
         return flagX && flagY && flagZ
     }
     
+    /// Move, rotate, and/or scale by a matrix
+    /// - Parameters:
+    ///   - xirtam:  Matrix for the intended transformation
+    public func transform(xirtam: Transform) -> OrthoVol {
+        
+           // Generate the eight points as an array
+        var source = [Point3D]()
+        
+        let sourceA = Point3D(x: self.rangeX.lowerBound, y: self.rangeY.lowerBound, z: self.rangeZ.lowerBound)
+        source.append(sourceA)
+        
+        let sourceB = Point3D(x: self.rangeX.upperBound, y: self.rangeY.lowerBound, z: self.rangeZ.lowerBound)
+        source.append(sourceB)
+        
+        let sourceC = Point3D(x: self.rangeX.lowerBound, y: self.rangeY.upperBound, z: self.rangeZ.lowerBound)
+        source.append(sourceC)
+        
+        let sourceD = Point3D(x: self.rangeX.lowerBound, y: self.rangeY.lowerBound, z: self.rangeZ.upperBound)
+        source.append(sourceD)
+        
+        let sourceE = Point3D(x: self.rangeX.upperBound, y: self.rangeY.upperBound, z: self.rangeZ.lowerBound)
+        source.append(sourceE)
+        
+        let sourceF = Point3D(x: self.rangeX.upperBound, y: self.rangeY.lowerBound, z: self.rangeZ.upperBound)
+        source.append(sourceF)
+        
+        let sourceG = Point3D(x: self.rangeX.lowerBound, y: self.rangeY.upperBound, z: self.rangeZ.upperBound)
+        source.append(sourceG)
+        
+        let sourceH = Point3D(x: self.rangeX.upperBound, y: self.rangeY.upperBound, z: self.rangeZ.upperBound)
+        source.append(sourceH)
+        
+           // Transform the array of eight points
+        let tformed = source.map( { $0.transform(xirtam: xirtam) } )
+        
+           // Find the min and max in each axis
+        let sortMinX = tformed.sorted(by: { return $0.x < $1.x } )
+        let minX = sortMinX.first!.x
+        let maxX = sortMinX.last!.x
+        
+        let sortMinY = tformed.sorted(by: { return $0.y < $1.y } )
+        let minY = sortMinY.first!.y
+        let maxY = sortMinY.last!.y
+        
+        let sortMinZ = tformed.sorted(by: { return $0.z < $1.z } )
+        let minZ = sortMinZ.first!.z
+        let maxZ = sortMinZ.last!.z
+        
+        let freshVol = OrthoVol(minX: minX, maxX: maxX, minY: minY, maxY: maxY, minZ: minZ, maxZ: maxZ)
+        
+        return freshVol
+    }
+    
     
 }   // End of definition for struct OrthoVol
 
