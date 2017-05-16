@@ -79,7 +79,37 @@ class TransformPlusTests: XCTestCase {
         XCTAssert(transformed == target3)
         
     }
+    
+    func testTranslate()   {
+        
+        let source = Point3D(x: 1.0, y: 5.0, z: 2.0)
+        
+        let tform = Transform(deltaX: -2.0, deltaY: 3.0, deltaZ: 1.5)
+        
+        let trial = source.transform(xirtam: tform)
+        
+        XCTAssertEqual(trial.x, -1.0)
+        XCTAssertEqual(trial.y, 8.0)
+        XCTAssertEqual(trial.z, 3.5)
+        
+    }
+    
+    
+    func testScale()   {
+        
+        let source = Point3D(x: 5.0, y: -5.0, z: -5.0)
+        
+        let shrink = Transform(scaleX: 0.8, scaleY: -0.5, scaleZ: 1.4)
+        
+        let trial = source.transform(xirtam: shrink)
+        
+        XCTAssertEqual(trial.x, 4.0)
+        XCTAssertEqual(trial.y, 2.5)
+        XCTAssertEqual(trial.z, -7.0)
 
+    }
+
+    
     func testRollYourOwn() {
         
         let fodder = Point3D(x: 2.0, y: 0.0, z: 0.0)

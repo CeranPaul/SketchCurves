@@ -95,7 +95,7 @@ open class CoordinateSystem   {
     
     /// Generate a Transform to rotate and translate TO the global coordinate system
     /// Should this become a method of Transform?
-    func genToGlobal() -> Transform   {
+    public func genToGlobal() -> Transform   {
         
         let rotate = Transform(localX: self.axisX, localY: self.axisY, localZ: self.axisZ)
         let translate = Transform(deltaX: self.origin.x, deltaY: self.origin.y, deltaZ: self.origin.z)
@@ -107,7 +107,7 @@ open class CoordinateSystem   {
     
     /// Generate a Transform to get points FROM the global CSYS
     /// Should this become a method of Transform?
-    func genFromGlobal() -> Transform   {
+    public func genFromGlobal() -> Transform   {
         
            // Construct the transpose of the 3 x 3
         let newA = self.axisX.i
@@ -150,7 +150,7 @@ open class CoordinateSystem   {
     ///   - uno: Unit vector to serve as an axis
     ///   - dos: Another unit vector
     ///   - tres: The final unit vector
-    open static func isMutOrtho(uno: Vector3D, dos: Vector3D, tres: Vector3D) -> Bool   {
+    public static func isMutOrtho(uno: Vector3D, dos: Vector3D, tres: Vector3D) -> Bool   {
         
         let dot12 = Vector3D.dotProduct(lhs: uno, rhs: dos)
         let flag1 = abs(dot12) < Vector3D.EpsilonV
@@ -169,7 +169,7 @@ open class CoordinateSystem   {
     ///   - startingCSYS: Desired set of orientations
     ///   - betterOrigin: New location
     /// Should this become another initializer?
-    open static func relocate(startingCSYS: CoordinateSystem, betterOrigin: Point3D) -> CoordinateSystem   {
+    public static func relocate(startingCSYS: CoordinateSystem, betterOrigin: Point3D) -> CoordinateSystem   {
         
         let sparkling = try! CoordinateSystem(spot: betterOrigin, alpha: startingCSYS.axisX, beta: startingCSYS.axisY, gamma: startingCSYS.axisZ)
         

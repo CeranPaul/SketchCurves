@@ -18,6 +18,7 @@ open class Transform   {
     
     
     /// Construct an identity matrix
+    /// - See: 'testIdentity' under TransformPlusTests
     public init()   {
         
         a = 1.0
@@ -71,6 +72,7 @@ open class Transform   {
     
     
     /// Construct a matrix to do translation only
+    /// - See: 'testTranslate' under TransformPlusTests
     public init (deltaX: Double, deltaY: Double, deltaZ: Double)   {
         
         a = 1.0
@@ -96,6 +98,7 @@ open class Transform   {
     
     /// Construct a matrix to do scaling
     /// scaleY should perhaps be negated for screen display
+    /// - See: 'testScale' under TransformPlusTests
     public init (scaleX: Double, scaleY: Double, scaleZ: Double)   {
     
         a = scaleX
@@ -123,6 +126,7 @@ open class Transform   {
     /// - Parameter rotationAxis Center for rotation.  Should be a member of enum Axis
     /// - Parameter angleRad Desired rotation in radians
     /// - Warning:  These each look to be the transpose of how this is normally taught
+    /// - See: 'testSimpleRotations' under TransformPlusTests
     public init(rotationAxis: Axis, angleRad: Double)   {
         
         let trigCos = cos(angleRad)
@@ -198,6 +202,7 @@ open class Transform   {
     /// Create a transform from orthogonal vectors
     /// - Warning:  The vectors are not checked for orthogonality
     /// - Warning:  This makes no attempt to use the local origin
+    /// - See: 'testRollYourOwn' under TransformPlusTests
     public init(localX: Vector3D, localY: Vector3D, localZ: Vector3D)   {
         
         self.a = localX.i
@@ -333,6 +338,8 @@ public func * (pre: RowMtx4, mtx: Transform) -> RowMtx4   {
     
     return RowMtx4.init(valOne: res1, valTwo: res2, valThree: res3, valFour: res4)
 }
+
+    //TODO: Add a post multiplication function and its tests
 
 /// Combine rotations by multiplying two square matrices
 /// - See:

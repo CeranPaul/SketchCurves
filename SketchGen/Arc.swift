@@ -37,7 +37,7 @@ open class Arc: PenCurve {
 
     
     /// Derived radius of the Arc
-    fileprivate var rad: Double
+    internal var rad: Double
     
     /// Whether or not this is a complete circle
     open var isFull: Bool
@@ -288,10 +288,110 @@ open class Arc: PenCurve {
         
     }
     
-    /// Define the smallest aligned rectangle that encloses the arc
-    public func getExtent() -> OrthoVol {
+    /// Extent in the plane of the Arc, with start aligned to X-axis
+    /// This is a case where the breakdown facilitates testing, not the end functionality
+    /// What is the appropriate access keyword for this case?
+    /// - See: 'testSimpleExtent' under ArcTests
+    public func simpleExtent() -> OrthoVol   {
         
-        return try! OrthoVol(corner1: self.getOneEnd(), corner2: getOtherEnd())
+        var minX = 0.0
+        let maxX = self.rad
+        
+        var minY, maxY: Double
+        
+        if self.sweepAngle > 0.0   {
+            
+            switch self.sweepAngle  {
+                
+            case 0.0..<Double.pi / 2.0:
+                minX = self.rad * cos(sweepAngle)
+                minY = 0.0
+                maxY = self.rad * sin(sweepAngle)
+                
+            case Double.pi / 2.0..<Double.pi:
+                minX = self.rad * cos(sweepAngle)
+                minY = 0.0
+                maxY = self.rad
+                
+            case Double.pi..<Double.pi * 3.0 / 2.0:
+                minX = -self.rad
+                minY = self.rad * sin(sweepAngle)
+                maxY = self.rad
+                
+            case Double.pi * 3.0 / 2.0..<Double.pi * 2.0:
+                minX = -self.rad
+                minY = -self.rad
+                maxY = self.rad
+                
+            default:
+                minX = -self.rad
+                minY = -self.rad
+                maxY = self.rad
+            }
+            
+        }  else  {
+            
+            switch -1.0 * self.sweepAngle   {
+                
+            case 0.0..<Double.pi / 2.0:
+                minX = self.rad * cos(sweepAngle)
+                minY = self.rad * sin(sweepAngle)
+                maxY = 0.0
+                
+            case Double.pi / 2.0..<Double.pi:
+                minX = self.rad * cos(sweepAngle)
+                minY = -self.rad
+                maxY = 0.0
+                
+            case Double.pi..<Double.pi * 3.0 / 2.0:
+                minX = -self.rad
+                minY = -self.rad
+                maxY = self.rad * sin(sweepAngle)
+                
+            case Double.pi * 3.0 / 2.0..<Double.pi * 2.0:
+                minX = -self.rad
+                minY = -self.rad
+                maxY = self.rad
+                
+            default:
+                minX = -self.rad
+                minY = -self.rad
+                maxY = self.rad
+            }
+        }
+        
+        
+        let localBrick = OrthoVol(minX: minX, maxX: maxX, minY: minY, maxY: maxY, minZ: -self.rad / 10.0, maxZ: self.rad / 10.0)
+//        let shift = Transform(deltaX: self.ctr.x, deltaY: self.ctr.y, deltaZ: self.ctr.z)
+        
+//        let shifted = localBrick.transform(xirtam: shift)
+        
+        return localBrick
+    }
+    
+    
+    /// Define the smallest aligned rectangle that encloses the arc
+    public func getExtent() -> OrthoVol   {
+        
+        /// Extent as if the arc were in the XY plane
+        let localBrick = self.simpleExtent()
+        
+        var genesisAxis = Vector3D.built(from: self.ctr, towards: self.start)
+        genesisAxis.normalize()
+        
+        let perp = try! Vector3D.crossProduct(lhs: self.axisDir, rhs: genesisAxis)   // Shouldn't need to be normalized
+        
+        let origin = Point3D(x: 0.0, y: 0.0, z: 0.0)
+        
+        let localCSYS = try! CoordinateSystem(spot: origin, alpha: genesisAxis, beta: perp, gamma: self.axisDir)
+        
+        let roll = localCSYS.genToGlobal()
+        let tilted = localBrick.transform(xirtam: roll)
+        
+        let offset = Transform(deltaX: self.ctr.x, deltaY: self.ctr.y, deltaZ: self.ctr.z)
+        let brick = tilted.transform(xirtam: offset)
+        
+        return brick
     }
     
     

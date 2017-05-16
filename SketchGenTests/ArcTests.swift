@@ -10,16 +10,6 @@ import XCTest
 
 class ArcTests: XCTestCase {
 
-    override func setUp() {
-        super.setUp()
-        // Put setup code here. This method is called before the invocation of each test method in the class.
-    }
-    
-    override func tearDown() {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
-        super.tearDown()
-    }
-
     /// Tests the simple parts for one of the inits
     func testFidelity() {
 
@@ -329,6 +319,111 @@ class ArcTests: XCTestCase {
     }
     
     
+    func testSimpleExtent()   {
+        
+        let axis = Vector3D(i: 0.0, j: 0.0, k: 1.0)
+        
+        let ctr = Point3D(x: 2.0, y: 1.0, z: 5.0)
+        let e1 = Point3D(x: 4.5, y: 1.0, z: 5.0)
+        
+        var theta = Double.pi / 4.0 + 0.15
+        var shield = try! Arc(center: ctr, axis: axis, end1: e1, sweep: theta)
+        
+        var brick = shield.simpleExtent()
+        
+        XCTAssertEqual(brick.getOrigin().x, shield.rad * cos(theta))
+        XCTAssertEqual(brick.getOrigin().y, 0.0)
+        XCTAssertEqual(brick.getOrigin().z, -shield.rad / 10.0)
+        
+        XCTAssertEqualWithAccuracy(brick.getWidth(), shield.rad * (1.0 - cos(theta)), accuracy: Point3D.Epsilon / 3.0)
+        XCTAssertEqualWithAccuracy(brick.getHeight(), shield.rad * sin(theta), accuracy: Point3D.Epsilon / 3.0)
+        XCTAssertEqual(brick.getDepth(), shield.rad / 5.0)
+        
+        
+           // Push the angle into quadrant II
+        theta = Double.pi / 2.0 + 0.15
+        
+        shield = try! Arc(center: ctr, axis: axis, end1: e1, sweep: theta)
+        brick = shield.simpleExtent()
+        
+        XCTAssertEqualWithAccuracy(brick.getOrigin().x, shield.rad * cos(theta), accuracy: Point3D.Epsilon / 3.0)
+        
+        XCTAssertEqualWithAccuracy(brick.getWidth(), shield.rad * (1.0 - cos(theta)), accuracy: Point3D.Epsilon / 3.0)
+        XCTAssertEqualWithAccuracy(brick.getHeight(), shield.rad, accuracy: Point3D.Epsilon / 3.0)
+        
+           // Push the angle into quadrant III
+        theta = Double.pi + 0.15
+        
+        shield = try! Arc(center: ctr, axis: axis, end1: e1, sweep: theta)
+        brick = shield.simpleExtent()
+        
+        XCTAssertEqualWithAccuracy(brick.getOrigin().x, -shield.rad, accuracy: Point3D.Epsilon / 3.0)
+        
+        XCTAssertEqualWithAccuracy(brick.getWidth(), 2.0 * shield.rad, accuracy: Point3D.Epsilon / 3.0)
+        XCTAssertEqualWithAccuracy(brick.getHeight(), shield.rad - shield.rad * sin(theta), accuracy: Point3D.Epsilon / 3.0)
+        
+           // Push the angle into quadrant IV
+        theta = Double.pi * 3.0 / 2.0 + 0.15
+        
+        shield = try! Arc(center: ctr, axis: axis, end1: e1, sweep: theta)
+        brick = shield.simpleExtent()
+        
+        XCTAssertEqualWithAccuracy(brick.getOrigin().x, -shield.rad, accuracy: Point3D.Epsilon / 3.0)
+        
+        XCTAssertEqualWithAccuracy(brick.getWidth(), 2.0 * shield.rad, accuracy: Point3D.Epsilon / 3.0)
+        XCTAssertEqualWithAccuracy(brick.getHeight(), 2.0 * shield.rad, accuracy: Point3D.Epsilon / 3.0)
+        
+           // Negative angle - quadrant IV
+        theta = -Double.pi / 2.0 + 0.15
+        
+        shield = try! Arc(center: ctr, axis: axis, end1: e1, sweep: theta)
+        brick = shield.simpleExtent()
+        
+        XCTAssertEqualWithAccuracy(brick.getOrigin().x, shield.rad * cos(theta), accuracy: Point3D.Epsilon / 3.0)
+        XCTAssertEqualWithAccuracy(brick.getOrigin().y, shield.rad * sin(theta), accuracy: Point3D.Epsilon / 3.0)
+        
+        XCTAssertEqualWithAccuracy(brick.getWidth(), shield.rad * (1.0 - cos(theta)), accuracy: Point3D.Epsilon / 3.0)
+        XCTAssertEqualWithAccuracy(brick.getHeight(), -1.0 * shield.rad * sin(theta), accuracy: Point3D.Epsilon / 3.0)
+        
+           // Negative angle - quadrant III
+        theta = -Double.pi + 0.15
+        
+        shield = try! Arc(center: ctr, axis: axis, end1: e1, sweep: theta)
+        brick = shield.simpleExtent()
+        
+        XCTAssertEqualWithAccuracy(brick.getOrigin().x, shield.rad * cos(theta), accuracy: Point3D.Epsilon / 3.0)
+        XCTAssertEqualWithAccuracy(brick.getOrigin().y, -shield.rad, accuracy: Point3D.Epsilon / 3.0)
+        
+        XCTAssertEqualWithAccuracy(brick.getWidth(), shield.rad * (1.0 - cos(theta)), accuracy: Point3D.Epsilon / 3.0)
+        XCTAssertEqualWithAccuracy(brick.getHeight(), shield.rad, accuracy: Point3D.Epsilon / 3.0)
+        
+           // Negative angle - quadrant II
+        theta = -Double.pi * 3.0 / 2.0 + 0.15
+        
+        shield = try! Arc(center: ctr, axis: axis, end1: e1, sweep: theta)
+        brick = shield.simpleExtent()
+        
+        XCTAssertEqualWithAccuracy(brick.getOrigin().x, -shield.rad, accuracy: Point3D.Epsilon / 3.0)
+        XCTAssertEqualWithAccuracy(brick.getOrigin().y, -shield.rad, accuracy: Point3D.Epsilon / 3.0)
+        
+        XCTAssertEqualWithAccuracy(brick.getWidth(), 2.0 * shield.rad, accuracy: Point3D.Epsilon / 3.0)
+        XCTAssertEqualWithAccuracy(brick.getHeight(), shield.rad * (1.0 + sin(theta)), accuracy: Point3D.Epsilon / 3.0)
+        
+           // Negative angle - quadrant I
+        theta = -Double.pi * 2.0 + 0.15
+        
+        shield = try! Arc(center: ctr, axis: axis, end1: e1, sweep: theta)
+        brick = shield.simpleExtent()
+        
+        XCTAssertEqualWithAccuracy(brick.getOrigin().x, -shield.rad, accuracy: Point3D.Epsilon / 3.0)
+        XCTAssertEqualWithAccuracy(brick.getOrigin().y, -shield.rad, accuracy: Point3D.Epsilon / 3.0)
+        
+        XCTAssertEqualWithAccuracy(brick.getWidth(), 2.0 * shield.rad, accuracy: Point3D.Epsilon / 3.0)
+        XCTAssertEqualWithAccuracy(brick.getHeight(), 2.0 * shield.rad, accuracy: Point3D.Epsilon / 3.0)
+        
+   }
+    
+    
     func testExtent()   {
         
         let axis = Vector3D(i: 0.0, j: 0.0, k: 1.0)
@@ -336,13 +431,48 @@ class ArcTests: XCTestCase {
         let ctr = Point3D(x: 2.0, y: 1.0, z: 5.0)
         let e1 = Point3D(x: 4.5, y: 1.0, z: 5.0)
         
-        let shield = try! Arc(center: ctr, axis: axis, end1: e1, sweep: Double.pi / 4.0 + 0.15)
+        let shield = try! Arc(center: ctr, axis: axis, end1: e1, sweep: Double.pi)
         
         let box = shield.getExtent()
         
-//        let target = 0.0
+        XCTAssertEqualWithAccuracy(box.getOrigin().x, -0.5, accuracy: Point3D.Epsilon / 3.0)
+        XCTAssertEqualWithAccuracy(box.getOrigin().y, 1.0, accuracy: Point3D.Epsilon / 3.0)
+        XCTAssertEqualWithAccuracy(box.getOrigin().z, 5.0 - shield.rad / 10.0, accuracy: Point3D.Epsilon / 3.0)
         
-        XCTAssert(box.getOrigin().y >= 1.0)
+        XCTAssertEqualWithAccuracy(box.getWidth(), 5.0, accuracy: Point3D.Epsilon / 3.0)
+        XCTAssertEqualWithAccuracy(box.getHeight(), 2.5, accuracy: Point3D.Epsilon / 3.0)
+        
+        let sqrt22 = sqrt(2.0) / 2.0
+
+           // Spin around Z-axis
+        let e2 = Point3D(x: 2.0 + 3.0 * sqrt22, y: 1.0 + 3.0 * sqrt22, z: 5.0)
+        let shield3 = try! Arc(center: ctr, axis: axis, end1: e2, sweep: Double.pi)
+        let box3 = shield3.getExtent()
+        
+        XCTAssertEqualWithAccuracy(box3.getOrigin().x, -0.5, accuracy: Point3D.Epsilon / 3.0)
+        XCTAssertEqualWithAccuracy(box3.getOrigin().y, 1.0, accuracy: Point3D.Epsilon / 3.0)
+        XCTAssertEqualWithAccuracy(box3.getOrigin().z, 5.0 - shield.rad / 10.0, accuracy: Point3D.Epsilon / 3.0)
+        
+        XCTAssertEqualWithAccuracy(box3.getWidth(), 5.0, accuracy: Point3D.Epsilon / 3.0)
+        XCTAssertEqualWithAccuracy(box3.getHeight(), 2.5, accuracy: Point3D.Epsilon / 3.0)
+        
+        
+        
+           // Tilt around the X-axis
+        var axis2 = Vector3D(i: 0.0, j: 0.707, k: 0.707)
+        axis2.normalize()
+        
+        let shield2 = try! Arc(center: ctr, axis: axis2, end1: e1, sweep: Double.pi)
+        let box2 = shield2.getExtent()
+        
+        XCTAssertEqualWithAccuracy(box2.getOrigin().x, -0.5, accuracy: Point3D.Epsilon / 3.0)
+        
+        XCTAssertEqualWithAccuracy(box2.getWidth(), 5.0, accuracy: Point3D.Epsilon / 3.0)
+        
+        XCTAssertEqualWithAccuracy(box2.getHeight(), shield2.rad * (1.0 + 0.2) * sqrt22, accuracy: Point3D.Epsilon / 3.0)
+        
+        
+        
         
     }
     
