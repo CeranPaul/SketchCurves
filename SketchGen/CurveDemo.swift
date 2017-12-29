@@ -1,5 +1,5 @@
 //
-//  Roundy.swift
+//  CurveDemo.swift
 //  SketchCurves
 //
 //  Created by Paul on 11/8/15.

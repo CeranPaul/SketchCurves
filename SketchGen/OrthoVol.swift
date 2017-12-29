@@ -79,6 +79,9 @@ public struct OrthoVol   {
     /// - Throws: CoincidentPointsError
     public init(corner1: Point3D, corner2: Point3D) throws  {
         
+        // Bail out if the input points are coincident
+        guard corner1 != corner2 else { throw CoincidentPointsError(dupePt: corner1) }
+        
         let sep = Point3D.dist(pt1: corner1, pt2: corner2)
         let halfMin = sep / 10.0   // Used to keep the box from becoming a whisker
         
@@ -119,9 +122,6 @@ public struct OrthoVol   {
         rangeX = ClosedRange(uncheckedBounds: (lower: leastX, upper: mostX))
         rangeY = ClosedRange(uncheckedBounds: (lower: leastY, upper: mostY))
         rangeZ = ClosedRange(uncheckedBounds: (lower: leastZ, upper: mostZ))
-        
-        // Because this is an 'init', a guard statement cannot be used at the top
-        if corner1 == corner2 { throw CoincidentPointsError(dupePt: corner1)}
         
     }
     

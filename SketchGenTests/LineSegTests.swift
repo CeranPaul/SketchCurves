@@ -121,7 +121,7 @@ class LineSegTests: XCTestCase {
         
         let target = 1.5 * sqrt(2.0)
         
-        XCTAssertEqualWithAccuracy(target, shorter.getLength(), accuracy: 0.00001)
+        XCTAssertEqual(target, shorter.getLength(), accuracy: 0.00001)
         
     }
     

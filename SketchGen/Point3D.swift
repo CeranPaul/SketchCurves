@@ -18,7 +18,7 @@ public struct  Point3D: Hashable {
 
     
     /// Threshhold of separation for equality checks
-    static let Epsilon: Double = 0.0001
+    public static let Epsilon: Double = 0.0001
     
     
     

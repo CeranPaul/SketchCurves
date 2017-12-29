@@ -79,7 +79,7 @@ class Vector3DTests: XCTestCase {
         XCTAssertFalse(trial.length() == 1.0)
         
         trial.normalize()   // Safe by inspection
-        XCTAssertEqualWithAccuracy (trial.length(), 1.0, accuracy: Vector3D.EpsilonV / 3.0)
+        XCTAssertEqual (trial.length(), 1.0, accuracy: Vector3D.EpsilonV / 3.0)
 
     }
     
@@ -247,13 +247,13 @@ class Vector3DTests: XCTestCase {
         var incoming = try! Vector3D.crossProduct(lhs: base, rhs: closer)
         incoming.normalize()
         print(incoming)
-        XCTAssertEqualWithAccuracy(incoming.k, 1.0, accuracy: 0.0001)
+        XCTAssertEqual(incoming.k, 1.0, accuracy: 0.0001)
         
         var outgoing = try! Vector3D.crossProduct(lhs: base, rhs: farther)
         outgoing.normalize()
         print(outgoing)
         
-        XCTAssertEqualWithAccuracy(outgoing.k, -1.0, accuracy: 0.0001)
+        XCTAssertEqual(outgoing.k, -1.0, accuracy: 0.0001)
         
     }
     
@@ -280,28 +280,28 @@ class Vector3DTests: XCTestCase {
         
         let trial = try! Vector3D.findAngle(baselineVec: thisWay, measureTo: thatWay, perp: rocket)
         
-        XCTAssertEqualWithAccuracy(trial, target, accuracy: Vector3D.EpsilonV)
+        XCTAssertEqual(trial, target, accuracy: Vector3D.EpsilonV)
 
 
         let thatWay2 = Vector3D(i: 0.866, j: -0.5, k: 0.0)
         let trial2 = try! Vector3D.findAngle(baselineVec: thisWay, measureTo: thatWay2, perp: rocket)
         let target2 = -Double.pi / 6.0
         
-        XCTAssertEqualWithAccuracy(trial2, target2, accuracy: Vector3D.EpsilonV)
+        XCTAssertEqual(trial2, target2, accuracy: Vector3D.EpsilonV)
 
         
         let thatWay3 = Vector3D(i: -1.0, j: 0.0, k: 0.0)
         let trial3 = try! Vector3D.findAngle(baselineVec: thisWay, measureTo: thatWay3, perp: rocket)
         let target3 = Double.pi
         
-        XCTAssertEqualWithAccuracy(trial3, target3, accuracy: Vector3D.EpsilonV)
+        XCTAssertEqual(trial3, target3, accuracy: Vector3D.EpsilonV)
         
         
         let thatWay4 = Vector3D(i: 1.0, j: 0.0, k: 0.0)
         let trial4 = try! Vector3D.findAngle(baselineVec: thisWay, measureTo: thatWay4, perp: rocket)
         let target4 = 0.0
         
-        XCTAssertEqualWithAccuracy(trial4, target4, accuracy: Vector3D.EpsilonV)
+        XCTAssertEqual(trial4, target4, accuracy: Vector3D.EpsilonV)
     }
     
     // Test addition

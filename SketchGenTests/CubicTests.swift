@@ -86,9 +86,9 @@ class CubicTests: XCTestCase {
         let sumY = bump.ay + bump.by + bump.cy + bump.dy
         let sumZ = bump.az + bump.bz + bump.cz + bump.dz
         
-        XCTAssertEqualWithAccuracy(beta.x, sumX, accuracy: 0.0001)
-        XCTAssertEqualWithAccuracy(beta.y, sumY, accuracy: 0.0001)
-        XCTAssertEqualWithAccuracy(beta.z, sumZ, accuracy: 0.0001)
+        XCTAssertEqual(beta.x, sumX, accuracy: 0.0001)
+        XCTAssertEqual(beta.y, sumY, accuracy: 0.0001)
+        XCTAssertEqual(beta.z, sumZ, accuracy: 0.0001)
     }
     
     func testSumsBezier()   {
@@ -109,9 +109,9 @@ class CubicTests: XCTestCase {
         let sumY = bump.ay + bump.by + bump.cy + bump.dy
         let sumZ = bump.az + bump.bz + bump.cz + bump.dz
         
-        XCTAssertEqualWithAccuracy(beta.x, sumX, accuracy: 0.0001)
-        XCTAssertEqualWithAccuracy(beta.y, sumY, accuracy: 0.0001)
-        XCTAssertEqualWithAccuracy(beta.z, sumZ, accuracy: 0.0001)
+        XCTAssertEqual(beta.x, sumX, accuracy: 0.0001)
+        XCTAssertEqual(beta.y, sumY, accuracy: 0.0001)
+        XCTAssertEqual(beta.z, sumZ, accuracy: 0.0001)
     }
     
     func testExtent()   {
@@ -129,7 +129,7 @@ class CubicTests: XCTestCase {
         
         let box = bump.getExtent()
         
-        XCTAssertEqualWithAccuracy(box.getOrigin().x, -2.9624, accuracy: 0.0001)
+        XCTAssertEqual(box.getOrigin().x, -2.9624, accuracy: 0.0001)
     }
     
     /// Basic intersection tests in the XY plane
@@ -158,9 +158,9 @@ class CubicTests: XCTestCase {
         XCTAssertEqual(tnuoc, 1)
         
         let common = spots.first!
-        XCTAssertEqualWithAccuracy(common.x, 3.312, accuracy: 0.001)
-        XCTAssertEqualWithAccuracy(common.y, 2.161, accuracy: 0.001)
-        XCTAssertEqualWithAccuracy(common.z, 0.0, accuracy: 0.001)
+        XCTAssertEqual(common.x, 3.312, accuracy: 0.001)
+        XCTAssertEqual(common.y, 2.161, accuracy: 0.001)
+        XCTAssertEqual(common.z, 0.0, accuracy: 0.001)
     }
     
     func testIntLine2()   {
