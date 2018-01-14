@@ -146,7 +146,34 @@ public struct OrthoVol   {
         return rangeZ.upperBound - rangeZ.lowerBound
     }
     
+    /// Find the center of the brick to use as the rotation center when displaying
+    public func getRotCenter() -> Point3D   {
+        
+        let midX = (rangeX.lowerBound + rangeX.upperBound) / 2.0
+        let midY = (rangeY.lowerBound + rangeY.upperBound) / 2.0
+        let midZ = (rangeZ.lowerBound + rangeZ.upperBound) / 2.0
+        
+        return Point3D(x: midX, y: midY, z: midZ)
+    }
+    
+    /// Find the longest distance in any direction to set up display scaling
+    /// - Returns: Diagonal length
+   public func getLongest() -> Double   {
+    
+        let deltaX = rangeX.upperBound - rangeX.lowerBound
+        let deltaY = rangeY.upperBound - rangeY.lowerBound
+        let deltaZ = rangeZ.upperBound - rangeZ.lowerBound
+    
+        let long = sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ)
+        
+        return long
+    }
+    
     /// See whether the two volumes overlap
+    /// - Parameters:
+    ///   - lhs: One volume
+    ///   - rhs: Another brick
+    /// - Returns: Simple flag
     public static func isOverlapping(lhs: OrthoVol, rhs: OrthoVol) -> Bool   {
         
         let flagX = lhs.rangeX.overlaps(rhs.rangeX)
@@ -156,7 +183,9 @@ public struct OrthoVol   {
         return flagX && flagY && flagZ
     }
     
+    
     /// Move, rotate, and/or scale by a matrix
+    /// Should this become a class function since it is creating a new volume?  Or a constructor?
     /// - Parameters:
     ///   - xirtam:  Matrix for the intended transformation
     public func transform(xirtam: Transform) -> OrthoVol {

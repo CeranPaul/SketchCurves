@@ -445,9 +445,9 @@ class ArcTests: XCTestCase {
         let sqrt22 = sqrt(2.0) / 2.0
 
            // Spin around Z-axis   Gee, is a transform the way to handle the spin case!
-        let e2 = Point3D(x: 2.0 + 3.0 * sqrt22, y: 1.0 + 3.0 * sqrt22, z: 5.0)
-        let shield3 = try! Arc(center: ctr, axis: axis, end1: e2, sweep: Double.pi)
-        let box3 = shield3.getExtent()
+//        let e2 = Point3D(x: 2.0 + 3.0 * sqrt22, y: 1.0 + 3.0 * sqrt22, z: 5.0)
+//        let shield3 = try! Arc(center: ctr, axis: axis, end1: e2, sweep: Double.pi)
+//        let box3 = shield3.getExtent()
         
 //        XCTAssertEqual(box3.getOrigin().x, -0.5, accuracy: Point3D.Epsilon / 3.0)
 //        XCTAssertEqual(box3.getOrigin().y, 1.0, accuracy: Point3D.Epsilon / 3.0)

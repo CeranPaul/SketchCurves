@@ -12,7 +12,7 @@ import UIKit
 /// The code compiles, but beware of the results!
 /// This DOES NOT handle the case of precisely half a circle
 /// - SeeAlso:  Ellipse
-open class Arc: PenCurve {
+public class Arc: PenCurve {
     
     /// Point around which the arc is swept
     fileprivate var ctr: Point3D

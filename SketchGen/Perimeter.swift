@@ -177,10 +177,6 @@ open class Perimeter {
     /// - Returns: Closest of the curve endpoints, if near enough, or nil
     func  nearEnd(speck: Point3D, enough: Double) -> Point3D?   {
         
-        
-        let sep = Double.greatestFiniteMagnitude   // Good start for comparison
-        
-        
         for g in 0..<pieces.count  {   // Is this actually just a lengthy reduce?
             
             let wire = pieces[g]
