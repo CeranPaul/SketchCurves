@@ -19,6 +19,9 @@ public struct Plane   {
     
     
     /// Records parameters and checks to see that the normal is a legitimate vector
+    /// - Parameters:
+    ///   - alpha:  Origin for the fresh plane
+    ///   - arrow:  Unit vector that the plane will be perpendicular to
     /// - See: 'testFidelity' under PlaneTests
     init(spot: Point3D, arrow: Vector3D) throws  {
         
@@ -28,18 +31,16 @@ public struct Plane   {
         self.location = spot
         self.normal = arrow
         
-        // TODO:  Include tests to verify that the errors get thrown correctly
-
     }
     
-    /// Generate a perpendicular vector from differences between the inputs
-    /// Normal could be the opposite of what you hoped for
+    /// Construct a plane from three points
     /// - Parameters:
     ///   - alpha:  First input point and origin of the fresh plane
     ///   - beta:  Second input point
     ///   - gamma:  Third input point
     /// - Returns: Fresh plane
     /// - Throws: CoincidentPointsError for duplicate or linear inputs
+    /// - See: 'testInitPts' under PlaneTests
     init(alpha: Point3D, beta: Point3D, gamma: Point3D) throws   {
         
         guard Point3D.isThreeUnique(alpha: alpha, beta: beta, gamma: gamma)  else  { throw CoincidentPointsError(dupePt: alpha) }

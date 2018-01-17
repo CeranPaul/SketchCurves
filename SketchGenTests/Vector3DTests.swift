@@ -106,6 +106,7 @@ class Vector3DTests: XCTestCase {
     }
     
     // Test a common construction operation
+    /// Needs to have a test for the optional parameter
     func testBuiltFrom()   {
         
         let alpha = Point3D(x: 1.5, y: 2.0, z: -1.7)
@@ -142,6 +143,8 @@ class Vector3DTests: XCTestCase {
         let scaled3 = raw * 0.0
         
         XCTAssert(scaled3 == nilVec)
+        
+        
     }
     
     // Check for difference between direction and sense
@@ -219,17 +222,12 @@ class Vector3DTests: XCTestCase {
         let thereScaleNeg = Vector3D(i: -0.8, j: 0.6, k: -1.8)
         XCTAssertThrowsError(try Vector3D.crossProduct(lhs: there, rhs: thereScaleNeg))
 
+           // See that non-scaled vectors don't throw
+        let there1 = Vector3D(i: 0.4, j: -0.3, k: 0.9)
+        let there2 = Vector3D(i: 0.4, j: 0.3, k: -0.9)
         
-        do   {
+        XCTAssertNoThrow(try Vector3D.crossProduct(lhs: there1, rhs: there2))
             
-            let there = Vector3D(i: 0.4, j: -0.3, k: 0.9)
-            let there2 = Vector3D(i: 0.4, j: 0.3, k: -0.9)
-            
-            _ = try Vector3D.crossProduct(lhs: there, rhs: there2)
-            
-        }  catch  {
-            XCTFail()
-        }
         
         /// Handy numbers for building vectors
         let sqrt22 = sqrt(2.0) / 2.0
@@ -278,6 +276,7 @@ class Vector3DTests: XCTestCase {
         
         let target = -Double.pi / 2.0
         
+        XCTAssertNoThrow(try Vector3D.findAngle(baselineVec: thisWay, measureTo: thatWay, perp: rocket))
         let trial = try! Vector3D.findAngle(baselineVec: thisWay, measureTo: thatWay, perp: rocket)
         
         XCTAssertEqual(trial, target, accuracy: Vector3D.EpsilonV)
@@ -302,6 +301,13 @@ class Vector3DTests: XCTestCase {
         let target4 = 0.0
         
         XCTAssertEqual(trial4, target4, accuracy: Vector3D.EpsilonV)
+        
+           // Test the guard statements
+        let heinous = Vector3D(i: 0.0, j: 0.0, k: 0.0)
+        
+        XCTAssertThrowsError(try Vector3D.findAngle(baselineVec: heinous, measureTo: thatWay4, perp: rocket))
+        XCTAssertThrowsError(try Vector3D.findAngle(baselineVec: thisWay, measureTo: heinous, perp: rocket))
+        XCTAssertThrowsError(try Vector3D.findAngle(baselineVec: thisWay, measureTo: thatWay4, perp: heinous))
     }
     
     // Test addition
@@ -331,5 +337,24 @@ class Vector3DTests: XCTestCase {
         XCTAssert(trial == target)
     }
     
+    func testIsScaled()   {
+        
+        let pristine = Vector3D(i: 1.0, j: 2.0, k: 3.0)
+        
+        let bigger = Vector3D(i: 4.5, j: 9.0, k: 13.5)
+        
+        let smaller = Vector3D(i: 0.4, j: 0.8, k: 1.2)
+        
+        XCTAssert(try! Vector3D.isScaled(lhs: pristine, rhs: bigger))
+        
+        XCTAssert(try! Vector3D.isScaled(lhs: pristine, rhs: smaller))
+
+        let heinous = Vector3D(i: 0.0, j: 0.0, k: 0.0)
+        
+        XCTAssertThrowsError(try Vector3D.isScaled(lhs: pristine, rhs: heinous))
+        
+        XCTAssertThrowsError(try Vector3D.isScaled(lhs: heinous, rhs: pristine))
+
+   }
     
 }

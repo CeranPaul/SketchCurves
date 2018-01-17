@@ -38,7 +38,7 @@ class DemoPool  {
             
         case "herm": demoHermite()   // Single swoopy curve
             
-            case "jout": jsOut()   // A bit of text
+        case "jout": jsOut()   // A bit of text
             
         case "segs": makeSegs()   // Bad arc points, I think.  Try both values for "useSmallAngle"
             

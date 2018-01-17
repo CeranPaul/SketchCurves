@@ -35,13 +35,13 @@ class CubicTests: XCTestCase {
            // Gee, this would be a grand place for an extension of XCTAssert that compares points
         let flag1 = Point3D.dist(pt1: oneTrial, pt2: alpha) < (Point3D.Epsilon / 3.0)
         
-        if !flag1  {  XCTFail()  }
+        XCTAssert(flag1)
         
         let otherTrial = try! bump.pointAt(t: 1.0)
         let flag2 = Point3D.dist(pt1: otherTrial, pt2: beta) < (Point3D.Epsilon / 3.0)
         
-        if !flag2  {  XCTFail()  }
-        
+        XCTAssert(flag2)
+
     }
 
     func testBezier()   {
@@ -69,6 +69,29 @@ class CubicTests: XCTestCase {
         let flag2 = Point3D.dist(pt1: otherTrial, pt2: beta) < (Point3D.Epsilon / 3.0)
         
         XCTAssert(flag2)
+        
+    }
+    
+    func testGetters()   {
+        
+        let alpha = Point3D(x: 2.3, y: 1.5, z: 0.7)
+        let alSlope = Vector3D(i: 0.866, j: 0.5, k: 0.0)
+        
+        let control1 = alpha.offset(jump: alSlope)
+        
+        let beta = Point3D(x: 3.1, y: 1.6, z: 0.7)
+        let betSlope = Vector3D(i: 0.866, j: -0.5, k: 0.0)
+        let bReverse = betSlope.reverse()
+        let control2 = beta.offset(jump: bReverse)
+        
+        let bump = Cubic(ptA: alpha, controlA: control1, controlB: control2, ptB: beta)
+        
+        
+        let retAlpha = bump.getOneEnd()
+        XCTAssertEqual(alpha, retAlpha)
+        
+        let retBeta = bump.getOtherEnd()
+        XCTAssertEqual(beta, retBeta)
         
     }
     

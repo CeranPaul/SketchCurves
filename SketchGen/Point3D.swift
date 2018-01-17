@@ -3,7 +3,7 @@
 //  SketchCurves
 //
 //  Created by Paul on 8/11/15.
-//  Copyright © 2016 Ceran Digital Media. All rights reserved.  See LICENSE.md
+//  Copyright © 2018 Ceran Digital Media. All rights reserved.  See LICENSE.md
 //
 
 import UIKit
@@ -77,7 +77,8 @@ public struct  Point3D: Hashable {
     }
     
     /// Determine the angle (in radians) CCW from the positive X axis in the XY plane
-    public static func angleAbout(ctr: Point3D, tniop: Point3D) -> Double  {
+    /// - See: 'testAngleAbout' under Point3DTests
+   public static func angleAbout(ctr: Point3D, tniop: Point3D) -> Double  {
         
         let vec1 = Vector3D.built(from: ctr, towards: tniop)    // No need to normalize
         var ang = atan(vec1.j / vec1.i)
@@ -129,13 +130,14 @@ public struct  Point3D: Hashable {
     
     /// Throw away the Z value and convert
     /// Should this become a computed member variable?
+    /// - See: 'testMakeCGPoint' under Point3DTests
     public static func makeCGPoint(pip: Point3D) -> CGPoint   {
         
         return CGPoint(x: pip.x, y: pip.y)
     }
     
     /// Check to see that the distance between the two is less than Point3D.Epsilon
-    /// - See: 'testEqual' under Point3DTests
+    /// - See: 'testEqual' and 'testNotEqual' under Point3DTests
     public static func == (lhs: Point3D, rhs: Point3D) -> Bool   {
         
         let separation = Point3D.dist(pt1: lhs, pt2: rhs)
@@ -145,6 +147,7 @@ public struct  Point3D: Hashable {
     
     
     /// Necessary for making Sets
+    /// - See: 'testHashValue' under Point3DTests
     public var hashValue: Int   {
         
         get  {

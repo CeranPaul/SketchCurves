@@ -3,7 +3,7 @@
 //  SketchCurves
 //
 //  Created by Paul on 11/5/15.
-//  Copyright © 2016 Ceran Digital Media. All rights reserved.  See LICENSE.md
+//  Copyright © 2018 Ceran Digital Media. All rights reserved.  See LICENSE.md
 //
 
 import XCTest
@@ -130,6 +130,63 @@ class Point3DTests: XCTestCase {
         XCTAssert(trial != target)
     }
     
-    // TODO: Add tests for transform, intersectLinePlane, angleAbout, makeCGPoint, and project
+    func testMakeCGPoint()   {
+        
+        let base = Point3D(x: -3.7, y: 6.1, z: 10.4)
+        
+        let target = CGPoint(x: -3.7, y: 6.1)
+        
+        let trial = Point3D.makeCGPoint(pip: base)
+        
+        XCTAssertEqual(trial, target)
+        
+    }
+    
+    func testHashValue()   {
+        
+        let trial = Point3D(x: -3.7, y: 6.1, z: 10.4)
+        let trial2 = Point3D(x: -3.7, y: 6.1, z: 10.4)
+        let trial3 = Point3D(x: 3.1, y: 6.1, z: 10.4)
+        let trial4 = Point3D(x: -3.7, y: 1.6, z: 10.4)
+        let trial5 = Point3D(x: -3.7, y: 6.1, z: 1.4)
+        
+        XCTAssertEqual(trial.hashValue, trial2.hashValue)
+
+        XCTAssertNotEqual(trial.hashValue, trial3.hashValue)
+        XCTAssertNotEqual(trial.hashValue, trial4.hashValue)
+        XCTAssertNotEqual(trial.hashValue, trial5.hashValue)
+    }
+    
+    func testAngleAbout()   {
+        
+        let origin = Point3D(x: 5.0, y: 5.0, z: 2.0)
+        
+        let trial1 = Point3D(x: 3.7, y: 6.3, z: 2.0)
+        
+        var azim = Point3D.angleAbout(ctr: origin, tniop: trial1)
+        
+        var target = Double.pi * 3.0 / 4.0
+        
+        XCTAssertEqual(azim, target)
+        
+        
+        let trial2 = Point3D(x: 6.3, y: 6.3, z: 2.0)
+        azim = Point3D.angleAbout(ctr: origin, tniop: trial2)
+        target = Double.pi / 4.0
+        XCTAssertEqual(azim, target)
+        
+        let trial3 = Point3D(x: 3.7, y: 3.7, z: 2.0)
+        azim = Point3D.angleAbout(ctr: origin, tniop: trial3)
+        target = -Double.pi * 3.0 / 4.0
+        XCTAssertEqual(azim, target)
+        
+        let trial4 = Point3D(x: 6.3, y: 3.7, z: 2.0)
+        azim = Point3D.angleAbout(ctr: origin, tniop: trial4)
+        target = -Double.pi / 4.0
+        XCTAssertEqual(azim, target)
+        
+    }
+    
+    // TODO: Add tests for transform, intersectLinePlane, and project
     
 }

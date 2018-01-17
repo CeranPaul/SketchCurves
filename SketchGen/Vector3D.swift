@@ -180,6 +180,7 @@ public struct Vector3D: Equatable {
     /// Could be used before doing cross product
     /// - Throws: ZeroVectorError if either input is of zero length
     /// - SeeAlso:  isOpposite()
+    /// - See: 'testIsScaled' under Vector3DTests
     public static func isScaled(lhs: Vector3D, rhs: Vector3D) throws -> Bool  {
         
         guard(!lhs.isZero()) else {  throw ZeroVectorError(dir: lhs)  }
