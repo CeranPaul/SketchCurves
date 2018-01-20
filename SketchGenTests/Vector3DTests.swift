@@ -3,7 +3,7 @@
 //  SketchCurves
 //
 //  Created by Paul on 10/30/15.
-//  Copyright © 2017 Ceran Digital Media. All rights reserved.  See LICENSE.md
+//  Copyright © 2018 Ceran Digital Media. All rights reserved.  See LICENSE.md
 //
 
 import XCTest
@@ -117,6 +117,39 @@ class Vector3DTests: XCTestCase {
         let trial = Vector3D.built(from: alpha, towards: beta)
         
         XCTAssert(trial == target)
+        
+    }
+    
+    func testPerp()   {
+        
+        var orig = Vector3D(i: 2.5, j: 0.0, k: 0.0)
+        var trial = orig.perp()
+        
+        var target = Vector3D(i: 0.0, j: 2.5, k: 0.0)
+        
+        XCTAssertEqual(trial, target)
+        
+        
+        orig = Vector3D(i: 2.5, j: 0.0, k: 1.2)
+        trial = orig.perp()
+        
+        XCTAssertEqual(trial, target)
+        
+        
+        orig = Vector3D(i: 0.0, j: 2.5, k: 0.0)
+        trial = orig.perp()
+        
+        target = Vector3D(i: -2.5, j: 0.0, k: 0.0)
+        
+        XCTAssertEqual(trial, target)
+        
+
+        orig = Vector3D(i: -1.0, j: -1.0, k: 0.0)
+        trial = orig.perp()
+        
+        target = Vector3D(i: 1.0, j: -1.0, k: 0.0)
+        
+        XCTAssertEqual(trial, target)
         
     }
     
@@ -308,6 +341,18 @@ class Vector3DTests: XCTestCase {
         XCTAssertThrowsError(try Vector3D.findAngle(baselineVec: heinous, measureTo: thatWay4, perp: rocket))
         XCTAssertThrowsError(try Vector3D.findAngle(baselineVec: thisWay, measureTo: heinous, perp: rocket))
         XCTAssertThrowsError(try Vector3D.findAngle(baselineVec: thisWay, measureTo: thatWay4, perp: heinous))
+    }
+    
+    func testMakeXZ()   {
+        
+        let alpha = 45.0
+        
+        let trial = Vector3D.makeXZ(angle: alpha)
+        
+        var target = Vector3D(i: 0.707, j: 0.0, k: 0.707)
+        target.normalize()
+        
+        XCTAssert(trial == target)
     }
     
     // Test addition

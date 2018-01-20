@@ -3,16 +3,18 @@
 //  SketchCurves
 //
 //  Created by Paul on 10/30/15.
-//  Copyright © 2017 Ceran Digital Media. All rights reserved.  See LICENSE.md
+//  Copyright © 2018 Ceran Digital Media. See LICENSE.md
 //
 
 import UIKit
 
+/// The general framework for a curve.  Not limited to 2D.
 public protocol PenCurve   {
     
     /// The enum that hints at the meaning of the curve
     var usage: PenTypes   { get set }
     
+    /// I can't think of anywhere that this is used
     var parameterRange: ClosedRange<Double>   { get set }
     
     /// Supply the point on the curve for the input parameter value

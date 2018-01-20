@@ -62,7 +62,7 @@ public struct Vector3D: Equatable {
     }
     
 
-    /// Construct a vector with the opposite direction
+    /// Construct a new vector with the opposite direction
     /// - See: 'testReverse' under Vector3DTests
     public func reverse() -> Vector3D   {
         
@@ -72,6 +72,10 @@ public struct Vector3D: Equatable {
     
     
     /// Rotate by a matrix
+    /// - Parameters:
+    ///   - xirtam: The Transform to be applied
+    /// - Returns: A new Vector
+    /// - SeeAlso:  twistAbout()
     /// - See: 'testTransform' under Vector3DTests
     public func transform(xirtam: Transform) -> Vector3D {
         
@@ -85,6 +89,7 @@ public struct Vector3D: Equatable {
     
     /// Construct a vector that has been rotated from self about the axis specified by the first argument
     /// - Parameter:  angleRad  The amount that the direction should change  Expressed in radians, not degrees!
+    /// - SeeAlso:  transform()
     func twistAbout(axisDir: Vector3D, angleRad: Double) -> Vector3D  {   // Should this become a static func?
         
         let perp = try! Vector3D.crossProduct(lhs: axisDir, rhs: self)
@@ -101,6 +106,8 @@ public struct Vector3D: Equatable {
     
     /// Construct a vector re-directed one quarter turn away in the counterclockwise direction in the XY plane
     /// Use crossProduct to do this for a more general case
+    /// - Returns: A new vector in the XY plane
+    /// - See: 'testPerp' under Vector3DTests
     public func perp() -> Vector3D   {
         
         let rightAngle = Vector3D(i: -self.j, j: self.i, k: 0.0)   // Perpendicular in a CCW direction

@@ -3,7 +3,7 @@
 //  SketchCurves
 //
 //  Created by Paul on 8/12/15.
-//  Copyright © 2016 Ceran Digital Media. All rights reserved.  See LICENSE.md
+//  Copyright © 2018 Ceran Digital Media.  See LICENSE.md
 //
 
 import Foundation
@@ -87,6 +87,7 @@ public struct Line: Equatable {
     /// - Parameters:
     ///   - away:  Hanging point
     /// - Returns: Nearest point on line
+    /// - See: 'testDropPoint' under LineTests
     public func dropPoint(away: Point3D) -> Point3D   {
         
         if Line.isCoincident(straightA: self, trial: away)   {  return away  }   // Shortcut!
@@ -101,6 +102,7 @@ public struct Line: Equatable {
     
     /// Checks to see if the trial point lies on the line
     /// - SeeAlso:  Overloaded ==
+    /// - See: 'testIsCoincident' under LineTests
     public static func isCoincident(straightA: Line, trial: Point3D) -> Bool   {
         
         var bridgeVector = Vector3D.built(from: straightA.origin, towards: trial)
@@ -116,19 +118,6 @@ public struct Line: Equatable {
     }
     
 
-    /// Check two lines  See that the either origin lies on the other line, and
-    /// that they have the same direction, even with the opposite sense
-    /// - SeeAlso:  Overloaded ==
-    public static func isCoincident(straightA: Line, straightB: Line) -> Bool   {
-        
-        if !Line.isCoincident(straightA: straightA, trial: straightB.getOrigin())   { return false }
-        if !Line.isCoincident(straightA: straightB, trial: straightA.getOrigin())   { return false }
-        
-        if !Line.isParallel(straightA: straightA, straightB: straightB)   { return false }
-        
-        return true
-    }
-    
     /// Do two lines have the same direction, even with opposite sense?
     /// - Parameters:
     ///   - straightA:  First test line
@@ -142,6 +131,20 @@ public struct Line: Equatable {
         return sameFlag  || oppFlag
     }
     
+    
+    /// Check two lines  See that the either origin lies on the other line, and
+    /// that they have the same direction, even with the opposite sense
+    /// - SeeAlso:  Overloaded ==
+    /// - See: 'testIsCoincidentLine' under LineTests
+    public static func isCoincident(straightA: Line, straightB: Line) -> Bool   {
+        
+        if !Line.isParallel(straightA: straightA, straightB: straightB)   { return false }
+        
+        if !Line.isCoincident(straightA: straightA, trial: straightB.getOrigin())   { return false }
+        if !Line.isCoincident(straightA: straightB, trial: straightA.getOrigin())   { return false }   // Is this second one needed?
+        
+        return true
+    }
     
     /// Verify that lines are on the same plane
     /// - Parameters:

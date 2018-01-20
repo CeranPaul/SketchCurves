@@ -3,7 +3,7 @@
 //  SketchGen
 //
 //  Created by Paul Hollingshead on 12/10/15.
-//  Copyright © 2015 Ceran Digital Media. All rights reserved.
+//  Copyright © 2018 Ceran Digital Media. All rights reserved.  See LICENSE.md
 //
 
 import XCTest
@@ -27,22 +27,130 @@ class LineTests: XCTestCase {
         var horn = Vector3D(i: 12.0, j: 3.0, k: 4.0)
         horn.normalize()
         
-        do   {
+        XCTAssertNoThrow( try Line(spot: nexus, arrow: horn) )
+        
+        let contrail = try! Line(spot: nexus, arrow: horn)   // The previous test verified that this is safe
+        
+        XCTAssert(contrail.getOrigin().x == -2.5)
+        XCTAssert(contrail.getOrigin().y == 1.5)
+        XCTAssert(contrail.getOrigin().z == 0.015)
+        
+        XCTAssert(contrail.getDirection().i == 12.0 / 13.0)
+        XCTAssert(contrail.getDirection().j == 3.0 / 13.0)
+        XCTAssert(contrail.getDirection().k == 4.0 / 13.0)
+        
+           // Check that one of the guard statements works
+        do {
             
-            let contrail = try Line(spot: nexus, arrow: horn)
+            horn = Vector3D(i: 0.0, j: 0.0, k: 0.0)
             
-            XCTAssert(contrail.getOrigin().x == -2.5)
-            XCTAssert(contrail.getOrigin().y == 1.5)
-            XCTAssert(contrail.getOrigin().z == 0.015)
+            _ = try Line(spot: nexus, arrow: horn)
             
-            XCTAssert(contrail.getDirection().i == 12.0 / 13.0)
-            XCTAssert(contrail.getDirection().j == 3.0 / 13.0)
-            XCTAssert(contrail.getDirection().k == 4.0 / 13.0)
+        }  catch is ZeroVectorError {
             
-        }   catch   {
-            print("Did you really throw an error in a test case?  Line")
+            XCTAssert(true)
+            
+        }  catch  {   // I don't see how you avoid writing this code, and having it be untested
+        
+            XCTAssert(false)
         }
+        
+        
+            // Check that the other guard statements works
+        do {
+            
+            horn = Vector3D(i: 3.0, j: 2.0, k: 1.0)
+            
+            _ = try Line(spot: nexus, arrow: horn)
+            
+        }  catch is NonUnitDirectionError {
+            
+            XCTAssert(true)
+            
+        }  catch  {   // I don't see how you avoid writing this code, and having it be untested
+            
+            XCTAssert(false)
+        }
+        
     }
+    
+    func testIsCoincident()   {
+        
+        let flatOrig = Point3D(x: 1.0, y: 2.0, z: 3.0)
+        var flatDir = Vector3D(i: 1.0, j: 1.0, k: 1.0)
+        flatDir.normalize()
+        
+        let contrail = try! Line(spot: flatOrig, arrow: flatDir)
+        
+        let trialOff = Point3D(x: 1.0, y: 2.0, z: 4.0)
+        
+        XCTAssertFalse(Line.isCoincident(straightA: contrail, trial: trialOff))
+        
+        
+        let trialOn = Point3D(x: 3.5, y: 4.5, z: 5.5)
+        
+        XCTAssert(Line.isCoincident(straightA: contrail, trial: trialOn))
+        
+        
+        let trialCoin = Point3D(x: 1.0, y: 2.0, z: 3.0)
+        
+        XCTAssert(Line.isCoincident(straightA: contrail, trial: trialCoin))
+        
+    }
+    
+    func testDropPoint()   {
+        
+        let trailhead = Point3D(x: 4.0, y: 2.0, z: 1.0)
+        var compass = Vector3D(i: 1.0, j: 1.0, k: 1.0)
+        compass.normalize()
+        
+        var rocket = try! Line(spot: trailhead, arrow: compass)
+        
+        var incoming = Point3D(x: 6.0, y: 4.0, z: 3.0)
+        var splat = rocket.dropPoint(away: incoming)
+        
+        XCTAssert(splat == incoming)
+        
+        
+        compass = Vector3D(i: 1.0, j: 1.0, k: 0.0)
+        compass.normalize()
+        
+        rocket = try! Line(spot: trailhead, arrow: compass)
+        
+        incoming = Point3D(x: 5.0, y: 3.0, z: 0.0)
+        let target = Point3D(x: 5.0, y: 3.0, z: 1.0)
+        
+        splat = rocket.dropPoint(away: incoming)
+        
+        XCTAssert(splat == target)
+        
+    }
+    
+    func testIsCoincidentLine()   {
+        
+        let gOrig = Point3D(x: 5.0, y: 8.5, z: -1.25)
+        var gDir = Vector3D(i: -1.0, j: -1.0, k: -1.0)
+        gDir.normalize()
+        
+        let redstone = try! Line(spot: gOrig, arrow: gDir)
+        
+        let pOrig = Point3D(x: 3.0, y: 6.5, z: -3.25)
+        var pDir = Vector3D(i: -1.0, j: -1.0, k: -1.0)
+        pDir.normalize()
+        
+        let titan = try! Line(spot: pOrig, arrow: pDir)
+        
+        XCTAssert(Line.isCoincident(straightA: redstone, straightB: titan))
+        
+        
+        pDir = Vector3D(i: -1.0, j: 1.0, k: 1.0)
+        pDir.normalize()
+        
+        let atlas = try! Line(spot: pOrig, arrow: pDir)
+        XCTAssertFalse(Line.isCoincident(straightA: redstone, straightB: atlas))
+
+    }
+    
     
     func testIntersectTwo()   {
         
