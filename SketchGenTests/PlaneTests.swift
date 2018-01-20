@@ -185,6 +185,68 @@ class PlaneTests: XCTestCase {
         }
     }
     
+    func testResolveRelative()   {
+        
+           // Test coincident case
+        let pOrig = Point3D(x: -1.2, y: 3.1, z: 5.0)
+        let pNorm = Vector3D(i: 0.0, j: 0.0, k: 1.0)
+        let flat = try! Plane(spot: pOrig, arrow: pNorm)
+        
+        var trial = Point3D(x: -1.2, y: 3.1, z: 5.0)
+        
+        var streets = flat.resolveRelative(pip: trial)
+        
+        XCTAssert(streets.inPlane.isZero())
+        XCTAssert(streets.perp.isZero())
+        
+        
+        trial = Point3D(x: -4.2, y: 7.1, z: 5.0)
+        streets = flat.resolveRelative(pip: trial)
+        
+        XCTAssert(streets.inPlane.length() == 5.0)
+        XCTAssert(streets.perp.isZero())
+
+        
+        trial = Point3D(x: -1.2, y: 3.1, z: 8.0)
+        streets = flat.resolveRelative(pip: trial)
+        
+        XCTAssert(streets.perp.length() == 3.0)
+        XCTAssert(streets.inPlane.isZero())
+        
+    }
+    
+    func testIsParallelLine()   {
+        
+        let pOrig = Point3D(x: -1.2, y: 3.1, z: 5.0)
+        var pNorm = Vector3D(i: 0.0, j: 0.0, k: 1.0)
+        let flat = try! Plane(spot: pOrig, arrow: pNorm)
+        
+        let gOrig = Point3D(x: 5.0, y: 3.1, z: 4.0)
+        var gNorm = Vector3D(i: 1.0, j: 0.0, k: 0.0)
+        
+        var heli = try! Line(spot: gOrig, arrow: gNorm)
+        
+        XCTAssert(Plane.isParallel(flat: flat, enil: heli))
+        
+        gNorm = Vector3D(i: 0.0, j: 1.0, k: 0.0)
+        heli = try! Line(spot: gOrig, arrow: gNorm)
+        
+        XCTAssert(Plane.isParallel(flat: flat, enil: heli))
+        
+
+        gNorm = Vector3D(i: 0.707, j: 0.707, k: 0.0)
+        gNorm.normalize()
+        heli = try! Line(spot: gOrig, arrow: gNorm)
+        
+        XCTAssert(Plane.isParallel(flat: flat, enil: heli))
+        
+        
+        pNorm = Vector3D(i: 1.0, j: 0.0, k: 0.0)
+        let flat2 = try! Plane(spot: pOrig, arrow: pNorm)
+        
+        XCTAssertFalse(Plane.isParallel(flat: flat2, enil: heli))
+    }
+    
     
     func testIsCoincident()   {
         
@@ -209,4 +271,259 @@ class PlaneTests: XCTestCase {
         XCTAssert(Plane.isCoincident(flat: playingField, pip: trial))
         
     }
+    
+    func testIsCoincidentLine()   {
+        
+        let nexus = Point3D(x: 2.0, y: 3.0, z: 4.0)
+        let horn = Vector3D(i: 1.0, j: 0.0, k: 0.0)
+        
+        let playingField = try! Plane(spot: nexus, arrow: horn)
+        
+        let gOrig = Point3D(x: 5.0, y: 3.1, z: 4.0)
+        var gNorm = Vector3D(i: 1.0, j: 0.0, k: 0.0)
+        
+        var heli = try! Line(spot: gOrig, arrow: gNorm)
+        
+        XCTAssertFalse(Plane.isCoincident(enalp: playingField, enil: heli))
+        
+        let gOrig2 = Point3D(x: 2.0, y: 3.5, z: 6.0)
+        gNorm = Vector3D(i: 0.0, j: 0.0, k: 1.0)
+        heli = try! Line(spot: gOrig2, arrow: gNorm)
+
+        XCTAssert(Plane.isCoincident(enalp: playingField, enil: heli))
+        
+    }
+    
+    func testIsParallelPlane()   {
+        
+        let nexus = Point3D(x: 2.0, y: 3.0, z: 4.0)
+        let horn = Vector3D(i: 1.0, j: 0.0, k: 0.0)
+        
+        let playingField = try! Plane(spot: nexus, arrow: horn)
+        
+        let pOrig = Point3D(x: -1.2, y: 3.1, z: 5.0)
+        var pNorm = Vector3D(i: 0.0, j: 0.0, k: 1.0)
+        var flat = try! Plane(spot: pOrig, arrow: pNorm)
+        
+        XCTAssertFalse(Plane.isParallel(lhs: flat, rhs: playingField))
+        
+        
+        pNorm = Vector3D(i: 1.0, j: 0.0, k: 0.0)
+        flat = try! Plane(spot: pOrig, arrow: pNorm)
+        
+        XCTAssert(Plane.isParallel(lhs: flat, rhs: playingField))
+                
+    }
+    
+    func testIsCoincidentPlane()   {
+        
+        let nexus = Point3D(x: 2.0, y: 3.0, z: 4.0)
+        let horn = Vector3D(i: 1.0, j: 0.0, k: 0.0)
+        
+        let playingField = try! Plane(spot: nexus, arrow: horn)
+        
+        var pOrig = Point3D(x: -1.2, y: 3.1, z: 5.0)
+        var pNorm = Vector3D(i: 0.0, j: 0.0, k: 1.0)
+        var flat = try! Plane(spot: pOrig, arrow: pNorm)
+        
+        XCTAssertFalse(Plane.isCoincident(lhs: flat, rhs: playingField))
+        
+        
+        // Parallel, but not coincident
+        pNorm = Vector3D(i: 1.0, j: 0.0, k: 0.0)
+        
+        flat = try! Plane(spot: pOrig, arrow: pNorm)
+        
+        XCTAssertFalse(Plane.isCoincident(lhs: flat, rhs: playingField))
+        
+        
+        pOrig = Point3D(x: 2.0, y: 3.1, z: 5.0)
+        flat = try! Plane(spot: pOrig, arrow: pNorm)
+        
+        XCTAssert(Plane.isCoincident(lhs: flat, rhs: playingField))
+        
+    }
+    
+    
+    func testIntersectLinePlane()   {
+        
+        let nexus = Point3D(x: 2.0, y: 3.0, z: 4.0)
+        let horn = Vector3D(i: 1.0, j: 0.0, k: 0.0)
+        
+        let groundFloor = try! Plane(spot: nexus, arrow: horn)
+        
+        var gOrig = Point3D(x: 5.0, y: 3.1, z: 4.0)
+        var gNorm = Vector3D(i: 0.0, j: 0.0, k: 1.0)
+        
+        var heli = try! Line(spot: gOrig, arrow: gNorm)
+        
+        do   {
+            
+            _ = try Plane.intersectLinePlane(enil: heli, enalp: groundFloor)
+            
+        }  catch is ParallelError   {
+            XCTAssert(true)
+        }   catch   {
+            print("Unexpected journey!")
+        }
+        
+        gNorm = Vector3D(i: 1.0, j: 0.0, k: 0.0)
+        heli = try! Line(spot: gOrig, arrow: gNorm)
+
+        var target = Point3D(x: 2.0, y: 3.1, z: 4.0)
+        
+        var pierce = try! Plane.intersectLinePlane(enil: heli, enalp: groundFloor)
+        
+        XCTAssert(pierce == target)
+
+        
+        gOrig = Point3D(x: 2.0, y: 3.7, z: 6.0)
+        heli = try! Line(spot: gOrig, arrow: gNorm)
+        
+        target = Point3D(x: 2.0, y: 3.7, z: 6.0)
+
+        pierce = try! Plane.intersectLinePlane(enil: heli, enalp: groundFloor)
+        
+        XCTAssert(pierce == target)
+        
+    }
+    
+    func testIntersectPlanes()   {
+        
+        let nexus = Point3D(x: 2.0, y: 3.0, z: 4.0)
+        let horn = Vector3D(i: 0.0, j: 1.0, k: 0.0)
+        
+        let groundFloor = try! Plane(spot: nexus, arrow: horn)
+        
+        var pOrig = Point3D(x: -1.2, y: 3.1, z: 5.0)
+        var pNorm = Vector3D(i: 0.0, j: 1.0, k: 0.0)
+        let flat = try! Plane(spot: pOrig, arrow: pNorm)
+        
+        do   {
+            
+            _ = try Plane.intersectPlanes(flatA: groundFloor, flatB: flat)
+            
+        }   catch is ParallelPlanesError   {
+            XCTAssert(true)
+        }   catch  {
+            print("Unexpected journey!")
+        }
+        
+        let dupe = try! Plane(spot: nexus, arrow: horn)
+        
+        do   {
+            
+            _ = try Plane.intersectPlanes(flatA: groundFloor, flatB: dupe)
+            
+        }   catch is CoincidentPlanesError   {
+            XCTAssert(true)
+        }   catch  {
+            print("Unexpected journey!")
+        }
+        
+        
+        pOrig = Point3D(x: -1.2, y: 3.1, z: 5.0)
+        pNorm = Vector3D(i: 1.0, j: 0.0, k: 0.0)
+        let flat2 = try! Plane(spot: pOrig, arrow: pNorm)
+        
+        let slash = try! Plane.intersectPlanes(flatA: groundFloor, flatB: flat2)
+        
+        let targetVect = Vector3D(i: 0.0, j: 0.0, k: 1.0)
+        
+        let flag = slash.getDirection() == targetVect || Vector3D.isOpposite(lhs: slash.getDirection(), rhs: targetVect)
+        
+        XCTAssert(flag)
+        
+    }
+    
+    func testProjectToPlane()   {
+        
+        let nexus = Point3D(x: 2.0, y: 3.0, z: 4.0)
+        let horn = Vector3D(i: 1.0, j: 0.0, k: 0.0)
+        
+        let playingField = try! Plane(spot: nexus, arrow: horn)
+        
+            // Test a point that already lies on the plane
+        var standoff = Point3D(x: 2.0, y: 5.0, z: 3.5)
+        
+        var trial = Plane.projectToPlane(pip: standoff, enalp: playingField)
+        
+        var target = Point3D(x: 2.0, y: 5.0, z: 3.5)
+        
+        XCTAssert(trial == target)
+        
+        
+        standoff = Point3D(x: 1.0, y: -1.2, z: 3.15)
+        
+        trial = Plane.projectToPlane(pip: standoff, enalp: playingField)
+        
+        target = Point3D(x: 2.0, y: -1.2, z: 3.15)
+        
+        XCTAssert(trial == target)
+        
+    }
+    
+    func testBuildParallel()   {
+        
+        let nexus = Point3D(x: 2.0, y: 3.0, z: 4.0)
+        let horn = Vector3D(i: 1.0, j: 0.0, k: 0.0)
+        
+        let groundFloor = try! Plane(spot: nexus, arrow: horn)
+        
+        let build1 = Plane.buildParallel(base: groundFloor, offset: 1.2, reverse: false)
+        
+        XCTAssert(Plane.isParallel(lhs: groundFloor, rhs: build1))
+        
+        let diff = groundFloor.resolveRelative(pip: build1.getLocation())
+        
+        XCTAssert(Plane.isParallel(lhs: groundFloor, rhs: build1))
+        XCTAssertEqual(diff.perp.length(), 1.2, accuracy: Vector3D.EpsilonV)
+        
+        
+        let build2 = Plane.buildParallel(base: groundFloor, offset: 1.2, reverse: true)
+        
+        XCTAssert(Vector3D.isOpposite(lhs: groundFloor.getNormal(), rhs: build2.getNormal()))
+
+        
+    }
+    
+    func testBuildPerpThroughLine()   {
+        
+        let nexus = Point3D(x: 2.0, y: 3.0, z: 4.0)
+        let horn = Vector3D(i: 1.0, j: 0.0, k: 0.0)
+        
+        let groundFloor = try! Plane(spot: nexus, arrow: horn)
+        
+        var gOrig = Point3D(x: 5.0, y: 3.1, z: 4.0)
+        let gNorm = Vector3D(i: 0.0, j: 0.0, k: 1.0)
+        
+        var heli = try! Line(spot: gOrig, arrow: gNorm)
+        
+        XCTAssertFalse(Plane.isCoincident(enalp: groundFloor, enil: heli))
+        
+        do   {
+            
+            _ = try Plane.buildPerpThruLine(enil: heli, enalp: groundFloor)
+            
+        }   catch is CoincidentLinesError   {
+            XCTAssert(true)
+        }   catch   {
+            print("Unexpected journey")
+        }
+        
+        gOrig = Point3D(x: 2.0, y: 3.1, z: 4.7)
+        heli = try! Line(spot: gOrig, arrow: gNorm)
+
+        XCTAssert(Plane.isCoincident(enalp: groundFloor, enil: heli))
+        
+        let standup = try! Plane.buildPerpThruLine(enil: heli, enalp: groundFloor)
+
+        let targetVect = Vector3D(i: 0.0, j: 1.0, k: 0.0)
+
+        let flag = standup.getNormal() == targetVect || Vector3D.isOpposite(lhs: standup.getNormal(), rhs: targetVect)
+
+        XCTAssert(flag)
+
+    }
+    
 }

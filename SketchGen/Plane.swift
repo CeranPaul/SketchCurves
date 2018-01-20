@@ -75,11 +75,11 @@ public struct Plane   {
     }
     
     
-    /// Resolve the vector from the origin of the plane to the point
+    /// Build orthogonal vectors from the origin of the plane to the point
     /// - Parameters:
     ///   - pip:  Point of interest
     /// - Returns: Tuple of Vectors
-    /// - Warning:  This will screw up if the input is at the origin of the plane
+    /// - See: 'testResolveRelative' under PlaneTests
     public func resolveRelative(pip: Point3D) -> (inPlane: Vector3D, perp: Vector3D)   {
         
         let bridge = Vector3D.built(from: self.location, towards: pip)
@@ -95,9 +95,11 @@ public struct Plane   {
     
     /// Check to see that the line direction is perpendicular to the normal
     /// - Parameters:
-    ///   - flat:  Plane for testing
+    ///   - flat:  Reference plane
     ///   - enil:  Line for testing
-    public static func isParallel(flat: Plane, enil: Line) -> Bool   {
+    /// - Returns: Simple flag
+    /// - See: 'testIsParallelLine' under PlaneTests
+   public static func isParallel(flat: Plane, enil: Line) -> Bool   {
         
         let perp = Vector3D.dotProduct(lhs: enil.getDirection(), rhs: flat.normal)
         
@@ -106,8 +108,10 @@ public struct Plane   {
     
     /// Check to see that the line is parallel to the plane, and lies on it
     /// - Parameters:
-    ///   - enalp:  Plane for testing
+    ///   - enalp:  Reference plane
     ///   - enil:  Line for testing
+    /// - Returns: Simple flag
+    /// - See: 'testIsCoincidentLine' under PlaneTests
     public static func isCoincident(enalp: Plane, enil: Line) -> Bool  {
         
         return self.isParallel(flat: enalp, enil: enil) && Plane.isCoincident(flat: enalp, pip: enil.getOrigin())
@@ -118,6 +122,7 @@ public struct Plane   {
     /// - Parameters:
     ///   - flat:  Plane for testing
     ///   - pip:  Point for testing
+    /// - Returns: Simple flag
     /// - See: 'testIsCoincident' under PlaneTests
     public static func isCoincident(flat: Plane, pip:  Point3D) -> Bool  {
         
@@ -132,14 +137,24 @@ public struct Plane   {
     }
     
     /// Are the normals either parallel or opposite?
+    /// - Parameters:
+    ///   - lhs:  One plane for testing
+    ///   - rhs:  Another plane for testing
+    /// - Returns: Simple flag
     /// - SeeAlso:  isCoincident and ==
+    /// - See: 'testIsParallelPlane' under PlaneTests
     public static func isParallel(lhs: Plane, rhs: Plane) -> Bool{
         
         return lhs.normal == rhs.normal || Vector3D.isOpposite(lhs: lhs.normal, rhs: rhs.normal)
     }
     
     /// Planes are parallel, and rhs location lies on lhs
+    /// - Parameters:
+    ///   - lhs:  One plane for testing
+    ///   - rhs:  Another plane for testing
+    /// - Returns: Simple flag
     /// - SeeAlso:  isParallel and ==
+    /// - See: 'testIsCoincidentPlane' under PlaneTests
     public static func isCoincident(lhs: Plane, rhs: Plane) -> Bool  {
         
         return Plane.isCoincident(flat: lhs, pip: rhs.location) && Plane.isParallel(lhs: lhs, rhs: rhs)
@@ -152,12 +167,10 @@ public struct Plane   {
     ///   - offset:  Desired separation
     ///   - reverse:  Flip the normal, or not
     /// - Returns: Fresh plane, with separation
-    /// - Throws:
-    ///   - ZeroVectorError if base somehow got corrupted
-    ///   - NonUnitDirectionError if base somehow got corrupted
-    public static func buildParallel(base: Plane, offset: Double, reverse: Bool) throws -> Plane  {
+    /// - See: 'testBuildParallel' under PlaneTests
+    public static func buildParallel(base: Plane, offset: Double, reverse: Bool) -> Plane  {
     
-        let jump = base.normal * offset    // offset can be a negative number
+        let jump = base.normal * offset    // Offset could be a negative number
         
         let origPoint = base.location
         let newLoc = origPoint.offset(jump: jump)
@@ -169,7 +182,7 @@ public struct Plane   {
             newNorm = base.normal * -1.0
         }
         
-        let sparkle =  try Plane(spot: newLoc, arrow: newNorm)
+        let sparkle =  try! Plane(spot: newLoc, arrow: newNorm)   // Allowable because the new normal mimics the original
     
         return sparkle
     }
@@ -182,12 +195,12 @@ public struct Plane   {
     ///   - enalp:  The reference plane
     /// - Returns: Fresh plane
     /// - Throws:
-    ///   - ZeroVectorError if enalp somehow got corrupted
-    ///   - NonUnitDirectionError if enalp somehow got corrupted
+    ///   - CoincidentLinesError if line doesn't lie on the plane
+    /// - See: 'testBuildPerpThruLine' under PlaneTests
     public static func buildPerpThruLine(enil: Line, enalp: Plane) throws -> Plane   {
         
         // TODO:  Better error type
-        guard !Plane.isCoincident(enalp: enalp, enil: enil)  else  { throw CoincidentLinesError(enil: enil) }
+        guard Plane.isCoincident(enalp: enalp, enil: enil)  else  { throw CoincidentLinesError(enil: enil) }
         
         let newDir = try! Vector3D.crossProduct(lhs: enil.getDirection(), rhs: enalp.normal)
         
@@ -201,6 +214,7 @@ public struct Plane   {
     ///   - enil:  Line of interest
     ///   - enalp:  Flat surface to hit
     /// - Throws: ParallelError if the input Line is parallel to the plane
+    /// - See: 'testIntersectLinePlane' under PlaneTests
     public static func intersectLinePlane(enil: Line, enalp: Plane) throws -> Point3D {
         
         // Bail if the line is parallel to the plane
@@ -234,17 +248,19 @@ public struct Plane   {
         return projectedLineOrigin.offset(jump: inPlaneOffset)
     }
     
+    
     /// Construct a line by intersecting two planes
     /// - Parameters:
     ///   - flatA:  First plane
     ///   - flatB:  Second plane
     /// - Throws: ParallelPlanesError if the inputs are parallel
     /// - Throws: CoincidentPlanesError if the inputs are coincident
+    /// - See: 'testIntersectPlanes' under PlaneTests
     public static func intersectPlanes(flatA: Plane, flatB: Plane) throws -> Line   {
         
-        guard !Plane.isParallel(lhs: flatA, rhs: flatB)  else  { throw ParallelPlanesError(enalpA: flatA) }
-        
         guard !Plane.isCoincident(lhs: flatA, rhs: flatB)  else  { throw CoincidentPlanesError(enalpA: flatA) }
+        
+        guard !Plane.isParallel(lhs: flatA, rhs: flatB)  else  { throw ParallelPlanesError(enalpA: flatA) }
         
         
         /// Direction of the intersection line
@@ -271,10 +287,10 @@ public struct Plane   {
     ///   - pip:  Point to be projected
     ///   - enalp:  Flat surface to hit
     /// - Returns: Closest point on plane
+    /// - See: 'testProjectToPlane' under PlaneTests
     public static func projectToPlane(pip: Point3D, enalp: Plane) -> Point3D  {
         
         if Plane.isCoincident(flat: enalp, pip: pip) {return pip }    // Shortcut!
-        
         
         let planeCenter = enalp.getLocation()   // Referred to multiple times
         
