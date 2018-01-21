@@ -138,4 +138,17 @@ class TransformPlusTests: XCTestCase {
         
     }
     
+    func testRowMtx4Init()   {
+        
+        let vec = Vector3D(i: 0.5, j: 0.866, k: 0.7)
+        
+        let trial = RowMtx4(vecIn: vec)
+        
+        XCTAssert(trial.a == 0.5)
+        XCTAssert(trial.b == 0.866)
+        XCTAssert(trial.c == 0.7)
+        XCTAssert(trial.d == 0.0)
+
+    }
+    
 }

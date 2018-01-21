@@ -109,15 +109,27 @@ class Vector3DTests: XCTestCase {
     /// Needs to have a test for the optional parameter
     func testBuiltFrom()   {
         
-        let alpha = Point3D(x: 1.5, y: 2.0, z: -1.7)
-        let beta = Point3D(x: 15.0, y: 0.15, z: 3.0)
+        var alpha = Point3D(x: 1.5, y: 2.0, z: -1.7)
+        var beta = Point3D(x: 15.0, y: 0.15, z: 3.0)
         
-        let target = Vector3D(i: 13.5, j: -1.85, k: 4.7)
+        var target = Vector3D(i: 13.5, j: -1.85, k: 4.7)
         
-        let trial = Vector3D.built(from: alpha, towards: beta)
+        var trial = Vector3D.built(from: alpha, towards: beta)
         
         XCTAssert(trial == target)
         
+        
+        alpha = Point3D(x: 1.5, y: 2.0, z: -1.7)
+        beta = Point3D(x: 15.0, y: 0.15, z: 3.0)
+        
+        target = Vector3D(i: 13.5, j: -1.85, k: 4.7)
+        
+        trial = Vector3D.built(from: alpha, towards: beta, unit: true)
+        
+        XCTAssert(trial.isUnit())
+        
+        
+
     }
     
     func testPerp()   {
@@ -297,6 +309,18 @@ class Vector3DTests: XCTestCase {
         let trial = Vector3D.dotProduct(lhs: there, rhs: there2)
         
         XCTAssert(trial == 1.06)
+    }
+    
+    func testTwistAbout()   {
+        
+        let thar = Vector3D(i: 1.0, j: 0.0, k: 0.0)
+        let homesickAngel = Vector3D(i: 0.0, j: 0.0, k: 1.0)
+        
+        let trial = thar.twistAbout(axisDir: homesickAngel, angleRad: Double.pi)
+        
+        let target = Vector3D(i: -1.0, j: 0.0, k: 0.0)
+        
+        XCTAssert(trial == target)
     }
     
     func testFindAngle()   {

@@ -3,7 +3,7 @@
 //  SketchGen
 //
 //  Created by Paul on 2/14/16.
-//  Copyright © 2016 Ceran Digital Media. All rights reserved.  See LICENSE.md
+//  Copyright © 2018 Ceran Digital Media. All rights reserved.  See LICENSE.md
 //
 
 import Foundation
@@ -243,6 +243,7 @@ public enum Axis {
 
 
 /// Row matrix of length 4
+/// Can this be replaced by double4 from simD?
 open class RowMtx4   {
     
     var a, b, c, d:  Double

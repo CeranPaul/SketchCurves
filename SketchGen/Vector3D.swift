@@ -3,7 +3,7 @@
 //  SketchCurves
 //
 //  Created by Paul on 8/11/15.
-//  Copyright © 2016 Ceran Digital Media. All rights reserved.  See LICENSE.md
+//  Copyright © 2018 Ceran Digital Media. See LICENSE.md
 //
 
 import Foundation
@@ -87,9 +87,13 @@ public struct Vector3D: Equatable {
     }
     
     
-    /// Construct a vector that has been rotated from self about the axis specified by the first argument
-    /// - Parameter:  angleRad  The amount that the direction should change  Expressed in radians, not degrees!
+    /// Construct a new vector that has been rotated about the axis specified by the first argument
+    /// - Parameters:
+    ///   - axisDir: Axis for twisting
+    ///   - angleRad:  The amount that the direction should change  Expressed in radians, not degrees!
+    /// - Returns: A new vector
     /// - SeeAlso:  transform()
+    /// - See: 'testTwistAbout' under Vector3DTests
     func twistAbout(axisDir: Vector3D, angleRad: Double) -> Vector3D  {   // Should this become a static func?
         
         let perp = try! Vector3D.crossProduct(lhs: axisDir, rhs: self)

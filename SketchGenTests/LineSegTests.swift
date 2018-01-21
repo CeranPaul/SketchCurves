@@ -19,6 +19,22 @@ class LineSegTests: XCTestCase {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
         super.tearDown()
     }
+    
+    
+    func testFidelity()   {
+        
+        let alpha = Point3D(x: 2.5, y: 2.5, z: 2.5)
+        let beta = Point3D(x: 4.5, y: 4.5, z: 2.5)
+        
+        let stroke = try! LineSeg(end1: alpha, end2: beta)
+        
+        XCTAssert(alpha == stroke.getOneEnd())
+        XCTAssert(beta == stroke.getOtherEnd())
+        
+        XCTAssert(stroke.usage == PenTypes.ordinary)
+    }
+    
+    
 
     /// Test a point at some proportion along the line segment
     func testPointAt() {
@@ -107,6 +123,20 @@ class LineSegTests: XCTestCase {
         XCTAssertEqual(beta, stroke.getOneEnd())
     }
     
+    func testSetIntent()   {
+        
+        let alpha = Point3D(x: 2.5, y: 2.5, z: 2.5)
+        let beta = Point3D(x: 4.5, y: 4.5, z: 2.5)
+        
+        let stroke = try! LineSeg(end1: alpha, end2: beta)
+        
+        XCTAssert(stroke.usage == PenTypes.ordinary)
+        
+        stroke.setIntent(purpose: PenTypes.ideal)
+        XCTAssert(stroke.usage == PenTypes.ideal)
+        
+    }
+    
     
     func testClipTo()   {
         
@@ -143,6 +173,21 @@ class LineSegTests: XCTestCase {
         XCTAssertEqual(offset.along, targetA)
         XCTAssertEqual(offset.perp, targetP)
         
+    }
+    
+    func testTangent()   {
+        
+        let alpha = Point3D(x: 2.5, y: 2.5, z: 2.5)
+        let beta = Point3D(x: 2.5, y: 4.5, z: 2.5)
+        
+        let stroke = try! LineSeg(end1: alpha, end2: beta)
+        
+        let target = Vector3D(i: 0.0, j: 2.0, k: 0.0)
+        
+        let trial = stroke.tangentAt(t: 0.5)
+        
+        XCTAssert(trial == target)
+
     }
     
     func testIsCrossing()   {
@@ -198,5 +243,18 @@ class LineSegTests: XCTestCase {
         XCTAssert(crater3.isEmpty)
 
     }
+    
+    func testCrown()   {
+        
+        let ptA = Point3D(x: 4.0, y: 2.0, z: 5.0)
+        let ptB = Point3D(x: 2.0, y: 4.0, z: 5.0)
+        
+        let plateau = try! LineSeg(end1: ptA, end2: ptB)
+        
+        XCTAssert(plateau.findCrown(smallerT: 0.0, largerT: 1.0)  == 0.0)
+        
+    }
+    
+    
     
 }

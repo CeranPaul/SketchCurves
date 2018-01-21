@@ -388,25 +388,25 @@ class DemoPool  {
                 let upperLeft = Point3D(x: boxX, y: boxY + bow.getExtent().getHeight(), z: 0.0)
                 
                 var rail = try LineSeg(end1: lowerLeft, end2: upperLeft)
-                rail.setIntent(PenTypes.extent)
+                rail.setIntent(purpose: PenTypes.extent)
                 displayCurves.append(rail)
                 
                 
                 let upperRight = Point3D(x: boxX + bow.getExtent().getWidth(), y: boxY + bow.getExtent().getHeight(), z: 0.0)
                 
                 rail = try LineSeg(end1: upperLeft, end2: upperRight)
-                rail.setIntent(PenTypes.extent)
+                rail.setIntent(purpose: PenTypes.extent)
                 displayCurves.append(rail)
                 
                 
                 let lowerRight = Point3D(x: boxX + bow.getExtent().getWidth(), y: boxY, z: 0.0)
                 
                 rail = try LineSeg(end1: upperRight, end2: lowerRight)
-                rail.setIntent(PenTypes.extent)
+                rail.setIntent(purpose: PenTypes.extent)
                 displayCurves.append(rail)
                 
                 rail = try LineSeg(end1: lowerRight, end2: lowerLeft)
-                rail.setIntent(PenTypes.extent)
+                rail.setIntent(purpose: PenTypes.extent)
                 displayCurves.append(rail)
                 
             }
@@ -556,7 +556,7 @@ class DemoPool  {
                 thatEnd = try! roundEdge.pointAt(t: currentT)
                 
                 let rail = try LineSeg(end1: thisEnd, end2: thatEnd)
-                rail.setIntent(PenTypes.approx)
+                rail.setIntent(purpose: PenTypes.approx)
                 displayCurves.append(rail)
                 
                 thisEnd = thatEnd

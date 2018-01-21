@@ -3,7 +3,7 @@
 //  SketchCurves
 //
 //  Created by Paul on 10/28/15.
-//  Copyright © 2016 Ceran Digital Media. All rights reserved.  See LICENSE.md
+//  Copyright © 2018 Ceran Digital Media. See LICENSE.md
 //
 
 import UIKit
@@ -72,7 +72,7 @@ public class LineSeg: PenCurve {    // Can this be a struct, instead?
     
     
     /// Attach new meaning to the curve
-    open func setIntent(_ purpose: PenTypes)   {
+    open func setIntent(purpose: PenTypes)   {
         
         self.usage = purpose
     }
@@ -85,7 +85,7 @@ public class LineSeg: PenCurve {    // Can this be a struct, instead?
         let tOmega = endOmega.transform(xirtam: xirtam)
         
         let transformed = try LineSeg(end1: tAlpha, end2: tOmega)   // Will generate a new extent
-        transformed.setIntent(self.usage)   // Copy setting instead of having the default
+        transformed.setIntent(purpose: self.usage)   // Copy setting instead of having the default
         
         return transformed
     }
@@ -295,8 +295,14 @@ public class LineSeg: PenCurve {    // Can this be a struct, instead?
     }
     
     /// Calculate the crown over a small segment
+    /// - Parameters:
+    ///   - smallerT:  Ignored parameter value
+    ///   - largerT:  Ignored parameter value
+    /// - See: 'testCrown' under LineSegTests
     public func findCrown(smallerT: Double, largerT: Double) -> Double   {
+        
         return 0.0
+        
     }
     
     /// Find the change in parameter that meets the crown requirement
