@@ -17,7 +17,7 @@ public struct Vector3D: Equatable {
     var k: Double
     
     /// Difference limit between components in equality checks
-    static let EpsilonV: Double = 0.0001
+    public static let EpsilonV: Double = 0.0001
 
     
     
@@ -35,7 +35,8 @@ public struct Vector3D: Equatable {
         }
     }
     
-    /// Figure the combined length of all three components
+    /// Figure the combined length of all three components.
+    /// - Returns: Size from base to tip.
     /// - See: 'testLength' under Vector3DTests
     public func length() -> Double {
         
@@ -44,6 +45,7 @@ public struct Vector3D: Equatable {
     
     
     /// Check to see if the vector has zero length
+    /// - Returns: A simple flag
     /// - See: 'testIsZero' under Vector3DTests
     public func isZero() -> Bool   {
         
@@ -55,6 +57,7 @@ public struct Vector3D: Equatable {
     }
     
     /// Check to see if this is a unit vector
+    /// - Returns: A simple flag
     /// - See: 'testIsUnit' under Vector3DTests
     public func isUnit() -> Bool   {
         
@@ -63,6 +66,7 @@ public struct Vector3D: Equatable {
     
 
     /// Construct a new vector with the opposite direction
+    /// - Returns: A new Vector
     /// - See: 'testReverse' under Vector3DTests
     public func reverse() -> Vector3D   {
         
@@ -91,7 +95,7 @@ public struct Vector3D: Equatable {
     /// - Parameters:
     ///   - axisDir: Axis for twisting
     ///   - angleRad:  The amount that the direction should change  Expressed in radians, not degrees!
-    /// - Returns: A new vector
+    /// - Returns: A new Vector
     /// - SeeAlso:  transform()
     /// - See: 'testTwistAbout' under Vector3DTests
     func twistAbout(axisDir: Vector3D, angleRad: Double) -> Vector3D  {   // Should this become a static func?
@@ -126,6 +130,7 @@ public struct Vector3D: Equatable {
     ///   - from: Start point
     ///   - towards: End point
     ///   - unit: Whether or not the result should be a unit vector
+    /// - Returns: A new Vector
     /// - See: 'testBuiltFrom' under Vector3DTests
     public static func built(from: Point3D, towards: Point3D, unit: Bool = false) -> Vector3D {
         
@@ -154,10 +159,13 @@ public struct Vector3D: Equatable {
         return lhs.i * rhs.i + lhs.j * rhs.j + lhs.k * rhs.k
     }
     
-    /// Standard definition of cross product
-    /// This makes no assumptions or guarantees about normalized vectors
-    /// - Throws: IdenticalVectorError if the inputs are identical or opposite
-    /// - Throws: IdenticalVectorError if the inputs are scaled versions of each other
+    /// Standard definition of cross product.
+    /// This makes no assumptions or guarantees about normalized vectors.
+    /// - Parameters:
+    ///   - lhs:  One Vector
+    ///   - rhs:  Another Vector
+    /// - Throws: IdenticalVectorError if the inputs are identical or opposite.
+    /// - Throws: IdenticalVectorError if the inputs are scaled versions of each other.
     /// - See: 'testCross' under Vector3DTests
     public static func crossProduct(lhs: Vector3D, rhs: Vector3D) throws -> Vector3D   {
         
@@ -177,8 +185,12 @@ public struct Vector3D: Equatable {
         return Vector3D(i: freshI, j: freshJ, k: freshK)
     }
     
-    /// Check for vectors with the same direction but a different sense
-    /// This assumes that they are of identical length
+    /// Check for vectors with the same direction but a different sense.
+    /// This assumes that they are of identical length.
+    /// - Parameters:
+    ///   - lhs:  One Vector for testing
+    ///   - rhs:  Another Vector for testing
+    /// - Returns: A simple flag
     /// - SeeAlso:  isScaled()
     /// - See: 'testIsOpposite' under Vector3DTests
     public static func isOpposite(lhs: Vector3D, rhs: Vector3D) -> Bool   {
@@ -187,9 +199,14 @@ public struct Vector3D: Equatable {
         return rhs == tempVec
     }
     
+    
     /// Check to see if one vector is a scaled version of the other
     /// Could be used before doing cross product
+    /// - Parameters:
+    ///   - lhs:  One Vector for testing
+    ///   - rhs:  Another Vector for testing
     /// - Throws: ZeroVectorError if either input is of zero length
+    /// - Returns: A simple flag
     /// - SeeAlso:  isOpposite()
     /// - See: 'testIsScaled' under Vector3DTests
     public static func isScaled(lhs: Vector3D, rhs: Vector3D) throws -> Bool  {
@@ -210,13 +227,13 @@ public struct Vector3D: Equatable {
     }
     
     
-    /// Find a positive or negative angle between two unit vectors
+    /// Find a positive or negative angle between two unit vectors.
     /// - Parameters:
     ///   - baselineVec: Unit direction vector to be measured from
     ///   - measureTo: Unit direction vector of interest
     ///   - perp: Unit normal vector used to determine positive and negative
-    /// - Throws: NonUnitDirectionError
-    /// - Returns: Angle in radians between -M_PI and M_PI
+    /// - Throws: NonUnitDirectionError on any of the inputs.
+    /// - Returns: Angle in radians between -Double.pi and Double.pi.
     /// - See: 'testFindAngle' under Vector3DTests
     public static func findAngle(baselineVec: Vector3D, measureTo: Vector3D, perp: Vector3D) throws -> Double   {
         
@@ -240,7 +257,7 @@ public struct Vector3D: Equatable {
     
     
     
-    /// Build a Vector3D in the XY plane
+    /// Build a Vector3D in the XZ plane.
     /// - Parameter: angle: Desired angle in degrees
     public static func makeXZ(angle: Double) -> Vector3D  {
         
@@ -254,7 +271,7 @@ public struct Vector3D: Equatable {
         return direction
     }
     
-    /// Compare each component of the vector for equality
+    /// Compare each component of the vector.
     /// - See: 'testEquals' under Vector3DTests
     public static func == (lhs: Vector3D, rhs: Vector3D) -> Bool   {
         
@@ -268,21 +285,21 @@ public struct Vector3D: Equatable {
 }    // End of struct Vector3D definition
 
 
-/// Construct a vector that is the sum of the two input vectors
+/// Construct a vector that is the sum of the two input vectors.
 /// - See: 'testPlus' under Vector3DTests
 public func + (lhs: Vector3D, rhs: Vector3D) -> Vector3D   {
     
     return Vector3D(i: lhs.i + rhs.i, j: lhs.j + rhs.j, k: lhs.k + rhs.k)
 }
 
-/// Construct a vector that is the difference between the two input vectors
+/// Construct a vector that is the difference between the two input vectors.
 /// - See: 'testMinus' under Vector3DTests
 public func - (lhs: Vector3D, rhs: Vector3D) -> Vector3D   {
     
     return Vector3D(i: lhs.i - rhs.i, j: lhs.j - rhs.j, k: lhs.k - rhs.k)
 }
 
-/// Construct a vector by scaling the Vector3D by the Double argument
+/// Construct a vector by scaling the Vector3D by the Double argument.
 /// - SeeAlso:  crossProduct()
 /// - SeeAlso:  dotProduct()
 /// - See: 'testScaling' under Vector3DTests

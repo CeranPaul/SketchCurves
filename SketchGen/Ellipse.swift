@@ -3,7 +3,7 @@
 //  SketchCurves
 //
 //  Created by Paul on 1/26/16.
-//  Copyright © 2016 Ceran Digital Media. All rights reserved.  See LICENSE.md
+//  Copyright © 2018 Ceran Digital Media. See LICENSE.md
 //
 
 import UIKit

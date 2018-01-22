@@ -8,7 +8,8 @@
 
 import Foundation
 
-/// Built the way I was taught in college, as opposed to being twisted to use SIMD
+/// Built the way I was taught in college, as opposed to being twisted to use SIMD.
+/// This uses some overloaded operators.
 open class Transform   {
     
     var a, b, c, d: Double   // Labeling is done across each row, then down
@@ -18,7 +19,7 @@ open class Transform   {
     
     
     /// Construct an identity matrix
-    /// - See: 'testIdentity' under TransformPlusTests
+    /// - See: 'testIdentity' under TransformTests
     public init()   {
         
         a = 1.0
@@ -72,7 +73,7 @@ open class Transform   {
     
     
     /// Construct a matrix to do translation only
-    /// - See: 'testTranslate' under TransformPlusTests
+    /// - See: 'testTranslate' under TransformTests
     public init (deltaX: Double, deltaY: Double, deltaZ: Double)   {
         
         a = 1.0
@@ -98,7 +99,7 @@ open class Transform   {
     
     /// Construct a matrix to do scaling
     /// scaleY should perhaps be negated for screen display
-    /// - See: 'testScale' under TransformPlusTests
+    /// - See: 'testScale' under TransformTests
     public init (scaleX: Double, scaleY: Double, scaleZ: Double)   {
     
         a = scaleX
@@ -126,7 +127,7 @@ open class Transform   {
     /// - Parameter rotationAxis Center for rotation.  Should be a member of enum Axis
     /// - Parameter angleRad Desired rotation in radians
     /// - Warning:  These each look to be the transpose of how this is normally taught
-    /// - See: 'testSimpleRotations' under TransformPlusTests
+    /// - See: 'testSimpleRotations' under TransformTests
     public init(rotationAxis: Axis, angleRad: Double)   {
         
         let trigCos = cos(angleRad)
@@ -202,7 +203,7 @@ open class Transform   {
     /// Create a transform from orthogonal vectors
     /// - Warning:  The vectors are not checked for orthogonality
     /// - Warning:  This makes no attempt to use the local origin
-    /// - See: 'testRollYourOwn' under TransformPlusTests
+    /// - See: 'testRollYourOwn' under TransformTests
     public init(localX: Vector3D, localY: Vector3D, localZ: Vector3D)   {
         
         self.a = localX.i
@@ -242,8 +243,8 @@ public enum Axis {
 }
 
 
-/// Row matrix of length 4
-/// Can this be replaced by double4 from simD?
+/// Row matrix of length 4.
+/// Distinct from double4 from simD to control the order of operations.
 open class RowMtx4   {
     
     var a, b, c, d:  Double
@@ -273,13 +274,14 @@ open class RowMtx4   {
         self.d = 1.0
     }
     
-    
+    /// Create a Point from the result
     open func toPoint() -> Point3D   {
         
         return Point3D(x: a, y: b, z: c)
     }
     
     
+    /// Create a Vector from the result
     open func toVector() -> Vector3D   {
         
         return Vector3D(i: a, j: b, k: c)
@@ -288,7 +290,7 @@ open class RowMtx4   {
 }   // End of definition for RowMtx4
 
 
-
+/// Compare two of 'em.
 public func == (lhs: Transform, rhs: Transform) -> Bool  {
     
     let a = abs(lhs.a - rhs.a) < Vector3D.EpsilonV
@@ -324,7 +326,8 @@ public func == (lhs: Transform, rhs: Transform) -> Bool  {
 
 
 
-/// Pre-multiply a row matrix and the square matrix
+/// Pre-multiply a row matrix and the square matrix.
+/// Custom code that uses a slightly different order than simd.
 /// - See:
 public func * (pre: RowMtx4, mtx: Transform) -> RowMtx4   {
     

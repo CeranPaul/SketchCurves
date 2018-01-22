@@ -23,7 +23,7 @@ public struct Plane   {
     ///   - alpha:  Origin for the fresh plane
     ///   - arrow:  Unit vector that the plane will be perpendicular to
     /// - See: 'testFidelity' under PlaneTests
-    init(spot: Point3D, arrow: Vector3D) throws  {
+    public init(spot: Point3D, arrow: Vector3D) throws  {
         
         guard !arrow.isZero()  else  { throw ZeroVectorError(dir: arrow) }
         guard arrow.isUnit()  else  { throw NonUnitDirectionError(dir: arrow) }
@@ -213,6 +213,7 @@ public struct Plane   {
     /// - Parameters:
     ///   - enil:  Line of interest
     ///   - enalp:  Flat surface to hit
+    /// - Returns: Common Point
     /// - Throws: ParallelError if the input Line is parallel to the plane
     /// - See: 'testIntersectLinePlane' under PlaneTests
     public static func intersectLinePlane(enil: Line, enalp: Plane) throws -> Point3D {

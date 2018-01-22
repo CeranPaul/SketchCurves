@@ -3,7 +3,7 @@
 //  SketchCurves
 //
 //  Created by Paul on 8/11/15.
-//  Copyright © 2018 Ceran Digital Media. All rights reserved.  See LICENSE.md
+//  Copyright © 2018 Ceran Digital Media. See LICENSE.md
 //
 
 import UIKit
@@ -22,11 +22,12 @@ public struct  Point3D: Hashable {
     
     
     
-    /// Create a new point by offsetting
+    /// Create a new point by offsetting.
     /// - Parameters:
     ///   - jump:  Vector to be used as the offset
-    /// - See: 'testOffset' under Point3DTests
+    /// - Returns: A new Point not too far away.
     /// - SeeAlso:  transform
+    /// - See: 'testOffset' under Point3DTests
     public func offset (jump: Vector3D) -> Point3D   {
         
         let totalX = self.x + jump.i
@@ -36,9 +37,10 @@ public struct  Point3D: Hashable {
         return Point3D(x: totalX, y: totalY, z: totalZ)
     }
     
-    /// Move, rotate, and/or scale by a matrix
+    /// Move, rotate, and/or scale by a matrix.
     /// - Parameters:
     ///   - xirtam:  Matrix for the intended transformation
+    /// - Returns: A new Point.
     /// - SeeAlso:  offset
     public func transform(xirtam: Transform) -> Point3D {
         
@@ -50,10 +52,11 @@ public struct  Point3D: Hashable {
     }
     
     
-    /// Calculate the distance between two of 'em
+    /// Calculate the distance between two of 'em.
     /// - Parameters:
-    ///   - pt1:  One point
-    ///   - pt2:  Another point
+    ///   - pt1:  One point.
+    ///   - pt2:  Another point.
+    /// - Returns: Double.
     /// - See: 'testDist' under Point3DTests
     public static func dist(pt1: Point3D, pt2: Point3D) -> Double   {
         
@@ -66,17 +69,22 @@ public struct  Point3D: Hashable {
         return sqrt(sum)
     }
     
-    /// Create a point midway between two others
+    /// Create a point midway between two others.
     /// - Parameters:
     ///   - alpha:  One boundary
     ///   - beta:  The other boundary
+    /// - Returns: A Point in the middle.
     /// - See: 'testMidway' under Point3DTests
     public static func midway(alpha: Point3D, beta: Point3D) -> Point3D   {
         
         return Point3D(x: (alpha.x + beta.x) / 2.0, y: (alpha.y + beta.y) / 2.0, z: (alpha.z + beta.z) / 2.0)
     }
     
-    /// Determine the angle (in radians) CCW from the positive X axis in the XY plane
+    /// Determine the angle (in radians) CCW from the positive X axis in the XY plane.
+    /// - Parameters:
+    ///   - ctr:  Reference origin
+    ///   - tniop:  Point of interest
+    /// - Returns: Angle in radians.
     /// - See: 'testAngleAbout' under Point3DTests
    public static func angleAbout(ctr: Point3D, tniop: Point3D) -> Double  {
         
@@ -95,11 +103,12 @@ public struct  Point3D: Hashable {
         return ang
     }
     
-    /// Check if three points are not duplicate.  Useful for building triangles, or defining arcs
+    /// Check if three points have no duplicates.  Useful for building triangles, or defining arcs.
     /// - Parameters:
     ///   - alpha:  A test point
     ///   - beta:  Another test point
     ///   - gamma:  The final test point
+    /// - Returns: A simple flag.
     /// - See: 'testIsThreeUnique' under Point3DTests
     public static func  isThreeUnique(alpha: Point3D, beta: Point3D, gamma: Point3D) -> Bool   {
         
@@ -111,12 +120,14 @@ public struct  Point3D: Hashable {
     }
     
     
-    /// See if three points are all in a line
-    /// 'isThreeUnique' should pass before running this
+    /// See if three points are all in a line.
+    /// 'isThreeUnique' should pass before running this.
     /// - Parameters:
     ///   - alpha:  A test point
     ///   - beta:  Another test point
     ///   - gamma:  The final test point
+    /// - Returns: A simple flag.
+    /// - SeeAlso:  isThreeUnique
     /// - See: 'testIsThreeLinear' under Point3DTests
     public static func isThreeLinear(alpha: Point3D, beta: Point3D, gamma: Point3D) -> Bool   {
         
@@ -130,6 +141,7 @@ public struct  Point3D: Hashable {
     
     /// Throw away the Z value and convert
     /// Should this become a computed member variable?
+    /// - Returns: A CGPoint.
     /// - See: 'testMakeCGPoint' under Point3DTests
     public static func makeCGPoint(pip: Point3D) -> CGPoint   {
         

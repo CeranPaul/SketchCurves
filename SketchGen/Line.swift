@@ -8,7 +8,7 @@
 
 import Foundation
 
-/// Unbounded and straight
+/// Unbounded and straight.  Contrast with LineSeg.
 public struct Line: Equatable {
     
     /// A point to locate the line
@@ -18,14 +18,14 @@ public struct Line: Equatable {
     fileprivate var direction: Vector3D
     
     
-    /// Build a fresh one - with error checking
+    /// Build a fresh one - with error checking.
     /// - Parameters:
     ///   - spot:  Origin for the fresh line
     ///   - arrow:  Direction for the fresh line.  Must have unit length
     /// - Throws: 
     ///   - ZeroVectorError if the input Vector3D has no length
     ///   - NonUnitDirectionError for a bad input Vector3D
-    init (spot: Point3D, arrow: Vector3D) throws  {
+    public init (spot: Point3D, arrow: Vector3D) throws  {
         
         guard !arrow.isZero() else  {throw ZeroVectorError(dir: arrow)}
         guard arrow.isUnit() else  {throw NonUnitDirectionError(dir: arrow)}
@@ -176,6 +176,9 @@ public struct Line: Equatable {
     
     
     /// Generate a point by intersecting two Lines
+    /// - Parameters:
+    ///   - straightA:  First test line
+    ///   - straightB:  Second test line
     /// - Throws: CoincidentLinesError if the inputs are the same
     /// - Throws: ParallelLinesError if the inputs are parallel
     /// - Throws: NonCoPlanarLinesError if the inputs don't lie in the same plane

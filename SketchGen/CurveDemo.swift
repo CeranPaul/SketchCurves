@@ -233,8 +233,8 @@ class DemoPool  {
         for g in 1..<segs  {
             let stepU = Double(g) * stepSize
             
-            let stepPoint1 = try! swoop1.pointAt(t: stepU)
-            let stepPoint2 = try! swoop2.pointAt(t: stepU)
+            let stepPoint1 = swoop1.pointAt(t: stepU)
+            let stepPoint2 = swoop2.pointAt(t: stepU)
 
             /// LineSeg to be added to the display list
             var stroke: PenCurve
@@ -285,7 +285,7 @@ class DemoPool  {
         for g in 1..<segs  {
             let stepU = Double(g) * stepSize
             
-            let stepPoint1 = try! bump.pointAt(t: stepU)
+            let stepPoint1 = bump.pointAt(t: stepU)
             
             /// LineSeg to be added to the display list
             var stroke: PenCurve
@@ -330,7 +330,7 @@ class DemoPool  {
         
         for piece in swing.pieces   {
             
-            var priorPt1 = try! piece.pointAt(t: 0.0)
+            var priorPt1 = piece.pointAt(t: 0.0)
             
             let segs = 10
             let stepSize = 1.0 / Double(segs)
@@ -338,7 +338,7 @@ class DemoPool  {
             for g in 1...segs  {
                 let stepU = Double(g) * stepSize
                 
-                let stepPoint1 = try! piece.pointAt(t: stepU)
+                let stepPoint1 = piece.pointAt(t: stepU)
                 
                 /// LineSeg to be added to the display list
                 var stroke: PenCurve

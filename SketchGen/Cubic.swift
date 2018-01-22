@@ -3,7 +3,7 @@
 //  SketchCurves
 //
 //  Created by Paul on 12/14/15.
-//  Copyright © 2015 Ceran Digital Media. All rights reserved.  See LICENSE.md
+//  Copyright © 2018 Ceran Digital Media. See LICENSE.md
 //
 
 import UIKit
@@ -34,14 +34,14 @@ open class Cubic: PenCurve   {
     var controlB: Point3D?
     
     /// The enum that hints at the meaning of the curve
-    public var usage: PenTypes
+    open var usage: PenTypes
     
-    open var parameterRange: ClosedRange<Double>
+    open var parameterRange: ClosedRange<Double>   // Never used
     
     
     
-    /// Build from 12 individual parameters
-    init (ax: Double, bx: Double, cx: Double, dx: Double, ay: Double, by: Double, cy: Double, dy: Double, az: Double, bz: Double, cz: Double, dz: Double)   {
+    /// Build from 12 individual parameters.
+    public init(ax: Double, bx: Double, cx: Double, dx: Double, ay: Double, by: Double, cy: Double, dy: Double, az: Double, bz: Double, cz: Double, dz: Double)   {
         
         self.ax = ax
         self.bx = bx
@@ -80,7 +80,7 @@ open class Cubic: PenCurve   {
     /// in the Wikipedia article on Cubic Hermite spline
     /// There are checks here for input points that should be added!
     /// - See: 'testSumsHermite' under CubicTests
-    init(ptA: Point3D, slopeA: Vector3D, ptB: Point3D, slopeB: Vector3D)   {
+    public init(ptA: Point3D, slopeA: Vector3D, ptB: Point3D, slopeB: Vector3D)   {
         
         ptAlpha = ptA
         ptOmega = ptB
@@ -116,12 +116,12 @@ open class Cubic: PenCurve   {
     }
     
     
-    /// Build from two end points and two control points
+    /// Build from two end points and two control points.
     /// Assignment statements from an algebraic manipulation of the equations
-    /// in the Wikipedia article on Bezier Curve
+    /// in the Wikipedia article on Bezier Curve.
     /// There are checks here for input points that should be added!
     /// - See: 'testSumsBezier' under CubicTests
-    init(ptA: Point3D, controlA: Point3D, controlB: Point3D, ptB: Point3D)   {
+    public init(ptA: Point3D, controlA: Point3D, controlB: Point3D, ptB: Point3D)   {
         
            // Dummy initial values
         self.ax = 0.0
@@ -163,7 +163,7 @@ open class Cubic: PenCurve   {
     ///   - gamma: Third point
     ///   - gammaFraction: Portion along the curve for point gamma
     ///   - delta: Last point
-    init(alpha: Point3D, beta: Point3D, betaFraction: Double, gamma: Point3D, gammaFraction: Double, delta: Point3D)   {
+    public init(alpha: Point3D, beta: Point3D, betaFraction: Double, gamma: Point3D, gammaFraction: Double, delta: Point3D)   {
         
         self.ptAlpha = alpha
         self.ptOmega = delta
@@ -224,11 +224,11 @@ open class Cubic: PenCurve   {
         
         
         // Add control points for editing
-        let slopeA = try! self.tangentAt(t: 0.0)
+        let slopeA = self.tangentAt(t: 0.0)
         var jump = slopeA * 0.3333
         self.controlA = ptAlpha.offset(jump: jump)
         
-        let slopeB = try! self.tangentAt(t: 1.0)
+        let slopeB = self.tangentAt(t: 1.0)
         jump = slopeB * -0.3333
         self.controlB = ptOmega.offset(jump: jump)
         
@@ -236,8 +236,8 @@ open class Cubic: PenCurve   {
         
     }
     
-    /// Develop the coefficients from the points
-    /// This is done as a separate routine so that modifications will be consistent with original construction
+    /// Develop the coefficients from the points.
+    /// This is done as a separate routine so that modifications will be consistent with original construction.
     func parameterizeBezier() -> Void {
         
         self.ax = 3.0 * self.controlA!.x - self.ptAlpha.x - 3.0 * self.controlB!.x + self.ptOmega.x
@@ -257,7 +257,7 @@ open class Cubic: PenCurve   {
     }
     
     
-    /// Create a new curve translated, scaled, and rotated by the matrix
+    /// Create a new curve translated, scaled, and rotated by the matrix.
     public func transform(xirtam: Transform) -> PenCurve   {
         
         let tAlpha = self.ptAlpha.transform(xirtam: xirtam)
@@ -273,25 +273,25 @@ open class Cubic: PenCurve   {
     }
     
     
-    /// Attach new meaning to the curve
+    /// Attach new meaning to the curve.
     public func setIntent(purpose: PenTypes)   {
         
         self.usage = purpose
     }
     
-    /// Fetch the location of an end
+    /// Fetch the location of an end.
     /// - See: 'getOtherEnd()'
     public func getOneEnd() -> Point3D   {
         return ptAlpha
     }
     
-    /// Fetch the location of the opposite end
+    /// Fetch the location of the opposite end.
     /// - See: 'getOneEnd()'
     public func getOtherEnd() -> Point3D   {
         return ptOmega
     }
     
-    /// Flip the order of the end points (and control points).  Used to align members of a Perimeter
+    /// Flip the order of the end points (and control points).  Used to align members of a Perimeter.
     public func reverse() -> Void  {
         
         var bubble = self.ptAlpha
@@ -365,13 +365,13 @@ open class Cubic: PenCurve   {
         let step = 1.0 / Double(pieces)
         let limit = pieces
         
-        var prevPoint = try! self.pointAt(t: 0.0)
+        var prevPoint = self.pointAt(t: 0.0)
         
         var length = 0.0
         
         for g in 1...limit   {
             
-            let pip = try! self.pointAt(t: Double(g) * step)
+            let pip = self.pointAt(t: Double(g) * step)
             let hop = Point3D.dist(pt1: prevPoint, pt2: pip)
             length += hop
             
@@ -392,7 +392,7 @@ open class Cubic: PenCurve   {
         var bucket = [Double]()
         
         for u in 1...limit   {
-            let pip = try! self.pointAt(t: Double(u) * step)
+            let pip = self.pointAt(t: Double(u) * step)
             bucket.append(pip.x)
         }
         
@@ -405,7 +405,7 @@ open class Cubic: PenCurve   {
         bucket = [Double]()   // Start with an empty array
         
         for u in 1...limit   {
-            let pip = try! self.pointAt(t: Double(u) * step)
+            let pip = self.pointAt(t: Double(u) * step)
             bucket.append(pip.y)
         }
         
@@ -417,7 +417,7 @@ open class Cubic: PenCurve   {
         bucket = [Double]()   // Start with an empty array
         
         for u in 1...limit   {
-            let pip = try! self.pointAt(t: Double(u) * step)
+            let pip = self.pointAt(t: Double(u) * step)
             bucket.append(pip.z)
         }
         
@@ -494,8 +494,8 @@ open class Cubic: PenCurve   {
     /// Calculate the crown over a small segment
     public func findCrown(smallerT: Double, largerT: Double) -> Double   {
         
-        let anchorA = try! self.pointAt(t: smallerT)
-        let anchorB = try! self.pointAt(t: largerT)
+        let anchorA = self.pointAt(t: smallerT)
+        let anchorB = self.pointAt(t: largerT)
         
         let wire = try! LineSeg(end1: anchorA, end2: anchorB)
         
@@ -505,7 +505,7 @@ open class Cubic: PenCurve   {
         
         for g in 1...9   {
             
-            let pip = try! self.pointAt(t: smallerT + Double(g) * delta / 10.0)
+            let pip = self.pointAt(t: smallerT + Double(g) * delta / 10.0)
             let diffs = wire.resolveRelative(speck: pip)
             
             let separation = diffs.perp.length()   // Always a positive value
@@ -519,16 +519,18 @@ open class Cubic: PenCurve   {
         return deviation
     }
     
-    /// Supply the point on the curve for the input parameter value
-    /// Assumes 0 < t < 1
-    /// Some notations show "t" as the parameter, instead of "u"
-    public func pointAt(t: Double) throws -> Point3D   {
+    /// Supply the point on the curve for the input parameter value.
+    /// Some notations show "u" as the parameter, instead of "t"
+    /// - Parameters:
+    ///   - t:  Curve parameter value.  Assumed 0 < t < 1.
+    /// - Returns: Point location at the parameter value
+    public func pointAt(t: Double) -> Point3D   {
         
         let t2 = t * t
         let t3 = t2 * t
         
            // This notation came from "Fundamentals of Interactive Computer Graphics" by Foley and Van Dam
-           // Warning!  The relationship of coefficients and powers of u might be unexpected, as notations vary
+           // Warning!  The relationship of coefficients and powers of t might be unexpected, as notations vary
         let myX = ax * t3 + bx * t2 + cx * t + dx
         let myY = ay * t3 + by * t2 + cy * t + dy
         let myZ = az * t3 + bz * t2 + cz * t + dz
@@ -536,11 +538,12 @@ open class Cubic: PenCurve   {
         return Point3D(x: myX, y: myY, z: myZ)
     }
     
-    /// Differentiate to find the tangent vector for the input parameter
-    /// Some notations show "t" as the parameter, instead of "u"
-    /// - Returns:
-    ///   - tan:  Non-normalized vector
-    func tangentAt(t: Double) throws -> Vector3D   {
+    /// Differentiate to find the tangent vector for the input parameter.
+    /// Some notations show "u" as the parameter, instead of "t".
+    /// - Parameters:
+    ///   - t:  Curve parameter value.  Assumed 0 < t < 1.
+    /// - Returns:  Non-normalized vector
+    func tangentAt(t: Double) -> Vector3D   {
         
         let t2 = t * t
 
@@ -557,7 +560,7 @@ open class Cubic: PenCurve   {
     public func getPlane() -> Plane?   {
         
         /// Mid-point along the curve
-        let mid = try! self.pointAt(t: 0.5)
+        let mid = self.pointAt(t: 0.5)
         
         /// A plane using the end points and a midpoint
         let flat = try! Plane(alpha: self.ptAlpha, beta: mid, gamma: self.ptOmega)
@@ -569,7 +572,7 @@ open class Cubic: PenCurve   {
         for g in 1...19   {
             
             let curT = Double(g) * 0.05
-            let pip = try! self.pointAt(t: curT)
+            let pip = self.pointAt(t: curT)
             
             flag = Plane.isCoincident(flat: flat, pip: pip)
             
@@ -614,7 +617,7 @@ open class Cubic: PenCurve   {
         var tighter: ClosedRange<Double>
         
         /// Point at the beginning of the range
-        let green = try! self.pointAt(t: span.lowerBound)
+        let green = self.pointAt(t: span.lowerBound)
         
         /// Vector from start of Line to point at beginning of range
         let bridgeVec = Vector3D.built(from: ray.getOrigin(), towards: green)
@@ -640,7 +643,7 @@ open class Cubic: PenCurve   {
             
             let freshT = span.lowerBound + Double(g) * parStep
             
-            let pip = try! self.pointAt(t: freshT)
+            let pip = self.pointAt(t: freshT)
             
             let bridge = Vector3D.built(from: ray.getOrigin(), towards: pip)
             
@@ -690,8 +693,8 @@ open class Cubic: PenCurve   {
             
             if let refined = self.crossing(ray: ray, span: shebang)   {
                 
-                let low = try! self.pointAt(t: refined.lowerBound)
-                let high = try! self.pointAt(t: refined.upperBound)
+                let low = self.pointAt(t: refined.lowerBound)
+                let high = self.pointAt(t: refined.upperBound)
                 sep = Point3D.dist(pt1: low, pt2: high)
                 
                 middle = Point3D.midway(alpha: low, beta: high)
@@ -754,7 +757,7 @@ open class Cubic: PenCurve   {
                 previous = objective
                 
                 
-                let slider = try! self.pointAt(t: t)
+                let slider = self.pointAt(t: t)
                 
                 let cast = Vector3D.built(from: ray.getOrigin(), towards: slider)
                 
@@ -778,7 +781,7 @@ open class Cubic: PenCurve   {
         } while abs(objective) > accuracy && abs(deltaT) > 0.001 && outsideCount < 10   // Iterate until a condition fails
         
         // This assumes that none of the loops have overrun
-        let pip = try! self.pointAt(t: t)
+        let pip = self.pointAt(t: t)
         crossings.append(pip)
         
         print(t)
@@ -792,7 +795,7 @@ open class Cubic: PenCurve   {
     /// - Parameters:
     ///   - context: In-use graphics framework
     ///   - tform:  Model-to-display transform
-    public func draw(context: CGContext, tform: CGAffineTransform)  {
+    public func draw(context: CGContext, tform: CGAffineTransform) -> Void  {
         
         var xCG: CGFloat = CGFloat(self.dx)    // Convert to "CGFloat", and throw out Z coordinate
         var yCG: CGFloat = CGFloat(self.dy)
@@ -809,8 +812,8 @@ open class Cubic: PenCurve   {
         for g in 1...pieces   {
             
             let stepU = Double(g) * step
-            xCG = CGFloat(try! pointAt(t: stepU).x)
-            yCG = CGFloat(try! pointAt(t: stepU).y)
+            xCG = CGFloat(pointAt(t: stepU).x)
+            yCG = CGFloat(pointAt(t: stepU).y)
             
             let midPoint = CGPoint(x: xCG, y: yCG)
             let midScreen = midPoint.applying(tform)
@@ -821,7 +824,11 @@ open class Cubic: PenCurve   {
         
     }
     
-    public func drawControls(context: CGContext, tform: CGAffineTransform)  {
+    /// Draw symbols to be used in manipulating the curve.
+    /// - Parameters:
+    ///   - context: In-use graphics framework
+    ///   - tform:  Model-to-display transform
+    public func drawControls(context: CGContext, tform: CGAffineTransform) -> Void  {
         
         let boxDim = 8.0
         let boxSize = CGSize(width: boxDim, height: boxDim)
@@ -887,8 +894,8 @@ open class Cubic: PenCurve   {
         
     }
     
-    /// Create a String that is suitable JavaScript to draw the Cubic
-    /// Assumes that the context has a plot location of the starting point for the Cubic
+    /// Create a String that is suitable JavaScript to draw the Cubic.
+    /// Assumes that the context has a plot location of the starting point for the Cubic.
     /// - Parameters:
     ///   - xirtam:  Model-to-display transform
     /// - Returns: String consisting of JavaScript to plot

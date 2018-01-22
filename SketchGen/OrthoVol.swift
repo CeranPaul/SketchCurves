@@ -147,6 +147,7 @@ public struct OrthoVol   {
     }
     
     /// Find the center of the brick to use as the rotation center when displaying
+    /// - Returns: Center point
     public func getRotCenter() -> Point3D   {
         
         let midX = (rangeX.lowerBound + rangeX.upperBound) / 2.0
@@ -243,6 +244,9 @@ public struct OrthoVol   {
 
 
 /// Construct a volume that combines the two input volumes
+/// - Parameters:
+///   - lhs: One volume
+///   - rhs: Another brick
 func + (lhs: OrthoVol, rhs: OrthoVol) -> OrthoVol   {
     
     let leastX = min(lhs.rangeX.lowerBound, rhs.rangeX.lowerBound)
