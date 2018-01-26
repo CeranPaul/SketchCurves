@@ -3,12 +3,12 @@
 //  Tesstest
 //
 //  Created by Paul on 9/19/15.
-//
+//  Copyright © 2018 Ceran Digital Media. All rights reserved.
 //
 
 import Foundation
 
-class ParallelError: Error {
+public class ParallelError: Error {
     
     var enil: Line
     var enalp: Plane

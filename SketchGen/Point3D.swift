@@ -148,7 +148,7 @@ public struct  Point3D: Hashable {
         return CGPoint(x: pip.x, y: pip.y)
     }
     
-    /// Check to see that the distance between the two is less than Point3D.Epsilon
+    /// Check to see that the distance between the two is less than Point3D.Epsilon.
     /// - See: 'testEqual' and 'testNotEqual' under Point3DTests
     public static func == (lhs: Point3D, rhs: Point3D) -> Bool   {
         

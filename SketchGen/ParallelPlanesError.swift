@@ -3,12 +3,13 @@
 //  Tesstest
 //
 //  Created by Paul on 9/21/15.
+//  Copyright © 2018 Ceran Digital Media. All rights reserved.
 //
 
 import Foundation
 
 /// Exception for when the planes shouldn't have been parallel - i.e. when trying to intersect them
-class ParallelPlanesError: Error {
+public class ParallelPlanesError: Error {
     
     var enalpA: Plane
     

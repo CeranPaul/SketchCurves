@@ -3,13 +3,13 @@
 //  SketchGen
 //
 //  Created by Paul Hollingshead on 1/10/16.
-//  Copyright © 2015 Ceran Digital Media. All rights reserved.  See LICENSE.md
+//  Copyright © 2018 Ceran Digital Media. All rights reserved.  See LICENSE.md
 //
 
 import Foundation
 
 /// Exception for when the lines shouldn't have been coincident - i.e. when trying to intersect them
-class CoincidentLinesError: Error {
+public class CoincidentLinesError: Error {
     
     var enil: Line
     

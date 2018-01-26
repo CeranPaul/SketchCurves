@@ -3,14 +3,14 @@
 //  SketchCurves
 //
 //  Created by Paul on 11/7/15.
-//  Copyright © 2016 Ceran Digital Media. All rights reserved.  See LICENSE.md
+//  Copyright © 2018 Ceran Digital Media. All rights reserved.  See LICENSE.md
 //
 
 import UIKit
 
-/// A circular arc - either whole, or a portion
+/// A circular arc - either whole, or a portion - in any plane.
 /// The code compiles, but beware of the results!
-/// This DOES NOT handle the case of precisely half a circle
+/// This DOES NOT handle the case of precisely half a circle.
 /// - SeeAlso:  Ellipse
 public class Arc: PenCurve {
     
@@ -22,22 +22,23 @@ public class Arc: PenCurve {
     
     /// Beginning point
     fileprivate var start: Point3D
+    
+    /// End point
     fileprivate var finish: Point3D
+    
+    /// Derived radius of the Arc
+    internal var rad: Double
+    
+    /// The enum that hints at the meaning of the curve
+    open var usage: PenTypes
+    
     
     /// Can be either positive or negative
     /// Magnitude should be less than 2 pi
     fileprivate var sweepAngle: Double
     
-    /// The enum that hints at the meaning of the curve
-    open var usage: PenTypes
-    
     ///Requirement of PenCurve?
     open var parameterRange: ClosedRange<Double>
-    
-
-    
-    /// Derived radius of the Arc
-    internal var rad: Double
     
     /// Whether or not this is a complete circle
     open var isFull: Bool
@@ -50,7 +51,7 @@ public class Arc: PenCurve {
     ///   - axis: Unit vector, often in the +Z direction
     ///   - end1: Starting point
     ///   - sweep: Angle (in radians) in the CCW direction.  Can be positive or negative
-    /// - Throws: ZeroVectorError, NonUnitDirectionError, CoincidentPointsError
+    /// - Throws: ZeroVectorError, NonUnitDirectionError, CoincidentPointsError, ZeroSweepError, or NonOrthogonalPointError
     /// - SeeAlso:  The other initializer
     /// - See: 'testFidelity', and 'testFindAxis' under ArcTests
     public init(center: Point3D, axis: Vector3D, end1: Point3D, sweep: Double) throws   {
@@ -60,13 +61,11 @@ public class Arc: PenCurve {
         
         guard (center != end1)  else  { throw CoincidentPointsError(dupePt: end1) }
 
-            // This is a misleading error type
-        guard (sweep != 0.0)  else  { throw CoincidentPointsError(dupePt: end1) }
+        guard (sweep != 0.0)  else  { throw ZeroSweepError(ctr: center) }
         
         let horiz = Vector3D.built(from: center, towards: end1, unit: true)
         
-           // This is another misleading error type
-        guard (Vector3D.dotProduct(lhs: axis, rhs: horiz) == 0.0)  else  { throw CoincidentPointsError(dupePt: end1) }
+        guard (Vector3D.dotProduct(lhs: axis, rhs: horiz) == 0.0)  else  { throw NonOrthogonalPointError(trats: end1) }
         
         
         self.ctr = center
@@ -102,7 +101,7 @@ public class Arc: PenCurve {
     
     
     /// Build an arc from a center and two terminating points - perhaps tangent points.
-    /// Direction is derived from the ordering of end1 and end2
+    /// Direction is derived from the ordering of end1 and end2.
     /// - Warning: Use the other initializer for a half or full circle
     /// - Parameters:
     ///   - center: Point3D used for pivoting
@@ -132,7 +131,9 @@ public class Arc: PenCurve {
         
         
         self.rad = Point3D.dist(pt1: self.ctr, pt2: self.start)
+        
         self.isFull = false
+        
         self.usage = PenTypes.ordinary   // Use 'setIntent' to attach a different desired value
         
         
@@ -193,7 +194,7 @@ public class Arc: PenCurve {
     open func pointAt(t: Double) throws -> Point3D  {
         
            // Misuse of this error type
-        guard (self.parameterRange.contains(t))  else  { throw CoincidentPointsError(dupePt: self.ctr) }
+//        guard (self.parameterRange.contains(t))  else  { throw CoincidentPointsError(dupePt: self.ctr) }
         
         let vecStart = Vector3D.built(from: self.ctr, towards: self.start, unit: true)
         
@@ -562,7 +563,7 @@ public class Arc: PenCurve {
 }    // End of definition for class Arc
 
 
-/// Check to see that both are built from the same points
+/// Check to see that both are built from the same points.
 /// Should this be modified to include the complementary definition?
 /// - SeeAlso:  Arc.isConcentric
 public func == (lhs: Arc, rhs: Arc) -> Bool   {

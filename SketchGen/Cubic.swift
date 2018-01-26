@@ -589,8 +589,11 @@ open class Cubic: PenCurve   {
     }
     
     
-    /// Find the position of a point relative to the line segment and its origin
-    /// - Returns: Vector components relative to the origin
+    /// Find the position of a point relative to the line segment and its origin.
+    /// Useless result at the moment.
+    /// - Parameters:
+    ///   - speck:  Point near the curve.
+    /// - Returns: Tuple of Vector components relative to the origin
     public func resolveRelative(speck: Point3D) -> (along: Vector3D, perp: Vector3D)   {
         
 //        let otherSpeck = speck
@@ -602,12 +605,12 @@ open class Cubic: PenCurve   {
         return (alongVector, perpVector)
     }
     
-    /// Find the range of the parameter where the curve crosses a line
-    /// This is part of finding the intersection
+    /// Find the range of the parameter where the curve crosses a line.
+    /// This is part of finding the intersection.
     /// - Parameters:
     ///   - ray:  The Line to be used in testing for a crossing
     ///   - span:  A range of the curve parameter t in which to hunt
-    /// - Returns: A smaller ClosedRange<Double>
+    /// - Returns: A smaller ClosedRange<Double>.
     func crossing(ray: Line, span: ClosedRange<Double>) -> ClosedRange<Double>?   {
         
         /// Number of pieces to divide range
@@ -669,7 +672,7 @@ open class Cubic: PenCurve   {
     /// Intersection points with a line
     /// - Parameters:
     ///   - ray:  The Line to be used for intersecting
-    ///   - accuracy:  How close is close enough?
+    ///   - accuracy:  Optional - How close is close enough?
     /// - Returns: Array of points common to both curves - though for now it will return only the first one
     /// - SeeAlso:  crossing()
     public func intersect(ray: Line, accuracy: Double = Point3D.Epsilon) -> [Point3D] {

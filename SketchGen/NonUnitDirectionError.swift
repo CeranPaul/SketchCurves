@@ -2,12 +2,12 @@
 //  NonUnitDirectionError.swift
 //
 //  Created by Paul on 12/10/15.
-//  Copyright © 2015 Ceran Digital Media. All rights reserved.
+//  Copyright © 2018 Ceran Digital Media. All rights reserved.
 //
 
 import Foundation
 /// Exception for failure to supply a unit vector when constructing a line or plane
-class NonUnitDirectionError: Error {
+public class NonUnitDirectionError: Error {
     
     var thataway: Vector3D
     

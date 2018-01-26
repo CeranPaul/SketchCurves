@@ -1,15 +1,15 @@
 //
 //  ArcPointsError.swift
-//  BoxChopDemo
+//  SketchGen
 //
 //  Created by Paul on 11/14/15.
-//  Copyright © 2015 Ceran Digital Media. All rights reserved.
+//  Copyright © 2018 Ceran Digital Media. All rights reserved.
 //
 
 import Foundation
 
 /// Exception for when the points should not have be coincident
-class ArcPointsError: Error {
+public class ArcPointsError: Error {
     
     var ptA: Point3D
     var ptB: Point3D

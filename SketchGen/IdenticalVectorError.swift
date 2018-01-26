@@ -3,13 +3,13 @@
 //  SketchGen
 //
 //  Created by Paul Hollingshead on 7/15/16.
-//  Copyright © 2016 Ceran Digital Media. All rights reserved.
+//  Copyright © 2018 Ceran Digital Media. All rights reserved.
 //
 
 import Foundation
 
 /// Exception for two vectors that shouldn't be duplicates
-class IdenticalVectorError: Error   {
+public class IdenticalVectorError: Error   {
     
     var thataway: Vector3D
     

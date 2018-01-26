@@ -20,7 +20,7 @@ class DemoPool  {
     /// Call a demonstration routine
     init()   {
         
-        let demoString = "jout"   // Change this to one of the case names
+        let demoString = "chop"   // Change this to one of the case names
         
         switch demoString   {
             

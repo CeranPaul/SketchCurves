@@ -8,8 +8,9 @@
 
 import Foundation
 
-/// A direction built from three orthogonal components
-/// Default constructor suffices
+/// A direction built from three orthogonal components.
+/// Default constructor suffices.
+/// See overloaded functions in the documentation.
 public struct Vector3D: Equatable {
     
     var i: Double
@@ -129,7 +130,7 @@ public struct Vector3D: Equatable {
     /// - Parameters:
     ///   - from: Start point
     ///   - towards: End point
-    ///   - unit: Whether or not the result should be a unit vector
+    ///   - unit: Optional - Whether or not the result should be a unit vector
     /// - Returns: A new Vector
     /// - See: 'testBuiltFrom' under Vector3DTests
     public static func built(from: Point3D, towards: Point3D, unit: Bool = false) -> Vector3D {
@@ -153,6 +154,10 @@ public struct Vector3D: Equatable {
     }
     
     /// Standard definition of dot product
+    /// - Parameters:
+    ///   - lhs:  One Vector
+    ///   - rhs:  Another Vector
+    /// - Returns: Projected length
     /// - See: 'testDot' under Vector3DTests
     public static func dotProduct(lhs: Vector3D, rhs: Vector3D) -> Double   {
         
@@ -259,6 +264,8 @@ public struct Vector3D: Equatable {
     
     /// Build a Vector3D in the XZ plane.
     /// - Parameter: angle: Desired angle in degrees
+    /// - Returns: A new Vector
+    /// - See: 'testMakeXZ' under Vector3DTests.
     public static func makeXZ(angle: Double) -> Vector3D  {
         
         let angleRad = angle * (Double.pi / 180.0)
@@ -272,7 +279,10 @@ public struct Vector3D: Equatable {
     }
     
     /// Compare each component of the vector.
-    /// - See: 'testEquals' under Vector3DTests
+    /// - Parameters:
+    ///   - lhs:  One Vector for comparison
+    ///   - rhs:  Another Vector for comparison
+    /// - See: 'testEquals' under Vector3DTests.
     public static func == (lhs: Vector3D, rhs: Vector3D) -> Bool   {
         
         let flagI = abs(rhs.i - lhs.i) < Vector3D.EpsilonV

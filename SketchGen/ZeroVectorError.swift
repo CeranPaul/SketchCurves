@@ -2,12 +2,12 @@
 //  ZeroVectorError.swift
 //
 //  Created by Paul Hollingshead on 12/10/15.
-//  Copyright © 2015 Ceran Digital Media. All rights reserved.
+//  Copyright © 2018 Ceran Digital Media. All rights reserved.
 //
 
 import Foundation
 /// Exception for failure to supply a useful vector
-class ZeroVectorError: Error {
+public class ZeroVectorError: Error {
     
     var thataway: Vector3D
     

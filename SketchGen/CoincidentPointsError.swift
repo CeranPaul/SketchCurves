@@ -2,12 +2,13 @@
 //  CoincidentPointsError.swift
 //
 //  Created by Paul on 10/28/15.
+//  Copyright © 2018 Ceran Digital Media. All rights reserved.
 //
 
 import Foundation
 
 /// Exception for when the points should not have be coincident
-class CoincidentPointsError: Error {
+public class CoincidentPointsError: Error {
     
     var ptA: Point3D
     
