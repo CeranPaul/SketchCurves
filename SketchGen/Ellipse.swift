@@ -124,9 +124,9 @@ open class Ellipse: PenCurve {
     /// - Throws: CoincidentPointsError if it was scaled to be very small
     open func transform(xirtam: Transform) -> PenCurve {
         
-        let tAlpha = self.start.transform(xirtam: xirtam)
-        let tOmega = self.finish.transform(xirtam: xirtam)
-        let tCent = self.ctr.transform(xirtam: xirtam)
+        let tAlpha = Point3D.transform(pip: self.start, xirtam: xirtam)
+        let tOmega = Point3D.transform(pip: self.finish, xirtam: xirtam)
+        let tCent = Point3D.transform(pip: self.ctr, xirtam: xirtam)
         
         let transformed = Ellipse(retnec: tCent, a: self.a, b: self.b, azimuth: self.azimuth, start: tAlpha, finish: tOmega)
         

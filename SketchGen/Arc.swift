@@ -157,15 +157,16 @@ public class Arc: PenCurve {
 
     
     /// Simple getter for the center point
+    /// - See: 'testFidelityThreePoints' and 'testFidelityCASS' under ArcTests
     open func getCenter() -> Point3D   {
         return self.ctr
     }
     
-    open func getOneEnd() -> Point3D {   // This may not give the correct answer, depend on 'isClockwise'
+    open func getOneEnd() -> Point3D {
         return self.start
     }
     
-    open func getOtherEnd() -> Point3D {   // This may not give the correct answer, depend on 'isClockwise'
+    open func getOtherEnd() -> Point3D {   
         return self.finish
     }
     
@@ -181,7 +182,9 @@ public class Arc: PenCurve {
         return sweepAngle
     }
     
+    
     /// Attach new meaning to the curve
+    /// - See: 'testSetIntent' under ArcTests
     open func setIntent(purpose: PenTypes)   {
         self.usage = purpose
     }
@@ -194,6 +197,7 @@ public class Arc: PenCurve {
     /// - Throws:
     ///   - CoincidentPointsError for out-of-range parameter value
     /// - Returns: Point
+    /// - See: 'testPointAt' under ArcTests
     open func pointAt(t: Double) throws -> Point3D  {
         
            // Misuse of this error type
@@ -253,9 +257,9 @@ public class Arc: PenCurve {
     /// - Throws: CoincidentPointsError if it was scaled to be very small
     open func transform(xirtam: Transform) throws -> PenCurve {
         
-        let tAlpha = self.start.transform(xirtam: xirtam)
-        let tCent = self.ctr.transform(xirtam: xirtam)
-        let tAxis = self.axisDir.transform(xirtam: xirtam)
+        let tAlpha = Point3D.transform(pip: self.start, xirtam: xirtam)
+        let tCent = Point3D.transform(pip: self.ctr, xirtam: xirtam)
+        let tAxis = Vector3D.transform(thataway: self.axisDir, xirtam: xirtam)
         
         let transformed = try Arc(center: tCent, axis: tAxis, end1: tAlpha, sweep: self.sweepAngle)
         
@@ -459,6 +463,7 @@ public class Arc: PenCurve {
     ///   - end1: Point3D on the perimeter
     ///   - end2: Point3D on the perimeter
     /// - Returns: Simple flag
+    /// - See: 'testFidelityThreePoints' under ArcTests
     public static func isArcable(center: Point3D, end1: Point3D, end2: Point3D) -> Bool  {
         
         if !Point3D.isThreeUnique(alpha: center, beta: end1, gamma: end2)  { return false }
@@ -481,11 +486,16 @@ public class Arc: PenCurve {
     }
     
 
-    /// Build the center of a circle from three points on the perimeter
-    /// - Throws: ArcPointsError if there any coincident points in the inputs
+    /// Build the center of a circle from three points on the perimeter.
+    /// - Parameters:
+    ///   - larry: Point3D on the perimeter
+    ///   - curly: Point3D on the perimeter
+    ///   - moe: Point3D on the perimeter
+    /// - Throws: ArcPointsError if there are any coincident points in the inputs, or if they are collinear
     public static func findCenter(larry: Point3D, curly: Point3D, moe: Point3D) throws -> Point3D   {
         
-        guard(Point3D.isThreeUnique(alpha: larry, beta: curly, gamma: moe))  else  { throw ArcPointsError(badPtA: larry, badPtB: curly, badPtC: moe)}
+        guard(Point3D.isThreeUnique(alpha: larry, beta: curly, gamma: moe))  else  { throw ArcPointsError(badPtA: larry, badPtB: curly, badPtC: moe) }
+        guard (!Point3D.isThreeLinear(alpha: larry, beta: curly, gamma: moe))  else  { throw ArcPointsError(badPtA: larry, badPtB: curly, badPtC: moe) }
         
         
         /// The desired result to be returned
@@ -520,7 +530,8 @@ public class Arc: PenCurve {
         return ctr
     }
     
-    /// Check for two having the same center point and axis
+    
+    /// Check for two having the same center point and parallel axes.
     /// - Parameter: lhs: One Arc
     /// - Parameter: rhs: Another Arc
     /// - Returns: Simple flag
@@ -535,6 +546,7 @@ public class Arc: PenCurve {
         
         return ctrFlag && axisFlag
     }
+    
     
     /// Plot the arc segment.  This will be called by the UIView 'drawRect' function.
     /// - Warning:  This only works in the XY plane

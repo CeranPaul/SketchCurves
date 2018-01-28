@@ -48,12 +48,13 @@ public struct Line: Equatable {
     
     
     
-    /// Find the position of a point relative to the line and its origin
-    /// The returned perp distance will always be positive
+    /// Find the position of a point relative to the line and its origin.
+    /// The returned perp distance will always be positive.
     /// - Parameters:
     ///   - yonder:  Trial point
     /// - Returns: Tuple of distances
     /// - SeeAlso:  'resolveRelative(Vector)'
+    /// - See: 'testResolveRelativePoint' under LineTests
     public func resolveRelative(yonder: Point3D) -> (along: Double, perp: Double)   {
         
         let bridge = Vector3D.built(from: self.origin, towards: yonder)
@@ -90,7 +91,7 @@ public struct Line: Equatable {
     /// - See: 'testDropPoint' under LineTests
     public func dropPoint(away: Point3D) -> Point3D   {
         
-        if Line.isCoincident(straightA: self, trial: away)   {  return away  }   // Shortcut!
+        if Line.isCoincident(straightA: self, pip: away)   {  return away  }   // Shortcut!
         
         let bridge = Vector3D.built(from: self.origin, towards: away)
         let along = Vector3D.dotProduct(lhs: bridge, rhs: self.direction)
@@ -100,12 +101,16 @@ public struct Line: Equatable {
         return onLine
     }
     
+    
     /// Checks to see if the trial point lies on the line
+    /// - Parameters:
+    ///   - straightA:  Reference line
+    ///   - pip:  Point to test
     /// - SeeAlso:  Overloaded ==
     /// - See: 'testIsCoincident' under LineTests
-    public static func isCoincident(straightA: Line, trial: Point3D) -> Bool   {
+    public static func isCoincident(straightA: Line, pip: Point3D) -> Bool   {
         
-        var bridgeVector = Vector3D.built(from: straightA.origin, towards: trial)
+        var bridgeVector = Vector3D.built(from: straightA.origin, towards: pip)
         
         if bridgeVector.isZero() { return true }
         
@@ -122,6 +127,7 @@ public struct Line: Equatable {
     /// - Parameters:
     ///   - straightA:  First test line
     ///   - straightB:  Second test line
+    /// - Returns: Simple flag
     /// - SeeAlso:  Overloaded ==
     public static func isParallel(straightA: Line, straightB: Line) -> Bool   {
         
@@ -140,33 +146,36 @@ public struct Line: Equatable {
         
         if !Line.isParallel(straightA: straightA, straightB: straightB)   { return false }
         
-        if !Line.isCoincident(straightA: straightA, trial: straightB.getOrigin())   { return false }
-        if !Line.isCoincident(straightA: straightB, trial: straightA.getOrigin())   { return false }   // Is this second one needed?
+        if !Line.isCoincident(straightA: straightA, pip: straightB.getOrigin())   { return false }
         
         return true
     }
     
-    /// Verify that lines are on the same plane
+    
+    /// Verify that two lines could form a plane.
     /// - Parameters:
     ///   - straightA:  First test line
     ///   - straightB:  Second test line
+    /// - Returns: Simple flag
     /// - SeeAlso:  Overloaded ==
     /// - SeeAlso:  Line.isParallel()
     public static func isCoplanar(straightA: Line, straightB: Line) -> Bool   {
         
-        if Line.isCoincident(straightA: straightA, straightB: straightB) { return true }
+        if Line.isCoincident(straightA: straightA, straightB: straightB) { return true }   // Shortcut!
+        
         
         var bridgeVector = Vector3D.built(from: straightA.getOrigin(), towards: straightB.getOrigin())
         
-        if bridgeVector.isZero() { return true }
+        if bridgeVector.isZero() { return true }   // Having the same origin means that they intersect.
         
-        bridgeVector.normalize()   // The zero length check above should keep this safe
+        bridgeVector.normalize()   // A zero case would have exited in the line above
+        
         
         var perp1 = try! Vector3D.crossProduct(lhs: straightA.getDirection(), rhs: bridgeVector)
-        perp1.normalize()   // The checks in crossProduct should keep this from being a zero vector
+        perp1.normalize()
         
         var perp2 = try! Vector3D.crossProduct(lhs: bridgeVector, rhs: straightA.getDirection())
-        perp2.normalize()   // The checks in crossProduct should keep this from being a zero vector
+        perp2.normalize()   
         
         let sameFlag = perp1 == perp2
         let oppFlag = Vector3D.isOpposite(lhs: perp1, rhs: perp2)
@@ -190,8 +199,8 @@ public struct Line: Equatable {
         
         guard Line.isCoplanar(straightA: straightA, straightB: straightB)  else { throw NonCoPlanarLinesError(enilA: straightA, enilB: straightB) }
         
-        if Line.isCoincident(straightA: straightA, trial: straightB.getOrigin())   { return straightB.getOrigin() }
-        if Line.isCoincident(straightA: straightB, trial: straightA.getOrigin())   { return straightA.getOrigin() }
+        if Line.isCoincident(straightA: straightA, pip: straightB.getOrigin())   { return straightB.getOrigin() }
+        if Line.isCoincident(straightA: straightB, pip: straightA.getOrigin())   { return straightA.getOrigin() }
         if straightA.getOrigin() == straightB.getOrigin()   { return straightA.getOrigin() }
         
         
@@ -224,7 +233,7 @@ public struct Line: Equatable {
 /// - SeeAlso:  isCoincident
 public func == (lhs: Line, rhs: Line) -> Bool   {
     
-    let flag1 = Line.isCoincident(straightA: lhs, trial: rhs.origin)
+    let flag1 = Line.isCoincident(straightA: lhs, pip: rhs.origin)
     
     let flag2 = lhs.direction == rhs.direction
     

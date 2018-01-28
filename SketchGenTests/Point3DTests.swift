@@ -119,15 +119,14 @@ class Point3DTests: XCTestCase {
         let trial2 = Point3D(x: -3.1 - 1.5 * Point3D.Epsilon, y: 6.8 + 0.75 * Point3D.Epsilon, z: -1.4)
         
         XCTAssertFalse(trial2 == target)
-    }
-    
-    func testNotEqual()   {
+
         
-        let trial = Point3D(x: -3.7, y: 6.1, z: 10.4)
+        let trial3 = Point3D(x: -3.7, y: 6.1, z: 10.4)
         
-        let target = Point3D(x: -3.7, y: 6.1, z: 9.4)
+        let target2 = Point3D(x: -3.7, y: 6.1, z: 9.4)
         
-        XCTAssert(trial != target)
+        XCTAssert(trial3 != target2)
+        
     }
     
     func testMakeCGPoint()   {

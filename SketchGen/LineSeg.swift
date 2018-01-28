@@ -81,8 +81,8 @@ public class LineSeg: PenCurve {    // Can this be a struct, instead?
     /// - Throws: CoincidentPointsError if it was scaled to be very small
     public func transform(xirtam: Transform) throws -> PenCurve {
         
-        let tAlpha = endAlpha.transform(xirtam: xirtam)
-        let tOmega = endOmega.transform(xirtam: xirtam)
+        let tAlpha = Point3D.transform(pip: endAlpha, xirtam: xirtam)
+        let tOmega = Point3D.transform(pip: endOmega, xirtam: xirtam)
         
         let transformed = try LineSeg(end1: tAlpha, end2: tOmega)   // Will generate a new extent
         transformed.setIntent(purpose: self.usage)   // Copy setting instead of having the default
@@ -125,7 +125,7 @@ public class LineSeg: PenCurve {    // Can this be a struct, instead?
         /// The output line
         var singleLine: String
         
-        let plotEnd = self.getOtherEnd().transform(xirtam: xirtam)
+        let plotEnd = Point3D.transform(pip: self.getOtherEnd(), xirtam: xirtam)
         
         let endX = Int(plotEnd.x + 0.5)   // The default is to round towards zero
         let endY = Int(plotEnd.y + 0.5)
@@ -172,6 +172,8 @@ public class LineSeg: PenCurve {    // Can this be a struct, instead?
     func getLength() -> Double   {
         return Point3D.dist(pt1: self.endAlpha, pt2: self.endOmega)
     }
+    
+    // TODO:  Add a function to generate n equally spaced points between end points
     
     /// Build a parallel line towards the inside
     /// Should this become a static func?

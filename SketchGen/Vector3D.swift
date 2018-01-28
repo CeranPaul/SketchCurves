@@ -76,15 +76,17 @@ public struct Vector3D: Equatable {
     }
     
     
-    /// Rotate by a matrix
+    /// Rotate or scale by a matrix.
+    /// The approach used here gives up polymorphism.
     /// - Parameters:
+    ///   - thataway: Original vector
     ///   - xirtam: The Transform to be applied
     /// - Returns: A new Vector
     /// - SeeAlso:  twistAbout()
     /// - See: 'testTransform' under Vector3DTests
-    public func transform(xirtam: Transform) -> Vector3D {
+    public static func transform(thataway: Vector3D, xirtam: Transform) -> Vector3D {
         
-        let dir4 = RowMtx4(valOne: self.i, valTwo: self.j, valThree: self.k, valFour: 0.0)
+        let dir4 = RowMtx4(valOne: thataway.i, valTwo: thataway.j, valThree: thataway.k, valFour: 0.0)
         let vec4 = dir4 * xirtam
         
         let transformed = vec4.toVector()

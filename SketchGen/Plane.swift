@@ -58,8 +58,11 @@ public struct Plane   {
         perpTo.normalize()
         
         self.normal = perpTo
+
     }
     
+    // TODO: Write a constructor from two lines, and possibly a line and a point.
+
     /// A getter for the point defining the plane
     /// - See: 'testLocationGetter' under PlaneTests
     public func getLocation() -> Point3D   {
@@ -161,12 +164,12 @@ public struct Plane   {
     }
     
     
-    /// Construct a parallel plane offset some distance
+    /// Construct a parallel plane offset some distance.
     /// - Parameters:
     ///   - base:  The reference plane
-    ///   - offset:  Desired separation
+    ///   - offset:  Desired separation. Can be positive or negative.
     ///   - reverse:  Flip the normal, or not
-    /// - Returns: Fresh plane, with separation
+    /// - Returns: Fresh plane that has separation
     /// - See: 'testBuildParallel' under PlaneTests
     public static func buildParallel(base: Plane, offset: Double, reverse: Bool) -> Plane  {
     

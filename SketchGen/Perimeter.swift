@@ -237,7 +237,7 @@ open class Perimeter {
         let firstStroke = self.pieces.first!
         let startPoint = firstStroke.getOneEnd()
         
-        let movePoint = startPoint.transform(xirtam: xirtam)
+        let movePoint = Point3D.transform(pip: startPoint, xirtam: xirtam)
         
         let endX = Int(movePoint.x + 0.5)   // The default is to round towards zero
         let endY = Int(movePoint.y + 0.5)

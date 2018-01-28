@@ -19,6 +19,8 @@
 		811EB7D1201A672500432F66 /* ZeroSweepError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 811EB7CF201A672500432F66 /* ZeroSweepError.swift */; };
 		811EB7D3201A68D700432F66 /* NonOrthogonalPointError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 811EB7D2201A68D700432F66 /* NonOrthogonalPointError.swift */; };
 		811EB7D4201A68D700432F66 /* NonOrthogonalPointError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 811EB7D2201A68D700432F66 /* NonOrthogonalPointError.swift */; };
+		811EB7D6201D8F7100432F66 /* ParameterRangeErrorUno.swift in Sources */ = {isa = PBXBuildFile; fileRef = 811EB7D5201D8F7100432F66 /* ParameterRangeErrorUno.swift */; };
+		811EB7D7201D8F7100432F66 /* ParameterRangeErrorUno.swift in Sources */ = {isa = PBXBuildFile; fileRef = 811EB7D5201D8F7100432F66 /* ParameterRangeErrorUno.swift */; };
 		812496901D0E0D8C0023A256 /* CoordinateSystem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8124968F1D0E0D8C0023A256 /* CoordinateSystem.swift */; };
 		812496921D0E0DFC0023A256 /* NonOrthogonalCSYSError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 812496911D0E0DFC0023A256 /* NonOrthogonalCSYSError.swift */; };
 		81414B001C08CE5E00A9DE83 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81414AFF1C08CE5E00A9DE83 /* AppDelegate.swift */; };
@@ -105,6 +107,7 @@
 		81078A741C587848001C21CD /* Ellipse.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Ellipse.swift; sourceTree = "<group>"; };
 		811EB7CF201A672500432F66 /* ZeroSweepError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZeroSweepError.swift; sourceTree = "<group>"; };
 		811EB7D2201A68D700432F66 /* NonOrthogonalPointError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NonOrthogonalPointError.swift; sourceTree = "<group>"; };
+		811EB7D5201D8F7100432F66 /* ParameterRangeErrorUno.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ParameterRangeErrorUno.swift; sourceTree = "<group>"; };
 		8124968F1D0E0D8C0023A256 /* CoordinateSystem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoordinateSystem.swift; sourceTree = "<group>"; };
 		812496911D0E0DFC0023A256 /* NonOrthogonalCSYSError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NonOrthogonalCSYSError.swift; sourceTree = "<group>"; };
 		81414AFC1C08CE5E00A9DE83 /* SketchGen.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SketchGen.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -192,6 +195,7 @@
 		81414AFE1C08CE5E00A9DE83 /* SketchGen */ = {
 			isa = PBXGroup;
 			children = (
+				811EB7D5201D8F7100432F66 /* ParameterRangeErrorUno.swift */,
 				818D17851D599DF200BE248A /* CurveDemo.swift */,
 				818D17831D599DF200BE248A /* Arc.swift */,
 				8124968F1D0E0D8C0023A256 /* CoordinateSystem.swift */,
@@ -391,6 +395,7 @@
 				81414B251C08CEE200A9DE83 /* OrthoVol.swift in Sources */,
 				81414B001C08CE5E00A9DE83 /* AppDelegate.swift in Sources */,
 				81414B271C08CEE200A9DE83 /* PenTypes.swift in Sources */,
+				811EB7D6201D8F7100432F66 /* ParameterRangeErrorUno.swift in Sources */,
 				81414B281C08CEE200A9DE83 /* Point3D.swift in Sources */,
 				81CDCC251C17E4D200060C8D /* CoincidentPlanesError.swift in Sources */,
 				8106F0031C1FA12C00C74FE6 /* Cubic.swift in Sources */,
@@ -425,6 +430,7 @@
 				814E0F601D3D65C900200289 /* SplineTests.swift in Sources */,
 				8183F2701C1A675A009CAF6B /* PlaneTests.swift in Sources */,
 				81F8D6CC1C51F65100A369CF /* PerimeterTests.swift in Sources */,
+				811EB7D7201D8F7100432F66 /* ParameterRangeErrorUno.swift in Sources */,
 				814F133F1C153EEA004AB22B /* OrthoVol.swift in Sources */,
 				814E0F5E1D3D64EF00200289 /* Spline.swift in Sources */,
 				81FEAAD31C4E9716000F0E2A /* Perimeter.swift in Sources */,

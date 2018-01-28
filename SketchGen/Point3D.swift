@@ -23,6 +23,7 @@ public struct  Point3D: Hashable {
     
     
     /// Create a new point by offsetting.
+    /// Should this become an overloaded addition function between a Point and Vector?
     /// - Parameters:
     ///   - jump:  Vector to be used as the offset
     /// - Returns: A new Point not too far away.
@@ -38,13 +39,16 @@ public struct  Point3D: Hashable {
     }
     
     /// Move, rotate, and/or scale by a matrix.
+    /// This could be alternately written as an overloaded multiplication function.
+    /// The approach used here gives up polymorphism.
     /// - Parameters:
+    ///   - pip:  The original point
     ///   - xirtam:  Matrix for the intended transformation
     /// - Returns: A new Point.
     /// - SeeAlso:  offset
-    public func transform(xirtam: Transform) -> Point3D {
+    public static func transform(pip: Point3D, xirtam: Transform) -> Point3D {
         
-        let pip4 = RowMtx4(valOne: self.x, valTwo: self.y, valThree: self.z, valFour: 1.0)
+        let pip4 = RowMtx4(valOne: pip.x, valTwo: pip.y, valThree: pip.z, valFour: 1.0)
         let tniop4 = pip4 * xirtam
         
         let transformed = tniop4.toPoint()
@@ -53,10 +57,11 @@ public struct  Point3D: Hashable {
     
     
     /// Calculate the distance between two of 'em.
+    /// Should this become an overloaded subtract function?
     /// - Parameters:
     ///   - pt1:  One point.
     ///   - pt2:  Another point.
-    /// - Returns: Double.
+    /// - Returns: Always positive Double.
     /// - See: 'testDist' under Point3DTests
     public static func dist(pt1: Point3D, pt2: Point3D) -> Double   {
         
@@ -69,6 +74,7 @@ public struct  Point3D: Hashable {
         return sqrt(sum)
     }
     
+    
     /// Create a point midway between two others.
     /// - Parameters:
     ///   - alpha:  One boundary
@@ -79,6 +85,7 @@ public struct  Point3D: Hashable {
         
         return Point3D(x: (alpha.x + beta.x) / 2.0, y: (alpha.y + beta.y) / 2.0, z: (alpha.z + beta.z) / 2.0)
     }
+    
     
     /// Determine the angle (in radians) CCW from the positive X axis in the XY plane.
     /// - Parameters:
@@ -102,6 +109,7 @@ public struct  Point3D: Hashable {
         
         return ang
     }
+    
     
     /// Check if three points have no duplicates.  Useful for building triangles, or defining arcs.
     /// - Parameters:
@@ -139,6 +147,7 @@ public struct  Point3D: Hashable {
         return flag1
     }
     
+    
     /// Throw away the Z value and convert
     /// Should this become a computed member variable?
     /// - Returns: A CGPoint.
@@ -148,11 +157,12 @@ public struct  Point3D: Hashable {
         return CGPoint(x: pip.x, y: pip.y)
     }
     
+    
     /// Check to see that the distance between the two is less than Point3D.Epsilon.
-    /// - See: 'testEqual' and 'testNotEqual' under Point3DTests
+    /// - See: 'testEqual' under Point3DTests
     public static func == (lhs: Point3D, rhs: Point3D) -> Bool   {
         
-        let separation = Point3D.dist(pt1: lhs, pt2: rhs)
+        let separation = Point3D.dist(pt1: lhs, pt2: rhs)   // Always positive
         
         return separation < Point3D.Epsilon
     }

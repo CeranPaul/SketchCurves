@@ -260,11 +260,11 @@ open class Cubic: PenCurve   {
     /// Create a new curve translated, scaled, and rotated by the matrix.
     public func transform(xirtam: Transform) -> PenCurve   {
         
-        let tAlpha = self.ptAlpha.transform(xirtam: xirtam)
-        let tOmega = self.ptOmega.transform(xirtam: xirtam)
+        let tAlpha = Point3D.transform(pip: self.ptAlpha, xirtam: xirtam)
+        let tOmega = Point3D.transform(pip: self.ptOmega, xirtam: xirtam)
         
-        let tControlA = self.controlA!.transform(xirtam: xirtam)
-        let tControlB = self.controlB!.transform(xirtam: xirtam)
+        let tControlA = Point3D.transform(pip: self.controlA!, xirtam: xirtam)
+        let tControlB = Point3D.transform(pip: self.controlB!, xirtam: xirtam)
         
         let fresh = Cubic(ptA: tAlpha, controlA: tControlA, controlB: tControlB, ptB: tOmega)
         fresh.setIntent(purpose: self.usage)   // Copy setting instead of having the default
@@ -907,18 +907,18 @@ open class Cubic: PenCurve   {
         /// The output line
         var singleLine: String
         
-        let plotCtrlA = controlA!.transform(xirtam: xirtam)
+        let plotCtrlA = Point3D.transform(pip: controlA!, xirtam: xirtam)
         
         let ctrlAX = Int(plotCtrlA.x + 0.5)   // The default is to round towards zero
         let ctrlAY = Int(plotCtrlA.y + 0.5)
         
-        let plotCtrlB = controlB!.transform(xirtam: xirtam)
+        let plotCtrlB = Point3D.transform(pip: controlB!, xirtam: xirtam)
         
         let ctrlBX = Int(plotCtrlB.x + 0.5)   // The default is to round towards zero
         let ctrlBY = Int(plotCtrlB.y + 0.5)
         
         
-        let plotEnd = ptOmega.transform(xirtam: xirtam)
+        let plotEnd = Point3D.transform(pip: ptOmega, xirtam: xirtam)
         
         let endX = Int(plotEnd.x + 0.5)   // The default is to round towards zero
         let endY = Int(plotEnd.y + 0.5)

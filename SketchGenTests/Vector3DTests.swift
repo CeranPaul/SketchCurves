@@ -228,7 +228,7 @@ class Vector3DTests: XCTestCase {
         
         let t = Transform(rotationAxis: Axis.z, angleRad: Double.pi / 4.0)
         
-        let swung = orig.transform(xirtam: t)
+        let swung = Vector3D.transform(thataway: orig, xirtam: t)
         
         XCTAssertEqual(swung, target)
     }

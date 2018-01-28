@@ -335,7 +335,7 @@ class ArcTests: XCTestCase {
         
         var plop = try! shoulder.pointAt(t: 0.5)
         
-        let flag1 = Line.isCoincident(straightA: ray, trial: plop)
+        let flag1 = Line.isCoincident(straightA: ray, pip: plop)
         
         XCTAssert(flag1)
         
@@ -351,7 +351,7 @@ class ArcTests: XCTestCase {
         
         plop = try! sunSetting.pointAt(t: 0.666667)
         
-        XCTAssert(Line.isCoincident(straightA: ray2, trial: plop))
+        XCTAssert(Line.isCoincident(straightA: ray2, pip: plop))
         
         // TODO: Add tests in a non-XY plane
 
@@ -366,7 +366,7 @@ class ArcTests: XCTestCase {
         var ray3 = try! Line(spot: ctr, arrow: clock2)
         
         plop = try! sunSetting2.pointAt(t: 0.666667)
-        XCTAssert(Line.isCoincident(straightA: ray3, trial: plop))
+        XCTAssert(Line.isCoincident(straightA: ray3, pip: plop))
         
         
         let countdown = try! Arc(center: ctr, end1: checker, end2: green, useSmallAngle: false)
@@ -375,7 +375,7 @@ class ArcTests: XCTestCase {
         ray3 = try! Line(spot: ctr, arrow: clock)
         
         plop = try! countdown.pointAt(t: 0.333333)
-        XCTAssert(Line.isCoincident(straightA: ray3, trial: plop))
+        XCTAssert(Line.isCoincident(straightA: ray3, pip: plop))
         
     }
     
@@ -398,7 +398,7 @@ class ArcTests: XCTestCase {
         
         var plop = try! shoulder.pointAt(t: 0.666667)
         
-        XCTAssert(Line.isCoincident(straightA: ray1, trial: plop))
+        XCTAssert(Line.isCoincident(straightA: ray1, pip: plop))
         
         
         shoulder.reverse()
@@ -410,7 +410,7 @@ class ArcTests: XCTestCase {
         
         plop = try! shoulder.pointAt(t: 0.666667)
         
-        XCTAssert(Line.isCoincident(straightA: ray2, trial: plop))
+        XCTAssert(Line.isCoincident(straightA: ray2, pip: plop))
     }
     
     func testEquals() {

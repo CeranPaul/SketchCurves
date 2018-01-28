@@ -86,7 +86,7 @@ class TransformPlusTests: XCTestCase {
         
         let tform = Transform(deltaX: -2.0, deltaY: 3.0, deltaZ: 1.5)
         
-        let trial = source.transform(xirtam: tform)
+        let trial = Point3D.transform(pip: source, xirtam: tform)
         
         XCTAssertEqual(trial.x, -1.0)
         XCTAssertEqual(trial.y, 8.0)
@@ -101,7 +101,7 @@ class TransformPlusTests: XCTestCase {
         
         let shrink = Transform(scaleX: 0.8, scaleY: -0.5, scaleZ: 1.4)
         
-        let trial = source.transform(xirtam: shrink)
+        let trial = Point3D.transform(pip: source, xirtam: shrink)
         
         XCTAssertEqual(trial.x, 4.0)
         XCTAssertEqual(trial.y, 2.5)

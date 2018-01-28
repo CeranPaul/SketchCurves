@@ -10,16 +10,6 @@ import XCTest
 
 class LineTests: XCTestCase {
 
-    override func setUp() {
-        super.setUp()
-        // Put setup code here. This method is called before the invocation of each test method in the class.
-    }
-    
-    override func tearDown() {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
-        super.tearDown()
-    }
-
     /// Verify the fidelity of recording the inputs
     func testFidelity()  {
         
@@ -38,6 +28,7 @@ class LineTests: XCTestCase {
         XCTAssert(contrail.getDirection().i == 12.0 / 13.0)
         XCTAssert(contrail.getDirection().j == 3.0 / 13.0)
         XCTAssert(contrail.getDirection().k == 4.0 / 13.0)
+        
         
            // Check that one of the guard statements works
         do {
@@ -74,30 +65,6 @@ class LineTests: XCTestCase {
         
     }
     
-    func testIsCoincident()   {
-        
-        let flatOrig = Point3D(x: 1.0, y: 2.0, z: 3.0)
-        var flatDir = Vector3D(i: 1.0, j: 1.0, k: 1.0)
-        flatDir.normalize()
-        
-        let contrail = try! Line(spot: flatOrig, arrow: flatDir)
-        
-        let trialOff = Point3D(x: 1.0, y: 2.0, z: 4.0)
-        
-        XCTAssertFalse(Line.isCoincident(straightA: contrail, trial: trialOff))
-        
-        
-        let trialOn = Point3D(x: 3.5, y: 4.5, z: 5.5)
-        
-        XCTAssert(Line.isCoincident(straightA: contrail, trial: trialOn))
-        
-        
-        let trialCoin = Point3D(x: 1.0, y: 2.0, z: 3.0)
-        
-        XCTAssert(Line.isCoincident(straightA: contrail, trial: trialCoin))
-        
-    }
-    
     func testDropPoint()   {
         
         let trailhead = Point3D(x: 4.0, y: 2.0, z: 1.0)
@@ -126,6 +93,32 @@ class LineTests: XCTestCase {
         
     }
     
+    /// For a line and a point
+    func testIsCoincidentPoint()   {
+        
+        let flatOrig = Point3D(x: 1.0, y: 2.0, z: 3.0)
+        var flatDir = Vector3D(i: 1.0, j: 1.0, k: 1.0)
+        flatDir.normalize()
+        
+        let contrail = try! Line(spot: flatOrig, arrow: flatDir)
+        
+        let trialOff = Point3D(x: 1.0, y: 2.0, z: 4.0)
+        
+        XCTAssertFalse(Line.isCoincident(straightA: contrail, pip: trialOff))
+        
+        
+        let trialOn = Point3D(x: 3.5, y: 4.5, z: 5.5)
+        
+        XCTAssert(Line.isCoincident(straightA: contrail, pip: trialOn))
+        
+        
+        let trialCoin = Point3D(x: 1.0, y: 2.0, z: 3.0)
+        
+        XCTAssert(Line.isCoincident(straightA: contrail, pip: trialCoin))
+        
+    }
+    
+    
     func testIsCoincidentLine()   {
         
         let gOrig = Point3D(x: 5.0, y: 8.5, z: -1.25)
@@ -143,12 +136,75 @@ class LineTests: XCTestCase {
         XCTAssert(Line.isCoincident(straightA: redstone, straightB: titan))
         
         
+           // Not parallel
         pDir = Vector3D(i: -1.0, j: 1.0, k: 1.0)
         pDir.normalize()
         
         let atlas = try! Line(spot: pOrig, arrow: pDir)
         XCTAssertFalse(Line.isCoincident(straightA: redstone, straightB: atlas))
 
+        
+           // Parallel, but not lying over one another
+        let pOrig2 = Point3D(x: 3.0, y: 6.5, z: -2.25)
+        let titan2 = try! Line(spot: pOrig2, arrow: pDir)
+        
+        XCTAssertFalse(Line.isCoincident(straightA: redstone, straightB: titan2))
+        
+    }
+    
+    func testIsCoPlanar()   {
+        
+        let orig1 = Point3D(x: 10.5, y: 5.5, z: 1.0)
+        let dir1 = Vector3D(i: 0.0, j: 0.0, k: 1.0)
+        
+        let arrow1 = try! Line(spot: orig1, arrow: dir1)
+        
+        let orig2 = Point3D(x: 6.2, y: 5.5, z: 3.0)
+        let dir2 = Vector3D(i: 1.0, j: 0.0, k: 0.0)
+        
+        let arrow2 = try! Line(spot: orig2, arrow: dir2)
+        
+        XCTAssert(Line.isCoplanar(straightA: arrow1, straightB: arrow2))
+        
+        
+           // Coincident origin case
+        let dir3 = Vector3D(i: 1.0, j: 0.0, k: 0.0)
+        
+        let arrow3 = try! Line(spot: orig1, arrow: dir3)
+        
+        XCTAssert(Line.isCoplanar(straightA: arrow1, straightB: arrow3))
+        
+
+           // Coincident case
+        let gOrig = Point3D(x: 5.0, y: 8.5, z: -1.25)
+        var gDir = Vector3D(i: -1.0, j: -1.0, k: -1.0)
+        gDir.normalize()
+        
+        let redstone = try! Line(spot: gOrig, arrow: gDir)
+        
+        let pOrig = Point3D(x: 3.0, y: 6.5, z: -3.25)
+        var pDir = Vector3D(i: -1.0, j: -1.0, k: -1.0)
+        pDir.normalize()
+        
+        let titan = try! Line(spot: pOrig, arrow: pDir)
+        
+        XCTAssert(Line.isCoplanar(straightA: redstone, straightB: titan))
+        
+        
+           // No intersection case
+//        let orig4 = Point3D(x: 10.5, y: 5.5, z: 1.0)
+//        let dir4 = Vector3D(i: 0.0, j: 0.0, k: 1.0)
+//        
+//        let arrow4 = try! Line(spot: orig4, arrow: dir4)
+//        
+//        let orig5 = Point3D(x: 6.2, y: 6.5, z: 3.0)
+//        let dir5 = Vector3D(i: 1.0, j: 0.0, k: 0.0)
+//        
+//        let arrow5 = try! Line(spot: orig5, arrow: dir5)
+//        
+//        XCTAssertFalse(Line.isCoplanar(straightA: arrow4, straightB: arrow5))
+        
+        
     }
     
     
@@ -203,7 +259,7 @@ class LineTests: XCTestCase {
         
     }
 
-    func testResolvePoint()   {
+    func testResolveRelativePoint()   {
         
         let orig = Point3D(x: 2.0, y: 1.5, z: 0.0)
         let thataway = Vector3D(i: 1.0, j: 0.0, k: 0.0)
