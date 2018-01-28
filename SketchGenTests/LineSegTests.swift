@@ -2,8 +2,8 @@
 //  LineSegTests.swift
 //  SketchCurves
 //
-//  Created by Paul Hollingshead on 11/3/15.
-//  Copyright © 2016 Ceran Digital Media. All rights reserved.  See LICENSE.md
+//  Created by Paul on 11/3/15.
+//  Copyright © 2018 Ceran Digital Media. All rights reserved.  See LICENSE.md
 //
 
 import XCTest

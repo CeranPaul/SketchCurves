@@ -10,8 +10,7 @@ import UIKit
 
 /// A circular arc - either whole, or a portion - in any plane.
 /// The code compiles, but beware of the results!
-/// This DOES NOT handle the case of precisely half a circle.
-/// - SeeAlso:  Ellipse
+/// - SeeAlso:  Ellipse and the overloaded ==
 public class Arc: PenCurve {
     
     /// Point around which the arc is swept
@@ -45,60 +44,6 @@ public class Arc: PenCurve {
     
     
     
-    /// The simplest initializer
-    /// - Parameters:
-    ///   - center: Point3D used for pivoting
-    ///   - axis: Unit vector, often in the +Z direction
-    ///   - end1: Starting point
-    ///   - sweep: Angle (in radians) in the CCW direction.  Can be positive or negative
-    /// - Throws: ZeroVectorError, NonUnitDirectionError, CoincidentPointsError, ZeroSweepError, or NonOrthogonalPointError
-    /// - SeeAlso:  The other initializer
-    /// - See: 'testFidelity', and 'testFindAxis' under ArcTests
-    public init(center: Point3D, axis: Vector3D, end1: Point3D, sweep: Double) throws   {
-        
-        guard (!axis.isZero()) else  {throw ZeroVectorError(dir: axis)}
-        guard (axis.isUnit()) else  {throw NonUnitDirectionError(dir: axis)}
-        
-        guard (center != end1)  else  { throw CoincidentPointsError(dupePt: end1) }
-
-        guard (sweep != 0.0)  else  { throw ZeroSweepError(ctr: center) }
-        
-        let horiz = Vector3D.built(from: center, towards: end1, unit: true)
-        
-        guard (Vector3D.dotProduct(lhs: axis, rhs: horiz) == 0.0)  else  { throw NonOrthogonalPointError(trats: end1) }
-        
-        
-        self.ctr = center
-        self.axisDir = axis
-        self.start = end1
-        self.sweepAngle = sweep
-        
-        self.rad = Point3D.dist(pt1: self.ctr, pt2: self.start)
-        
-            
-        /// A vector perpendicular to horiz in the plane of the circle
-        let vert = try! Vector3D.crossProduct(lhs: self.axisDir, rhs: horiz)
-            
-        let magnitudeH = self.rad * cos(sweepAngle)
-        let deltaH = horiz * magnitudeH
-            
-        let magnitudeV = self.rad * sin(sweepAngle)
-        let deltaV = vert * magnitudeV
-            
-        let jump = deltaH + deltaV
-            
-        self.finish = self.ctr.offset(jump: jump)
-        
-        
-        self.usage = PenTypes.ordinary   // Use 'setIntent' to attach a different desired value
-        
-        self.parameterRange = ClosedRange<Double>(uncheckedBounds: (lower: 0.0, upper: 1.0))
-        
-        self.isFull = false
-        if abs(self.sweepAngle) == 2.0 * Double.pi   { self.isFull = true }
-        
-    }
-    
     
     /// Build an arc from a center and two terminating points - perhaps tangent points.
     /// Direction is derived from the ordering of end1 and end2.
@@ -111,6 +56,7 @@ public class Arc: PenCurve {
     /// - Throws:
     ///   - ArcPointsError for two different cases
     ///   - IdenticalVectorError for attempted half or whole arcs
+    /// - See: 'testFidelityThreePoints' under ArcTests
     /// - SeeAlso:  The other initializer
     public init(center: Point3D, end1: Point3D, end2: Point3D, useSmallAngle: Bool) throws   {
         
@@ -124,7 +70,7 @@ public class Arc: PenCurve {
         let vecStart = Vector3D.built(from: center, towards: end1, unit: true)
         let vecFinish = Vector3D.built(from: center, towards: end2, unit: true)
         
-        var spin = try! Vector3D.crossProduct(lhs: vecStart, rhs: vecFinish)   // Guard statement should protect this
+        var spin = try Vector3D.crossProduct(lhs: vecStart, rhs: vecFinish)   // Guard statement should prevent opposite or equal vectors
         spin.normalize()
         
         self.axisDir = spin
@@ -152,6 +98,63 @@ public class Arc: PenCurve {
     }
     
     
+    /// Construct from center, axis, start, and sweep angle.
+    /// - Parameters:
+    ///   - center: Point3D used for pivoting
+    ///   - axis: Unit vector, often in the +Z direction
+    ///   - end1: Starting point
+    ///   - sweep: Angle (in radians) in the CCW direction.  Can be positive or negative
+    /// - Throws: ZeroVectorError, NonUnitDirectionError, CoincidentPointsError, ZeroSweepError, or NonOrthogonalPointError
+    /// - SeeAlso:  The other initializer from three points
+    /// - See: 'testFidelityCASS' under ArcTests
+    public init(center: Point3D, axis: Vector3D, end1: Point3D, sweep: Double) throws   {
+        
+        guard (!axis.isZero()) else  {throw ZeroVectorError(dir: axis)}
+        guard (axis.isUnit()) else  {throw NonUnitDirectionError(dir: axis)}
+        
+        guard (center != end1)  else  { throw CoincidentPointsError(dupePt: end1) }
+        
+        guard (sweep != 0.0)  else  { throw ZeroSweepError(ctr: center) }
+        
+        let horiz = Vector3D.built(from: center, towards: end1, unit: true)
+        
+        guard (Vector3D.dotProduct(lhs: axis, rhs: horiz) == 0.0)  else  { throw NonOrthogonalPointError(trats: end1) }
+        
+        
+        self.ctr = center
+        self.axisDir = axis
+        self.start = end1
+        self.sweepAngle = sweep
+        
+        self.rad = Point3D.dist(pt1: self.ctr, pt2: self.start)
+        
+        
+        // Generate the terminating point
+        
+        /// A vector perpendicular to horiz in the plane of the circle
+        let vert = try! Vector3D.crossProduct(lhs: self.axisDir, rhs: horiz)
+        
+        let magnitudeH = self.rad * cos(sweepAngle)
+        let deltaH = horiz * magnitudeH
+        
+        let magnitudeV = self.rad * sin(sweepAngle)
+        let deltaV = vert * magnitudeV
+        
+        let endJump = deltaH + deltaV
+        
+        self.finish = self.ctr.offset(jump: endJump)
+        
+        
+        self.usage = PenTypes.ordinary   // Use 'setIntent' to attach a different desired value
+        
+        self.parameterRange = ClosedRange<Double>(uncheckedBounds: (lower: 0.0, upper: 1.0))
+        
+        self.isFull = false
+        if abs(self.sweepAngle) == 2.0 * Double.pi   { self.isFull = true }
+        
+    }
+    
+
     
     /// Simple getter for the center point
     open func getCenter() -> Point3D   {
@@ -449,11 +452,13 @@ public class Arc: PenCurve {
     
     
     
-    /// Check three points to see if they fit the pattern for defining an Arc
+    /// Check three points to see if they fit the pattern for defining an Arc.
+    /// Different here is the check for equal distance from the center.
     /// - Parameters:
     ///   - center: Point3D used for pivoting
     ///   - end1: Point3D on the perimeter
     ///   - end2: Point3D on the perimeter
+    /// - Returns: Simple flag
     public static func isArcable(center: Point3D, end1: Point3D, end2: Point3D) -> Bool  {
         
         if !Point3D.isThreeUnique(alpha: center, beta: end1, gamma: end2)  { return false }
@@ -464,14 +469,15 @@ public class Arc: PenCurve {
         let dist1 = Point3D.dist(pt1: center, pt2: end1)
         let dist2 = Point3D.dist(pt1: center, pt2: end2)
         
-        let thumbsUp = abs(dist1 - dist2) < Point3D.Epsilon
+        let equidistant = abs(dist1 - dist2) < Point3D.Epsilon
+        
         
         let vecStart = Vector3D.built(from: center, towards: end1, unit: true)
         let vecFinish = Vector3D.built(from: center, towards: end2, unit: true)
         
-        let flag1 = Vector3D.isOpposite(lhs: vecStart, rhs: vecFinish)
+        let oppflag = Vector3D.isOpposite(lhs: vecStart, rhs: vecFinish)
         
-        return thumbsUp && !flag1
+        return equidistant && !oppflag
     }
     
 
@@ -517,6 +523,7 @@ public class Arc: PenCurve {
     /// Check for two having the same center point and axis
     /// - Parameter: lhs: One Arc
     /// - Parameter: rhs: Another Arc
+    /// - Returns: Simple flag
     /// - SeeAlso:  Overloaded ==
     public static func isConcentric(lhs: Arc, rhs: Arc) -> Bool  {
         
@@ -529,7 +536,7 @@ public class Arc: PenCurve {
         return ctrFlag && axisFlag
     }
     
-    /// Plot the arc segment.  This will be called by the UIView 'drawRect' function
+    /// Plot the arc segment.  This will be called by the UIView 'drawRect' function.
     /// - Warning:  This only works in the XY plane
     /// - Parameters:
     ///   - context: In-use graphics framework
@@ -563,8 +570,8 @@ public class Arc: PenCurve {
 }    // End of definition for class Arc
 
 
-/// Check to see that both are built from the same points.
-/// Should this be modified to include the complementary definition?
+/// Check to see that both are built from the same entities and values.
+/// Should this be modified to compare against the complementary definition?
 /// - SeeAlso:  Arc.isConcentric
 public func == (lhs: Arc, rhs: Arc) -> Bool   {
     

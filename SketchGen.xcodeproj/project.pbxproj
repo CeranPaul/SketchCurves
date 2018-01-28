@@ -216,8 +216,6 @@
 				81414B061C08CE5E00A9DE83 /* Assets.xcassets */,
 				81414B081C08CE5E00A9DE83 /* LaunchScreen.storyboard */,
 				81414B0B1C08CE5E00A9DE83 /* Info.plist */,
-				811EB7CF201A672500432F66 /* ZeroSweepError.swift */,
-				811EB7D2201A68D700432F66 /* NonOrthogonalPointError.swift */,
 			);
 			path = SketchGen;
 			sourceTree = "<group>";
@@ -253,10 +251,12 @@
 				81414B2D1C08CF2B00A9DE83 /* CoincidentPointsError.swift */,
 				81FEAAAA1C435AF0000F0E2A /* NonCoPlanarLinesError.swift */,
 				812496911D0E0DFC0023A256 /* NonOrthogonalCSYSError.swift */,
+				811EB7D2201A68D700432F66 /* NonOrthogonalPointError.swift */,
 				8183F2671C1A0872009CAF6B /* NonUnitDirectionError.swift */,
 				81CDCC201C17E41400060C8D /* ParallelError.swift */,
 				81FEAAA71C4359B1000F0E2A /* ParallelLinesError.swift */,
 				81CDCC261C17E4F000060C8D /* ParallelPlanesError.swift */,
+				811EB7CF201A672500432F66 /* ZeroSweepError.swift */,
 				8183F26A1C1A0A16009CAF6B /* ZeroVectorError.swift */,
 			);
 			name = Errors;

@@ -2,7 +2,7 @@
 //  CoincidentPlanesError.swift
 //  Tesstest
 //
-//  Created by Paul Hollingshead on 9/21/15.
+//  Created by Paul on 9/21/15.
 //  Copyright © 2018 Ceran Digital Media. All rights reserved.
 //
 

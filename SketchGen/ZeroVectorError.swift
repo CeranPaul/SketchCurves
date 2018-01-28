@@ -1,7 +1,7 @@
 //
 //  ZeroVectorError.swift
 //
-//  Created by Paul Hollingshead on 12/10/15.
+//  Created by Paul on 12/10/15.
 //  Copyright © 2018 Ceran Digital Media. All rights reserved.
 //
 

@@ -2,7 +2,7 @@
 //  IdenticalVectorError.swift
 //  SketchGen
 //
-//  Created by Paul Hollingshead on 7/15/16.
+//  Created by Paul on 7/15/16.
 //  Copyright © 2018 Ceran Digital Media. All rights reserved.
 //
 

@@ -2,7 +2,7 @@
 //  NonCoPlanarLinesError.swift
 //  SketchGen
 //
-//  Created by Paul Hollingshead on 1/10/16.
+//  Created by Paul on 1/10/16.
 //  Copyright © 2018 Ceran Digital Media. All rights reserved.  See LICENSE.md
 //
 

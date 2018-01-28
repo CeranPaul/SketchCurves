@@ -2,7 +2,7 @@
 //  NonOrthogonalPointError.swift
 //  SketchGen
 //
-//  Created by Paul Hollingshead on 1/25/18.
+//  Created by Paul on 1/25/18.
 //  Copyright © 2018 Ceran Digital Media. All rights reserved.
 //
 
