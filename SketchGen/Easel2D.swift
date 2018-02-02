@@ -70,6 +70,7 @@ class Easel2D: UIView {
         
         modelToDisplay = tforms.toDisplay
         displayToModel = tforms.toModel
+        
     }
     
     
@@ -168,6 +169,8 @@ class Easel2D: UIView {
         
         /// The combined matrix based on the plot parameters
         let modelToDisplay = modelScale.concatenating(modelTranslate)
+        
+        /// Useful for interpreting screen picks
         let displayToModel = modelToDisplay.inverted()
         
         return (modelToDisplay, displayToModel)

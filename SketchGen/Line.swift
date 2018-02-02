@@ -229,7 +229,7 @@ public struct Line: Equatable {
 
 
 /// Check to see that the second origin lies on the first Line, and that
-///  the directions are identical  Opposite direction will fail this test
+///  the directions are identical.  Opposite direction will fail this test.
 /// - SeeAlso:  isCoincident
 public func == (lhs: Line, rhs: Line) -> Bool   {
     

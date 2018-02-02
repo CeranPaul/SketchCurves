@@ -207,6 +207,43 @@ class LineTests: XCTestCase {
         
     }
     
+    func testIsParallel()   {
+        
+        // Coincident case
+        let gOrig = Point3D(x: 5.0, y: 8.5, z: -1.25)
+        var gDir = Vector3D(i: 1.0, j: 1.0, k: 1.0)
+        gDir.normalize()
+        
+        let redstone = try! Line(spot: gOrig, arrow: gDir)
+        
+        var pOrig = Point3D(x: 3.0, y: 6.5, z: -3.25)
+        var pDir = Vector3D(i: 1.0, j: 1.0, k: 1.0)
+        pDir.normalize()
+        
+        let titan = try! Line(spot: pOrig, arrow: pDir)
+        
+        XCTAssert(Line.isParallel(straightA: redstone, straightB: titan))    // They happen to be coincident
+        
+        
+        pOrig = Point3D(x: 5.0, y: 6.5, z: -3.25)
+
+        let titan2 = try! Line(spot: pOrig, arrow: pDir)
+        
+        XCTAssert(Line.isParallel(straightA: redstone, straightB: titan2))
+        
+        
+           // Not parallel
+        pOrig = Point3D(x: 3.0, y: 6.5, z: -3.25)
+        pDir = Vector3D(i: 1.0, j: -1.0, k: 1.0)
+        pDir.normalize()
+        
+        let titan3 = try! Line(spot: pOrig, arrow: pDir)
+        
+        XCTAssertFalse(Line.isParallel(straightA: redstone, straightB: titan3))    // Shouldn't show as parallel
+        
+
+    }
+    
     
     func testIntersectTwo()   {
         

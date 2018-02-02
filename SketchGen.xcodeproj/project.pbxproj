@@ -195,7 +195,6 @@
 		81414AFE1C08CE5E00A9DE83 /* SketchGen */ = {
 			isa = PBXGroup;
 			children = (
-				811EB7D5201D8F7100432F66 /* ParameterRangeErrorUno.swift */,
 				818D17851D599DF200BE248A /* CurveDemo.swift */,
 				818D17831D599DF200BE248A /* Arc.swift */,
 				8124968F1D0E0D8C0023A256 /* CoordinateSystem.swift */,
@@ -248,6 +247,7 @@
 		81FEAAD01C4E9411000F0E2A /* Errors */ = {
 			isa = PBXGroup;
 			children = (
+				811EB7D5201D8F7100432F66 /* ParameterRangeErrorUno.swift */,
 				814E0F521D39F31300200289 /* IdenticalVectorError.swift */,
 				81414B2A1C08CF0500A9DE83 /* ArcPointsError.swift */,
 				81FEAAA41C4348EE000F0E2A /* CoincidentLinesError.swift */,
