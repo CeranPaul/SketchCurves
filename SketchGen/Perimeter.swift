@@ -8,8 +8,9 @@
 
 import UIKit
 
-/// A closed boundary that is the result of the sketch
-/// Interior voids have only been tested one deep
+/// A closed boundary that is the result of the sketch.
+/// This is being abandoned - to be replaced by Silhouette and Loop.
+/// Interior voids have only been tested one deep.
 open class Perimeter {
     
     /// The component list

@@ -8,7 +8,7 @@
 
 import Foundation
 
-/// Built the way I was taught in college, as opposed to being twisted to use SIMD.
+/// Matrix built the way I was taught in college, as opposed to being twisted to use SIMD.
 /// This uses some overloaded operators.
 open class Transform   {
     
@@ -344,6 +344,8 @@ public func * (pre: RowMtx4, mtx: Transform) -> RowMtx4   {
 }
 
     //TODO: Add a post multiplication function and its tests
+
+//TODO: Add an identity check?
 
 /// Combine rotations by multiplying two square matrices
 /// - See:

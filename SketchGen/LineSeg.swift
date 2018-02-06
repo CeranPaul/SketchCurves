@@ -165,6 +165,8 @@ public class LineSeg: PenCurve {    // Can this be a struct, instead?
     }
     
     /// Find two vectors describing the position of a point relative to the LineSeg.
+    /// - Parameters:
+    ///   - speck:  Point of interest
     /// - Returns: Tuple of vectors - one along the seg, other perp to it
     /// - See: 'testResolveRelative' under LineSegTests
     public func resolveRelative(speck: Point3D) -> (along: Vector3D, perp: Vector3D)   {
@@ -180,6 +182,7 @@ public class LineSeg: PenCurve {    // Can this be a struct, instead?
         
         return (alongVector, perpVector)
     }
+    
     
     /// See if another segment crosses this one
     /// Used for seeing if a screen gesture cuts across the current seg

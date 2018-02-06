@@ -3,7 +3,7 @@
 //  SketchCurves
 //
 //  Created by Paul on 6/6/16.
-//  Copyright © 2016 Ceran Digital Media. All rights reserved.  See LICENSE.md
+//  Copyright © 2018 Ceran Digital Media. All rights reserved.  See LICENSE.md
 //
 
 import Foundation
@@ -11,16 +11,19 @@ import Foundation
 /// Three coordinates and three orthogonal axes
 open class CoordinateSystem   {
     
-    var origin: Point3D
+    /// Can be changed with 'relocate' function
+    private var origin: Point3D
     
-    var axisX: Vector3D
-    var axisY: Vector3D
-    var axisZ: Vector3D
+       // To assure the property of being mutually orthogonal
+    private var axisX: Vector3D
+    private var axisY: Vector3D
+    private var axisZ: Vector3D
     
     
-    /// Construct an equivalent to the global CSYS
-    /// Can be changed by static function "relocate"
-    init()   {
+    /// Construct an equivalent to the global CSYS.
+    /// Origin can be changed by static function 'relocate'.
+    /// - See: 'testFidelity1' under CoordinateSystemTests
+    public init()   {
         
         self.origin = Point3D(x: 0.0, y: 0.0, z: 0.0)
         self.axisX = Vector3D(i: 1.0, j: 0.0, k: 0.0)
@@ -28,6 +31,7 @@ open class CoordinateSystem   {
         self.axisZ = Vector3D(i: 0.0, j: 0.0, k: 1.0)
         
     }
+    
     
     /// Construct from a point and three vectors
     /// - Parameters:
@@ -38,35 +42,44 @@ open class CoordinateSystem   {
     /// - Throws:
     ///   - NonUnitDirectionError for any bad input vector
     ///   - NonOrthogonalCSYSError if the inputs, as a set, aren't good
-    init(spot: Point3D, alpha: Vector3D, beta: Vector3D, gamma: Vector3D) throws   {
+    /// - See: 'testFidelity2' under CoordinateSystemTests
+    public init(spot: Point3D, alpha: Vector3D, beta: Vector3D, gamma: Vector3D) throws   {
         
         self.origin = spot
         
+        guard (alpha.isUnit()) else {  throw NonUnitDirectionError(dir: alpha) }
         self.axisX = alpha
+        
+        guard (beta.isUnit()) else {  throw NonUnitDirectionError(dir: beta) }
         self.axisY = beta
+        
+        guard (gamma.isUnit()) else {  throw NonUnitDirectionError(dir: gamma) }
         self.axisZ = gamma
         
-        guard (axisX.isUnit()) else {  throw NonUnitDirectionError(dir: self.axisX) }
-        guard (axisY.isUnit()) else {  throw NonUnitDirectionError(dir: self.axisY) }
-        guard (axisZ.isUnit()) else {  throw NonUnitDirectionError(dir: self.axisZ) }
         
         guard (CoordinateSystem.isMutOrtho(uno: axisX, dos: axisY, tres: axisZ)) else { throw NonOrthogonalCSYSError() }
         
     }
     
-    /// Generate from two vectors and a point
+    /// Generate from two vectors and a point.
     /// - Parameters:
     ///   - spot: Point to serve as the origin
     ///   - direction1: A Vector3D
     ///   - direction2: A Vector3D that is not parallel or opposite to direction1
     ///   - useFirst: Use the first input vector as the reference direction?
     ///   - verticalRef: Does the reference direction represent vertical or horizontal in the base plane?
-    init(spot: Point3D, direction1: Vector3D, direction2: Vector3D, useFirst: Bool, verticalRef: Bool)   {
+    /// - See: 'testFidelity3' under CoordinateSystemTests
+    public init(spot: Point3D, direction1: Vector3D, direction2: Vector3D, useFirst: Bool, verticalRef: Bool) throws   {
         
-        var outOfPlane = try! Vector3D.crossProduct(lhs: direction1, rhs: direction2)
+        guard (direction1.isUnit()) else {  throw NonUnitDirectionError(dir: direction1) }
+        guard (direction2.isUnit()) else {  throw NonUnitDirectionError(dir: direction2) }
+
+        
+        var outOfPlane = try Vector3D.crossProduct(lhs: direction1, rhs: direction2)
         outOfPlane.normalize()
         
         self.axisZ = outOfPlane
+        
         
         if useFirst   {
             
@@ -93,8 +106,36 @@ open class CoordinateSystem   {
     }
     
     
-    /// Generate a Transform to rotate and translate TO the global coordinate system
+    public func getOrigin() -> Point3D   {
+        
+        return origin
+    }
+    
+    
+    public func getAxisX() -> Vector3D   {
+        
+        return axisX
+        
+    }
+    
+    
+    public func getAxisY() -> Vector3D   {
+        
+        return axisY
+        
+    }
+    
+    
+    public func getAxisZ() -> Vector3D   {
+        
+        return axisZ
+        
+    }
+    
+    
+    /// Generate a Transform to rotate and translate TO the global coordinate system.
     /// Should this become a method of Transform?
+    /// - See: 'testGenToGlobal' under CoordinateSystemTests for a partial set of tests
     public func genToGlobal() -> Transform   {
         
         let rotate = Transform(localX: self.axisX, localY: self.axisY, localZ: self.axisZ)
@@ -105,7 +146,7 @@ open class CoordinateSystem   {
         return tform
     }
     
-    /// Generate a Transform to get points FROM the global CSYS
+    /// Generate a Transform to get points FROM the global CSYS.
     /// Should this become a method of Transform?
     public func genFromGlobal() -> Transform   {
         
@@ -150,6 +191,8 @@ open class CoordinateSystem   {
     ///   - uno: Unit vector to serve as an axis
     ///   - dos: Another unit vector
     ///   - tres: The final unit vector
+    ///   Returns: Simple flag
+    /// - See: 'testIsMutOrtho' under CoordinateSystemTests
     public static func isMutOrtho(uno: Vector3D, dos: Vector3D, tres: Vector3D) -> Bool   {
         
         let dot12 = Vector3D.dotProduct(lhs: uno, rhs: dos)
@@ -164,11 +207,12 @@ open class CoordinateSystem   {
         return flag1 && flag2 && flag3
     }
     
+    
     /// Create from an existing CSYS, but use a different origin
     /// - Parameters:
     ///   - startingCSYS: Desired set of orientations
     ///   - betterOrigin: New location
-    /// Should this become another initializer?
+    /// - See: 'testRelocate' under CoordinateSystemTests
     public static func relocate(startingCSYS: CoordinateSystem, betterOrigin: Point3D) -> CoordinateSystem   {
         
         let sparkling = try! CoordinateSystem(spot: betterOrigin, alpha: startingCSYS.axisX, beta: startingCSYS.axisY, gamma: startingCSYS.axisZ)
@@ -176,4 +220,16 @@ open class CoordinateSystem   {
         return sparkling
     }
     
+}
+
+/// Check for them being identical
+public func == (lhs: CoordinateSystem, rhs: CoordinateSystem) -> Bool   {
+    
+    let flagOrig = (lhs.getOrigin() == rhs.getOrigin())
+    
+    let flagX = (lhs.getAxisX() == rhs.getAxisX())
+    let flagY = (lhs.getAxisY() == rhs.getAxisY())
+    let flagZ = (lhs.getAxisZ() == rhs.getAxisZ())
+    
+    return flagOrig && flagX && flagY && flagZ
 }
