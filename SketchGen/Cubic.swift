@@ -9,6 +9,14 @@
 import UIKit
 import simd
 
+// What's the right way to check for equivalence?  End points and control points?
+
+// TODO: Will need a way to find what point, if any, has a particular slope
+// TODO: Find the parameter for a point at some distance along the curve
+
+// Clip from either end and re-parameterize.  But what about 'undo'?
+
+
 /// Curve defined by polynomials for each coordinate direction
 open class Cubic: PenCurve   {
     
@@ -27,7 +35,10 @@ open class Cubic: PenCurve   {
     var cz: Double
     var dz: Double
     
+    /// The beginning point
     var ptAlpha: Point3D
+    
+    /// The end point
     var ptOmega: Point3D
     
     var controlA: Point3D?   // Since Bezier form is most useful for editing
@@ -74,10 +85,16 @@ open class Cubic: PenCurve   {
         
     }
     
+    
     /// Build from two points and two slopes
     /// This code always produces the Bezier form for ease of screen editing
     /// The assignment statements come from an algebraic manipulation of the equations
     /// in the Wikipedia article on Cubic Hermite spline
+    /// - Parameters:
+    ///   - ptA: First end point
+    ///   - slopeA: Slope that goes with the first end point
+    ///   - ptB: Other end point
+    ///   - slopeB: Slope that goes with the second end point
     /// There are checks here for input points that should be added!
     /// - See: 'testSumsHermite' under CubicTests
     public init(ptA: Point3D, slopeA: Vector3D, ptB: Point3D, slopeB: Vector3D)   {
@@ -111,7 +128,7 @@ open class Cubic: PenCurve   {
         
         self.parameterRange = ClosedRange<Double>(uncheckedBounds: (lower: 0.0, upper: 1.0))
         
-        parameterizeBezier()   // Generate the real coefficients
+        parameterizeBezier()   // Generate coefficients to be recorded
         
     }
     
@@ -119,6 +136,11 @@ open class Cubic: PenCurve   {
     /// Build from two end points and two control points.
     /// Assignment statements from an algebraic manipulation of the equations
     /// in the Wikipedia article on Bezier Curve.
+    /// - Parameters:
+    ///   - ptA: First end point
+    ///   - controlA: Control point for first end
+    ///   - ptB: Other end point
+    ///   - controlB: Control point for second end
     /// There are checks here for input points that should be added!
     /// - See: 'testSumsBezier' under CubicTests
     public init(ptA: Point3D, controlA: Point3D, controlB: Point3D, ptB: Point3D)   {
@@ -151,11 +173,11 @@ open class Cubic: PenCurve   {
         
         self.parameterRange = ClosedRange<Double>(uncheckedBounds: (lower: 0.0, upper: 1.0))
         
-        parameterizeBezier()   // Generate the real coefficients
+        parameterizeBezier()   // Generate coefficients to be recorded
         
     }
     
-    /// Construct from four points.
+    /// Construct from four points that lie on the curve.  This is the way to build an offset curve.
     /// - Parameters:
     ///   - alpha: First point
     ///   - beta: Second point
@@ -203,7 +225,7 @@ open class Cubic: PenCurve   {
         let coeffZ = nvers * rowZ
         
         
-        // Set the curve coefficients
+        // Set the curve coefficients.  Do these ever get used?
         self.ax = coeffX[0]
         self.bx = coeffX[1]
         self.cx = coeffX[2]
@@ -232,12 +254,14 @@ open class Cubic: PenCurve   {
         jump = slopeB * -0.3333
         self.controlB = ptOmega.offset(jump: jump)
         
-        parameterizeBezier()   // Generate in a form suitable for screen editing
+        parameterizeBezier()   // Generate coefficients to be recorded
         
     }
     
     /// Develop the coefficients from the points.
     /// This is done as a separate routine so that modifications will be consistent with original construction.
+    /// Used by several initializers
+    /// Should this be 'private' access level?
     func parameterizeBezier() -> Void {
         
         self.ax = 3.0 * self.controlA!.x - self.ptAlpha.x - 3.0 * self.controlB!.x + self.ptOmega.x
@@ -254,10 +278,14 @@ open class Cubic: PenCurve   {
         self.bz = 3.0 * self.ptAlpha.z - 6.0 * self.controlA!.z + 3.0 * self.controlB!.z
         self.cz = 3.0 * self.controlA!.z - 3.0 * self.ptAlpha.z
         self.dz = self.ptAlpha.z
+        
     }
     
     
+    
     /// Create a new curve translated, scaled, and rotated by the matrix.
+    /// - Parameters:
+    ///   - xirtam: Matrix containing translation, rotation, and scaling to be applied
     public func transform(xirtam: Transform) -> PenCurve   {
         
         let tAlpha = Point3D.transform(pip: self.ptAlpha, xirtam: xirtam)
@@ -274,10 +302,10 @@ open class Cubic: PenCurve   {
     
     
     /// Attach new meaning to the curve.
-    public func setIntent(purpose: PenTypes)   {
-        
+    public func setIntent(purpose: PenTypes) -> Void  {        
         self.usage = purpose
     }
+    
     
     /// Fetch the location of an end.
     /// - See: 'getOtherEnd()'
@@ -291,7 +319,7 @@ open class Cubic: PenCurve   {
         return ptOmega
     }
     
-    /// Flip the order of the end points (and control points).  Used to align members of a Perimeter.
+    /// Flip the order of the end points (and control points).  Used to align members of a Loop.
     public func reverse() -> Void  {
         
         var bubble = self.ptAlpha
@@ -605,6 +633,7 @@ open class Cubic: PenCurve   {
         return (alongVector, perpVector)
     }
     
+    
     /// Find the range of the parameter where the curve crosses a line.
     /// This is part of finding the intersection.
     /// - Parameters:
@@ -809,7 +838,7 @@ open class Cubic: PenCurve   {
         context.move(to: screenStart)
         
         
-        let pieces = 20
+        let pieces = 20   // This really should depend on the curvature
         let step = 1.0 / Double(pieces)
         
         for g in 1...pieces   {
@@ -826,6 +855,7 @@ open class Cubic: PenCurve   {
         context.strokePath()
         
     }
+    
     
     /// Draw symbols to be used in manipulating the curve.
     /// - Parameters:
@@ -927,13 +957,6 @@ open class Cubic: PenCurve   {
         
         return singleLine
     }
-    
-    // What's the right way to check for equivalence?
-    
-    // TODO: Figure a way to do an offset curve
-    
-    // Clip from either end and re-parameterize
-    
     
     
 }

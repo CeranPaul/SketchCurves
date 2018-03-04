@@ -10,9 +10,19 @@ import XCTest
 
 class CubicTests: XCTestCase {
 
+    var cup: Cubic?
+    
     override func setUp() {
         super.setUp()
-        // Put setup code here. This method is called before the invocation of each test method in the class.
+        
+        let alpha = Point3D(x: 2.3, y: 1.5, z: 0.7)
+        let alSlope = Vector3D(i: 0.866, j: 0.5, k: 0.0)
+        
+        let beta = Point3D(x: 3.1, y: 1.6, z: 0.7)
+        let betSlope = Vector3D(i: 0.866, j: -0.5, k: 0.0)
+        
+        cup = Cubic(ptA: alpha, slopeA: alSlope, ptB: beta, slopeB: betSlope)
+        
     }
     
     override func tearDown() {
@@ -95,6 +105,16 @@ class CubicTests: XCTestCase {
         
     }
     
+    func testSetIntent()   {
+        
+        XCTAssert(cup!.usage == PenTypes.ordinary)
+        
+        cup!.setIntent(purpose: PenTypes.ideal)
+        XCTAssert(cup!.usage == PenTypes.ideal)
+        
+    }
+    
+
     func testSumsHermite()   {
         
         let alpha = Point3D(x: 2.3, y: 1.5, z: 0.7)

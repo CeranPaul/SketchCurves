@@ -10,8 +10,11 @@ import XCTest
 
 class SplineTests: XCTestCase {
 
-    func testExample() {
-
+    var river: Spline?   // For simple tests
+    
+    override func setUp() {
+        super.setUp()
+        
         var lilyPads = [Point3D]()
         
         let a = Point3D(x: 0.25, y: -1.5, z: 4.2)
@@ -29,15 +32,38 @@ class SplineTests: XCTestCase {
         let e = Point3D(x: -0.10, y: 0.65, z: 4.2)
         lilyPads.append(e)
         
-        let swing = Spline(pts: lilyPads)
+        river = Spline(pts: lilyPads)
         
+
+    }
+    
+    func testFidelity() {
+
         let target = 4
         
-        let trial = swing.pieces.count
+        let trial = river!.pieces.count
         
         XCTAssertEqual(trial, target)
         
    }
+    
+    func testGetOneEnd()   {
+        
+        let a = Point3D(x: 0.25, y: -1.5, z: 4.2)
 
+        let alpha = river!.getOneEnd()
+                
+        XCTAssert(alpha == a)
+    }
+
+    func testGetOtherEnd()   {
+        
+        let e = Point3D(x: -0.10, y: 0.65, z: 4.2)
+
+        let omega = river!.getOtherEnd()
+        
+        XCTAssert(omega == e)
+   }
+    
 
 }

@@ -6,21 +6,27 @@
 //  Copyright © 2018 Ceran Digital Media. All rights reserved.  See LICENSE.md
 //
 
-import Foundation
+import UIKit
 
-// TODO: Explain this in a blog page
-
-/// End-to-end Cubic curves in 3D
+/// Sequence of Cubic curves in 3D - tangent at the interior points
 /// This will eventually need to conform to protocol PenCurve
 /// Each piece is assumed to be parameterized from 0 to 1
 open class Spline   {
     
+    // TODO: Explain this in a blog page
+    // TODO: Add all of the functions that will make this comply with PenCurve.  And the occasional test.
+    // What to do about a closed Spline?
+    
+    /// Sequence of component curves
     var pieces: [Cubic]
     
     /// The enum that hints at the meaning of the curve
     open var usage: PenTypes
     
+    open var parameterRange: ClosedRange<Double>   // Never used
+    
 
+    
     /// Build from an ordered array of points using finite differences
     /// See the Wikipedia article on Cubic Hermite splines
     init(pts: [Point3D])   {
@@ -64,7 +70,112 @@ open class Spline   {
         pieces.append(veer)   // Final piece in the array
         
         self.usage = PenTypes.ordinary
+
+        self.pieces.forEach( {$0.setIntent(purpose: PenTypes.ordinary)} )
+        
+        
+        self.parameterRange = ClosedRange<Double>(uncheckedBounds: (lower: 0.0, upper: 1.0))
+        
+}
+    
+    
+    /// Build from an array of points and correponding tangents, probably from screen points
+    /// - Parameters:
+    ///   - pts: Points on the desired curve
+    ///   - tangents: Matched vectors to specify slope
+    /// Currently doesn't check the length of input arrays
+    init(pts: [Point3D], tangents: [Vector3D])   {
+        
+        pieces = [Cubic]()
+        
+        for ptIndex in 1..<pts.count   {
+            
+            let alpha = pts[ptIndex - 1]   // Retrieve the end points
+            let omega = pts[ptIndex]
+            
+            let tangentA = tangents[(ptIndex - 1) * 2]
+            let tangentB = tangents[(ptIndex - 1) * 2 + 1]
+
+            let fresh = Cubic(ptA: alpha, slopeA: tangentA, ptB: omega, slopeB: tangentB)
+            
+            pieces.append(fresh)
+        }
+            
+        self.usage = PenTypes.ordinary
+        
+        self.pieces.forEach( {$0.setIntent(purpose: PenTypes.ordinary)} )
+        
+
+        self.parameterRange = ClosedRange<Double>(uncheckedBounds: (lower: 0.0, upper: 1.0))
+        
     }
     
-    //TODO: Add all of the functions that will make this comply with PenCurve.  And the occasional test.
+    
+    /// Attach new meaning to the curve.
+    public func setIntent(purpose: PenTypes) -> Void  {
+        self.usage = purpose
+        
+        self.pieces.forEach( {$0.setIntent(purpose: purpose)} )
+
+    }
+    
+    
+    /// Fetch the location of an end.
+    /// - See: 'getOtherEnd()'
+    public func getOneEnd() -> Point3D   {
+        
+        let locomotive = pieces.first!
+        
+        return locomotive.getOneEnd()
+    }
+    
+    
+    /// Fetch the location of the opposite end.
+    /// - See: 'getOneEnd()'
+    public func getOtherEnd() -> Point3D   {
+        
+        let caboose = pieces.last!
+        
+        return caboose.getOtherEnd()
+    }
+    
+    
+    /// Generate an enclosing volume
+    public func getExtent() -> OrthoVol   {
+        
+        var brick = self.pieces.first!.getExtent()
+        
+        if self.pieces.count > 1   {
+            
+            for g in 1..<self.pieces.count   {
+                brick = brick + self.pieces[g].getExtent()
+            }
+            
+        }
+        
+        return brick
+    }
+    
+    
+    /// Change the order of the components in the array, and the order of each component
+    public func reverse() -> Void   {
+        
+        self.pieces.forEach( {$0.reverse()} )
+        self.pieces = self.pieces.reversed()
+        
+    }
+    
+    
+    /// Plot the curves.  This will be called by the UIView 'drawRect' function
+    /// Won't be useful until Spline conforms to PenCurve
+    /// - Parameters:
+    ///   - context: In-use graphics framework
+    ///   - tform:  Model-to-display transform
+    public func draw(context: CGContext, tform: CGAffineTransform) -> Void  {
+        
+        self.pieces.forEach( {$0.draw(context: context, tform: tform)} )
+        
+    }
+        
+
 }

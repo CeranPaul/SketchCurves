@@ -20,7 +20,7 @@ class DemoPool  {
     /// Call a demonstration routine
     init()   {
         
-        let demoString = "chop"   // Change this to one of the case names
+        let demoString = "herm"   // Change this to a different case name
         
         switch demoString   {
             
@@ -274,39 +274,12 @@ class DemoPool  {
         
         let bump = Cubic(ptA: alpha, slopeA: alSlope, ptB: beta, slopeB: betSlope)
         
+        displayCurves.append(bump)
         
-        // Disregarding the 'draw' function
-        
-        var priorPt1 = alpha
-        
-        let segs = 15
-        let stepSize = 1.0 / Double(segs)
-        
-        for g in 1..<segs  {
-            let stepU = Double(g) * stepSize
-            
-            let stepPoint1 = bump.pointAt(t: stepU)
-            
-            /// LineSeg to be added to the display list
-            var stroke: PenCurve
-            
-            do   {
-                
-                stroke = try LineSeg(end1: priorPt1, end2: stepPoint1)
-                displayCurves.append(stroke)
-                
-                priorPt1 = stepPoint1   // Shuffle values in preparation for the next segment
-                
-            }  catch let error as CoincidentPointsError  {
-                print(error.description)
-            }  catch  {
-                print("Some other error while adding a segment of a Hermite cubic curve")
-            }
-    
-        }
     }
     
-    /// Build and plot a trial cubic curve
+    
+    /// Build and plot a trial sequence of cubic curves
     func demoSpline()   {
         
         var lilyPads = [Point3D]()
