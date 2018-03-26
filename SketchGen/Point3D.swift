@@ -148,6 +148,32 @@ public struct  Point3D: Hashable {
     }
     
     
+    /// Check if all contained points are unique
+    /// Not suitable for large arrays - n factorial
+    public static func uniqueChain(chain: [Point3D]) -> Bool   {
+        
+        /// All points have adequate separation
+        var flag = true
+        
+        for (index, pip) in chain.enumerated()   {
+            
+            for g in index + 1..<chain.count   {
+                
+                let sep = Point3D.dist(pt1: pip, pt2: chain[g])
+                
+                if sep < self.Epsilon   {
+                    
+                    flag = false
+                    break
+                }
+                
+            }
+            
+        }
+        
+        return flag
+    }
+    
     /// Throw away the Z value and convert
     /// Should this become a computed member variable?
     /// - Returns: A CGPoint.

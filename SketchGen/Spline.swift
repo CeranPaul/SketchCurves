@@ -11,7 +11,7 @@ import UIKit
 /// Sequence of Cubic curves in 3D - tangent at the interior points
 /// This will eventually need to conform to protocol PenCurve
 /// Each piece is assumed to be parameterized from 0 to 1
-open class Spline   {
+open class Spline: PenCurve   {
     
     // TODO: Explain this in a blog page
     // TODO: Add all of the functions that will make this comply with PenCurve.  And the occasional test.
@@ -110,6 +110,18 @@ open class Spline   {
         
     }
     
+    /// Build from an array of Cubics - typically the result of transforming
+    init(curves: [Cubic])   {
+        
+        self.pieces = curves
+        
+        self.usage = PenTypes.ordinary
+        
+        
+        self.parameterRange = ClosedRange<Double>(uncheckedBounds: (lower: 0.0, upper: 1.0))
+        
+    }
+    
     
     /// Attach new meaning to the curve.
     public func setIntent(purpose: PenTypes) -> Void  {
@@ -156,6 +168,11 @@ open class Spline   {
         return brick
     }
     
+    public func pointAt(t: Double) -> Point3D {
+        let dummy = Point3D(x: 0.0, y: 0.0, z: 0.0)
+        return dummy
+    }
+    
     
     /// Change the order of the components in the array, and the order of each component
     public func reverse() -> Void   {
@@ -163,6 +180,32 @@ open class Spline   {
         self.pieces.forEach( {$0.reverse()} )
         self.pieces = self.pieces.reversed()
         
+    }
+    
+    public func transform(xirtam: Transform) -> PenCurve   {
+
+        let spaghetti = self.pieces.map( {$0.transform(xirtam: xirtam)} )
+        
+        let roller = Spline(curves: spaghetti as! [Cubic])
+        
+        return spaghetti.first!
+    }
+    
+
+    /// Find the position of a point relative to the line segment and its origin.
+    /// Useless result at the moment.
+    /// - Parameters:
+    ///   - speck:  Point near the curve.
+    /// - Returns: Tuple of Vector components relative to the origin
+    public func resolveRelative(speck: Point3D) -> (along: Vector3D, perp: Vector3D)   {
+        
+        //        let otherSpeck = speck
+        
+        let alongVector = Vector3D(i: 1.0, j: 0.0, k: 0.0)
+        
+        let perpVector = Vector3D(i: 0.0, j: 1.0, k: 0.0)
+        
+        return (alongVector, perpVector)
     }
     
     

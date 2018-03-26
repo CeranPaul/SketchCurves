@@ -175,6 +175,95 @@ class CubicTests: XCTestCase {
         XCTAssertEqual(box.getOrigin().x, -2.9624, accuracy: 0.0001)
     }
     
+    func testTransform()   {
+        
+        let fling = Transform(rotationAxis: Axis.z, angleRad: Double.pi / 4.0)
+        
+        let alpha = cup!.getOneEnd()
+        let freshAlpha = Point3D.transform(pip: alpha, xirtam: fling)
+        
+        let omega = cup!.getOtherEnd()
+        let freshOmega = Point3D.transform(pip: omega, xirtam: fling)
+        
+        let mid = cup!.pointAt(t: 0.35)
+        let freshMid = Point3D.transform(pip: mid, xirtam: fling)
+        
+        let bulge = cup!.transform(xirtam: fling) as! Cubic   // Because the return value is a PenCurve
+        
+        XCTAssert(freshAlpha == bulge.getOneEnd())
+        XCTAssert(freshOmega == bulge.getOtherEnd())
+        
+        let target = bulge.pointAt(t: 0.35)
+        XCTAssert(freshMid == target)
+    }
+    
+    
+    /// I don't know if I can always expect this to work.
+    func testReverse()   {
+        
+        let alpha = Point3D(x: 2.3, y: 1.5, z: 0.7)
+        let alSlope = Vector3D(i: 0.866, j: 0.5, k: 0.0)
+        
+        let beta = Point3D(x: 3.1, y: 1.6, z: 0.7)
+        let betSlope = Vector3D(i: 0.866, j: -0.5, k: 0.0)
+        
+        /// Reversed the parameters
+        let scoop = Cubic(ptA: beta, slopeA: betSlope.reverse(), ptB: alpha, slopeB: alSlope.reverse())
+        
+        let midA = scoop.pointAt(t: 0.10)
+        let midB = scoop.pointAt(t: 0.75)
+        
+        
+        XCTAssert(cup?.pointAt(t: 0.90) == midA)
+        XCTAssert(cup?.pointAt(t: 0.25) == midB)
+        
+    }
+    
+    func testRefine()   {
+        
+        let near = Point3D(x: 2.9, y: 1.4, z: 0.7)
+        
+        let startRange = ClosedRange<Double>(uncheckedBounds: (lower: 0.0, upper: 1.0))
+        
+        let narrower = cup!.refineRangeDist(speck: near, span: startRange)
+        
+        XCTAssert(narrower?.lowerBound == 0.8)
+        XCTAssert(narrower?.upperBound == 1.0)
+        
+        let narrower3 = cup!.refineRangeDist(speck: near, span: narrower!)
+        
+        XCTAssert(narrower3?.lowerBound == 0.86)
+        XCTAssert(narrower3?.upperBound == 0.90)
+        
+
+        let near2 = Point3D(x: 2.65, y: 1.45, z: 0.7)
+        
+        let narrower2 = cup!.refineRangeDist(speck: near2, span: startRange)
+        
+        XCTAssert(narrower2?.lowerBound == 0.2)
+        XCTAssert(narrower2?.upperBound == 0.4)
+        
+
+        let near3 = Point3D(x: 2.40, y: 1.45, z: 0.7)
+        
+        let narrower4 = cup!.refineRangeDist(speck: near3, span: startRange)
+        
+        XCTAssert(narrower4?.lowerBound == 0.0)
+        XCTAssert(narrower4?.upperBound == 0.2)
+        
+        
+    }
+    
+    func testFindClosest()   {
+        
+        let near = Point3D(x: 2.9, y: 1.4, z: 0.7)
+        
+        let buddy = cup!.findClosest(speck: near)
+        
+        print(buddy)
+    }
+    
+    
     /// Basic intersection tests in the XY plane
     func testIntLine1()   {
         
@@ -205,6 +294,7 @@ class CubicTests: XCTestCase {
         XCTAssertEqual(common.y, 2.161, accuracy: 0.001)
         XCTAssertEqual(common.z, 0.0, accuracy: 0.001)
     }
+    
     
     func testIntLine2()   {
         

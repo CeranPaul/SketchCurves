@@ -138,6 +138,62 @@ class TransformPlusTests: XCTestCase {
         
     }
     
+    func testGenToGlobal()   {
+        
+        let fred = CoordinateSystem()
+        
+        let pebbles = Transform.genToGlobal(csys: fred)
+        
+        let pristine = Transform()
+        
+        XCTAssert(pebbles == pristine)
+        
+        let barney = Point3D(x: 1.0, y: 2.0, z: 3.0)
+        
+        let wilma = CoordinateSystem.relocate(startingCSYS: fred, betterOrigin: barney)
+        
+        let bambam = Transform.genToGlobal(csys: wilma)
+        
+        XCTAssertFalse(bambam == pristine)
+        
+        XCTAssert(bambam.p == 1.0)
+        XCTAssert(bambam.r == 2.0)
+        XCTAssert(bambam.s == 3.0)
+        
+    }
+    
+    
+    func testGenFromGlobal()   {
+        
+        let fred = CoordinateSystem()
+        
+        let barney = Point3D(x: 1.0, y: 2.0, z: 3.0)
+        
+        let wilma = CoordinateSystem.relocate(startingCSYS: fred, betterOrigin: barney)
+        
+        let betty = Transform.genFromGlobal(csys: wilma)
+        
+        XCTAssert(betty.p == -1.0)
+        XCTAssert(betty.r == -2.0)
+        XCTAssert(betty.s == -3.0)
+        
+        let dino = Transform.genToGlobal(csys: wilma)
+        
+        
+        let local1 = Point3D(x: 5.0, y: 4.0, z: 3.0)
+        let global1 = Point3D.transform(pip: local1, xirtam: dino)
+        
+        XCTAssert(global1.x == 6.0)
+        XCTAssert(global1.y == 6.0)
+        XCTAssert(global1.z == 6.0)
+        
+        let local2 = Point3D.transform(pip: global1, xirtam: betty)
+        
+        XCTAssert(local2 == local1)
+        
+    }
+    
+    
     func testRowMtx4Init()   {
         
         let vec = Vector3D(i: 0.5, j: 0.866, k: 0.7)

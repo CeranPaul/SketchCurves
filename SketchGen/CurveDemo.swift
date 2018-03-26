@@ -20,7 +20,7 @@ class DemoPool  {
     /// Call a demonstration routine
     init()   {
         
-        let demoString = "herm"   // Change this to a different case name
+        let demoString = "egg"   // Change this to a different case name
         
         switch demoString   {
             
@@ -47,6 +47,8 @@ class DemoPool  {
         case "stand": standProfile()  // Crude profile from just LineSeg's
             
         case "track": trackSection()   // Works, with bad scaling
+            
+        case "gallery": plotMulti()   // For presentation charts
             
             
         default:  showBox()   // Demonstrate the boundary box for an Arc
@@ -83,6 +85,62 @@ class DemoPool  {
         
     }
 
+    /// Plot the curve choices
+    func plotMulti() -> Void   {
+        
+        // Build curves to make a presentation chart
+        let ptA = Point3D(x: -3.5, y: 0.0, z: 0.0)
+        let ptB = Point3D(x: -3.4, y: 1.0, z: 0.0)
+        let ptC = Point3D(x: -2.5, y: 3.5, z: 0.0)
+        let ptD = Point3D(x: -1.5, y: 3.3, z: 0.0)
+        
+        let bump = Cubic(ptA: ptA, controlA: ptB, controlB: ptC, ptB: ptD)
+        
+        displayCurves.append(bump)
+        
+        
+        let ptE = Point3D(x: -0.5, y: 1.0, z: 0.0)
+        let ptF = Point3D(x: -0.5 - 0.293, y: 0.293, z: 0.0)
+        let ptG = Point3D(x: -0.5 + 0.293, y: 0.293, z: 0.0)
+        
+        let bow =  try! Arc(center: ptE, end1: ptF, end2: ptG, useSmallAngle: false)
+        
+        displayCurves.append(bow)
+        
+        /// Array for building a spline
+        var posts = [Point3D]()
+        
+        let ptH = Point3D(x: 1.5, y: 3.0, z: 0.0)
+        posts.append(ptH)
+        let ptJ = Point3D(x: 1.1, y: 2.6, z: 0.0)
+        posts.append(ptJ)
+        let ptK = Point3D(x: 1.18, y: 2.2, z: 0.0)
+        posts.append(ptK)
+        let ptL = Point3D(x: 1.5, y: 1.9, z: 0.0)
+        posts.append(ptL)
+        let ptM = Point3D(x: 1.65, y: 1.6, z: 0.0)
+        posts.append(ptM)
+        let ptN = Point3D(x: 1.8, y: 1.3, z: 0.0)
+        posts.append(ptN)
+        let ptP = Point3D(x: 1.55, y: 0.9, z: 0.0)
+        posts.append(ptP)
+        let ptQ = Point3D(x: 1.5, y: 0.0, z: 0.0)
+        posts.append(ptQ)
+
+        let wavy = Spline(pts: posts)
+        print(posts.count)
+        
+        displayCurves.append(wavy as PenCurve)
+
+        
+        let ptR = Point3D(x: -1.4, y: 2.7, z: 0.0)
+        let ptS = Point3D(x: 0.5, y: 2.4, z: 0.0)
+
+        let downhill = try! LineSeg(end1: ptR, end2: ptS)
+        displayCurves.append(downhill)
+}
+    
+    
     /// Experiment with line - cubic intersections
     func chopCubic() -> Void   {
         
@@ -147,49 +205,18 @@ class DemoPool  {
     
     /// Build and plot one quarter of an ellipse
     /// Kink near the X-axis?
-    /// Needs to be modified to use its own 'draw' function
     func wholeEllipse()   {
         
         let a = 50.0
         let b = 30.0
         let ctr = Point3D(x: 0.0, y: 0.0, z: 0.0)
-        let sf = Point3D(x: 50.0, y: 0.0, z: 0.0)
+        let green = Point3D(x: 50.0, y: 0.0, z: 0.0)
+        let checker = Point3D(x: 0.0, y: 30.0, z: 0.0)
         
-        let oval = Ellipse(retnec: ctr, a: a, b: b, azimuth: 0.0, start: sf, finish: sf)
         
+        let oval = Ellipse(retnec: ctr, a: a, b: b, azimuth: 0.0, start: green, finish: checker)
         
-        /// Generate line segments to represent the curve
-        
-            let divs = 50
-            let step = a / Double(divs)
-            
-            let home = oval.getCenter()
-        
-            var greenFlag = Point3D(x: home.x, y: home.y + b, z: home.z)
-        
-        var g = 1
-        
-        do   {
-            
-            repeat   {
-                
-                let newX = Double(g) * step
-                let newY = oval.findY(newX)
-                let checkeredFlag = Point3D(x: home.x + newX, y: home.y + newY, z: home.z)
-                
-                let stroke = try LineSeg(end1: greenFlag, end2: checkeredFlag)
-                displayCurves.append(stroke)
-        
-                greenFlag = checkeredFlag
-                g += 1
-        
-            } while g <= divs
-        
-        }  catch let error as CoincidentPointsError  {
-            print(error.description)
-        } catch  {
-            print("Some other error while adding a segment of an ellipse")
-        }
+        displayCurves.append(oval)
         
     }
     
@@ -276,7 +303,44 @@ class DemoPool  {
         
         displayCurves.append(bump)
         
-    }
+        
+        let alpha2 = Point3D(x: 2.3, y: 1.53, z: 0.7)
+        let alSlope2 = alSlope.reverse()
+
+        let beta2 = Point3D(x: 3.1, y: 1.63, z: 0.7)
+        let betSlope2 = betSlope.reverse()
+
+        let bump2 = Cubic(ptA: beta2, slopeA: betSlope2, ptB: alpha2, slopeB: alSlope2)
+        
+        displayCurves.append(bump2)
+        
+        let spot1 = bump.pointAt(t: 0.10)
+        displayCurves.append(contentsOf: plotPoint(speck: spot1, size: 0.03))
+        
+        let spot2 = bump2.pointAt(t: 0.90)
+        displayCurves.append(contentsOf: plotPoint(speck: spot2, size: 0.03))
+        
+        print(Point3D.dist(pt1: spot1, pt2: spot2))
+        
+        
+        let spot3 = bump.pointAt(t: 0.85)
+        displayCurves.append(contentsOf: plotPoint(speck: spot3, size: 0.03))
+        
+        let spot4 = bump2.pointAt(t: 0.15)
+        displayCurves.append(contentsOf: plotPoint(speck: spot4, size: 0.03))
+        
+        print(Point3D.dist(pt1: spot3, pt2: spot4))
+
+
+        let horsefly = Point3D(x: 2.75, y: 1.48, z: 0.7)
+        
+        let zips = plotPoint(speck: horsefly, size: 0.05)
+        
+        displayCurves.append(contentsOf: zips)
+        
+        let lz = bump.findClosest(speck: horsefly)
+        displayCurves.append(contentsOf: plotPoint(speck: lz, size: 0.05))
+   }
     
     
     /// Build and plot a trial sequence of cubic curves
@@ -663,6 +727,28 @@ class DemoPool  {
             print("Some other error while making the track sketch")
         }
         
+    }
+    
+    func plotPoint(speck: Point3D, size: Double) -> [PenCurve]   {
+        
+        let halfSize = size / 2.0
+        
+        var strokes = [PenCurve]()
+        
+        var alpha = Point3D(x: speck.x - halfSize, y: speck.y, z: speck.z)
+        var omega = Point3D(x: speck.x + halfSize, y: speck.y, z: speck.z)
+        
+        let horiz = try! LineSeg(end1: alpha, end2: omega)
+        strokes.append(horiz as PenCurve)
+        
+        alpha = Point3D(x: speck.x, y: speck.y - halfSize, z: speck.z)
+        omega = Point3D(x: speck.x, y: speck.y + halfSize, z: speck.z)
+        
+        let vert = try! LineSeg(end1: alpha, end2: omega)
+        strokes.append(vert as PenCurve)
+        
+
+        return strokes
     }
     
 }

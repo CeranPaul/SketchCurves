@@ -224,6 +224,29 @@ public class Arc: PenCurve {
     }
     
     
+    /// Angle is relative to a line between the center and the start point independent of direction of the arc
+    /// - Parameter: theta: Angle in radians
+    /// See the illustration in the wiki "Arc PointAtAngle" article
+    public func pointAtAngle(theta: Double) -> Point3D  {
+        
+        var horiz = Vector3D.built(from: self.ctr, towards: self.start)
+        horiz.normalize()
+        
+        
+        let vert = try! Vector3D.crossProduct(lhs: self.axisDir, rhs: horiz)   // Shouldn't need to be normalized
+        
+        let magnitudeH = self.rad * cos(theta)
+        let deltaH = horiz * magnitudeH
+        
+        let magnitudeV = self.rad * sin(theta)
+        let deltaV = vert * magnitudeV
+        
+        let jump = deltaH + deltaV
+        
+        return self.ctr.offset(jump: jump)
+    }
+    
+    
     // TODO:  Add a length function
     
     
@@ -393,7 +416,7 @@ public class Arc: PenCurve {
         
         let localCSYS = try! CoordinateSystem(spot: origin, alpha: genesisAxis, beta: perp, gamma: self.axisDir)
         
-        let roll = localCSYS.genToGlobal()
+        let roll = Transform.genToGlobal(csys: localCSYS)
         let tilted = localBrick.transform(xirtam: roll)
         
         let offset = Transform(deltaX: self.ctr.x, deltaY: self.ctr.y, deltaZ: self.ctr.z)
@@ -545,6 +568,36 @@ public class Arc: PenCurve {
         let axisFlag = axisFlag1 || axisFlag2
         
         return ctrFlag && axisFlag
+    }
+    
+    
+    /// Create only enough points to meet the crown limit
+    /// - Parameter: allowableCrown: Maximum deviation from the actual curve
+    /// - Returns: Array of evenly spaced points
+    /// This is a candidate for adding to the library version of this class
+    func approximate(allowableCrown: Double) -> [Point3D]   {
+        
+        let ratio = 1.0 - allowableCrown / self.rad
+        let maxSwing =  2.0 * acos(ratio)
+        
+        let count = ceil(abs(self.sweepAngle / maxSwing))
+        
+        let angleStep = self.sweepAngle / count
+        
+        
+        /// Collection of points to be returned
+        var chain = [Point3D]()
+        
+        let firstPt = pointAtAngle(theta: 0.0)
+        chain.append(firstPt)
+        
+        for index in 1...Int(count)   {
+            let theta = Double(index) * angleStep
+            let freshPt = pointAtAngle(theta: theta)
+            chain.append(freshPt)
+        }
+        
+        return chain
     }
     
     

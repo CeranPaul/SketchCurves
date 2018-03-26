@@ -228,7 +228,60 @@ open class Transform   {
                 
     }
     
-}   // End of definition for TransformPlus
+    /// Generate a Transform to rotate and translate from a local CSYS TO the global coordinate system.
+    /// Should this become a method of Transform?
+    /// - See: 'testGenToGlobal' under CoordinateSystemTests for a partial set of tests
+    public static func genToGlobal(csys: CoordinateSystem) -> Transform   {
+        
+        let rotate = Transform(localX: csys.axisX, localY: csys.axisY, localZ: csys.axisZ)
+        let translate = Transform(deltaX: csys.origin.x, deltaY: csys.origin.y, deltaZ: csys.origin.z)
+        
+        let tform = rotate * translate
+        
+        return tform
+    }
+    
+    /// Generate a Transform to get points FROM the global CSYS.
+    /// Should this become a method of Transform?
+    public static func genFromGlobal(csys: CoordinateSystem) -> Transform   {
+        
+        // Construct the transpose of the 3 x 3
+        let newA = csys.axisX.i
+        let newB = csys.axisY.i
+        let newC = csys.axisZ.i
+        let newD = 0.0
+        
+        let newE = csys.axisX.j
+        let newF = csys.axisY.j
+        let newG = csys.axisZ.j
+        let newH = 0.0
+        
+        let newJ = csys.axisX.k
+        let newK = csys.axisY.k
+        let newM = csys.axisZ.k
+        let newN = 0.0
+        
+        let newP = 0.0
+        let newR = 0.0
+        let newS = 0.0
+        let newT = 1.0
+        
+        let transpose = Transform(a: newA, b: newB, c: newC, d: newD, e: newE, f: newF, g: newG, h: newH, j: newJ, k: newK, m: newM, n: newN, p: newP, r: newR, s: newS, t: newT)
+        
+        let rowOrig = RowMtx4(ptIn: csys.origin)
+        
+        
+        let flippedOrig = rowOrig * transpose
+        
+        let invertedTranslate = Transform(deltaX: -1.0 * flippedOrig.a, deltaY: -1.0 * flippedOrig.b, deltaZ: -1.0 * flippedOrig.c)
+        
+        let tform = transpose * invertedTranslate
+        
+        return tform
+    }
+    
+    
+}   // End of definition for Transform
 
 
 /// Simple parameter to indicate axis of rotation

@@ -13,8 +13,9 @@ import simd
 
 // TODO: Will need a way to find what point, if any, has a particular slope
 // TODO: Find the parameter for a point at some distance along the curve
+// TODO: Add a bisecting function for Vector3D
 
-// Clip from either end and re-parameterize.  But what about 'undo'?
+// TODO: Clip from either end and re-parameterize.  But what about 'undo'?  Careful with a lack of proportionality
 
 
 /// Curve defined by polynomials for each coordinate direction
@@ -286,6 +287,7 @@ open class Cubic: PenCurve   {
     /// Create a new curve translated, scaled, and rotated by the matrix.
     /// - Parameters:
     ///   - xirtam: Matrix containing translation, rotation, and scaling to be applied
+    /// - See: 'testTransform' under CubicTests
     public func transform(xirtam: Transform) -> PenCurve   {
         
         let tAlpha = Point3D.transform(pip: self.ptAlpha, xirtam: xirtam)
@@ -302,19 +304,22 @@ open class Cubic: PenCurve   {
     
     
     /// Attach new meaning to the curve.
-    public func setIntent(purpose: PenTypes) -> Void  {        
+    /// - See: 'testSetIntent' under CubicTests
+    public func setIntent(purpose: PenTypes) -> Void  {
         self.usage = purpose
     }
     
     
     /// Fetch the location of an end.
     /// - See: 'getOtherEnd()'
+    /// - See: 'testGetters' under CubicTests
     public func getOneEnd() -> Point3D   {
         return ptAlpha
     }
     
     /// Fetch the location of the opposite end.
     /// - See: 'getOneEnd()'
+    /// - See: 'testGetters' under CubicTests
     public func getOtherEnd() -> Point3D   {
         return ptOmega
     }
@@ -334,56 +339,41 @@ open class Cubic: PenCurve   {
     }
     
     
-    /// Tweak the curve by changing one control point
+    /// Supply the point on the curve for the input parameter value.
+    /// Some notations show "u" as the parameter, instead of "t"
     /// - Parameters:
-    ///   - deltaX: Location change in X direction
-    ///   - deltaY: Location change in Y direction
-    ///   - deltaZ: Location change in Z direction
-    ///   - modA: Selector for which control point gets modified
-    public func modifyControlPoint(deltaX: Double, deltaY: Double, deltaZ: Double, modA: Bool) -> Void   {
+    ///   - t:  Curve parameter value.  Assumed 0 < t < 1.
+    /// - Returns: Point location at the parameter value
+    public func pointAt(t: Double) -> Point3D   {
         
-        if modA   {
-            
-            self.controlA!.x += deltaX
-            self.controlA!.y += deltaY
-            self.controlA!.z += deltaZ
-            
-        }  else  {
-            
-            self.controlB!.x += deltaX
-            self.controlB!.y += deltaY
-            self.controlB!.z += deltaZ
-            
-        }
+        let t2 = t * t
+        let t3 = t2 * t
         
-        parameterizeBezier()
+        // This notation came from "Fundamentals of Interactive Computer Graphics" by Foley and Van Dam
+        // Warning!  The relationship of coefficients and powers of t might be unexpected, as notations vary
+        let myX = ax * t3 + bx * t2 + cx * t + dx
+        let myY = ay * t3 + by * t2 + cy * t + dy
+        let myZ = az * t3 + bz * t2 + cz * t + dz
+        
+        return Point3D(x: myX, y: myY, z: myZ)
     }
     
-    /// Tweak a Bezier curve by changing an end point
+    /// Differentiate to find the tangent vector for the input parameter.
+    /// Some notations show "u" as the parameter, instead of "t".
     /// - Parameters:
-    ///   - deltaX: Location change in X direction
-    ///   - deltaY: Location change in Y direction
-    ///   - deltaZ: Location change in Z direction
-    ///   - modAlpha: Selector for which control point gets modified
-    public func modifyEndPoint(deltaX: Double, deltaY: Double, deltaZ: Double, modAlpha: Bool) -> Void   {
+    ///   - t:  Curve parameter value.  Assumed 0 < t < 1.
+    /// - Returns:  Non-normalized vector
+    func tangentAt(t: Double) -> Vector3D   {
         
-        if modAlpha   {
-            
-            self.ptAlpha.x += deltaX
-            self.ptAlpha.y += deltaY
-            self.ptAlpha.z += deltaZ
-            
-        }  else  {
-            
-            self.ptOmega.x += deltaX
-            self.ptOmega.y += deltaY
-            self.ptOmega.z += deltaZ
-            
-        }
+        let t2 = t * t
         
-        parameterizeBezier()
+        // This is the component matrix differentiated once
+        let myI = 3.0 * ax * t2 + 2.0 * bx * t + cx
+        let myJ = 3.0 * ay * t2 + 2.0 * by * t + cy
+        let myK = 3.0 * az * t2 + 2.0 * bz * t + cz
+        
+        return Vector3D(i: myI, j: myJ, k: myK)    // Notice that this is not normalized!
     }
-    
     
     /// Break into pieces and sum up the distances
     /// - Returns: Double that is an approximate length
@@ -411,6 +401,7 @@ open class Cubic: PenCurve   {
     
     /// Calculate the proper surrounding box
     /// Increase the number of intermediate points as necessary
+    /// - See: 'testExtent' under CubicTests
     public func getExtent() -> OrthoVol   {
         
         let pieces = 15
@@ -472,6 +463,57 @@ open class Cubic: PenCurve   {
         let box = OrthoVol(minX: minX, maxX: maxX, minY: minY, maxY: maxY, minZ: minZ, maxZ: maxZ)
         
         return box
+    }
+    
+    
+    /// Tweak the curve by changing one control point
+    /// - Parameters:
+    ///   - deltaX: Location change in X direction
+    ///   - deltaY: Location change in Y direction
+    ///   - deltaZ: Location change in Z direction
+    ///   - modA: Selector for which control point gets modified
+    public func modifyControlPoint(deltaX: Double, deltaY: Double, deltaZ: Double, modA: Bool) -> Void   {
+        
+        if modA   {
+            
+            self.controlA!.x += deltaX
+            self.controlA!.y += deltaY
+            self.controlA!.z += deltaZ
+            
+        }  else  {
+            
+            self.controlB!.x += deltaX
+            self.controlB!.y += deltaY
+            self.controlB!.z += deltaZ
+            
+        }
+        
+        parameterizeBezier()
+    }
+    
+    /// Tweak a Bezier curve by changing an end point
+    /// - Parameters:
+    ///   - deltaX: Location change in X direction
+    ///   - deltaY: Location change in Y direction
+    ///   - deltaZ: Location change in Z direction
+    ///   - modAlpha: Selector for which control point gets modified
+    public func modifyEndPoint(deltaX: Double, deltaY: Double, deltaZ: Double, modAlpha: Bool) -> Void   {
+        
+        if modAlpha   {
+            
+            self.ptAlpha.x += deltaX
+            self.ptAlpha.y += deltaY
+            self.ptAlpha.z += deltaZ
+            
+        }  else  {
+            
+            self.ptOmega.x += deltaX
+            self.ptOmega.y += deltaY
+            self.ptOmega.z += deltaZ
+            
+        }
+        
+        parameterizeBezier()
     }
     
     
@@ -547,42 +589,6 @@ open class Cubic: PenCurve   {
         return deviation
     }
     
-    /// Supply the point on the curve for the input parameter value.
-    /// Some notations show "u" as the parameter, instead of "t"
-    /// - Parameters:
-    ///   - t:  Curve parameter value.  Assumed 0 < t < 1.
-    /// - Returns: Point location at the parameter value
-    public func pointAt(t: Double) -> Point3D   {
-        
-        let t2 = t * t
-        let t3 = t2 * t
-        
-           // This notation came from "Fundamentals of Interactive Computer Graphics" by Foley and Van Dam
-           // Warning!  The relationship of coefficients and powers of t might be unexpected, as notations vary
-        let myX = ax * t3 + bx * t2 + cx * t + dx
-        let myY = ay * t3 + by * t2 + cy * t + dy
-        let myZ = az * t3 + bz * t2 + cz * t + dz
-        
-        return Point3D(x: myX, y: myY, z: myZ)
-    }
-    
-    /// Differentiate to find the tangent vector for the input parameter.
-    /// Some notations show "u" as the parameter, instead of "t".
-    /// - Parameters:
-    ///   - t:  Curve parameter value.  Assumed 0 < t < 1.
-    /// - Returns:  Non-normalized vector
-    func tangentAt(t: Double) -> Vector3D   {
-        
-        let t2 = t * t
-
-           // This is the component matrix differentiated once
-        let myI = 3.0 * ax * t2 + 2.0 * bx * t + cx
-        let myJ = 3.0 * ay * t2 + 2.0 * by * t + cy
-        let myK = 3.0 * az * t2 + 2.0 * bz * t + cz
-        
-        return Vector3D(i: myI, j: myJ, k: myK)    // Notice that this is not normalized!
-    }
-    
     /// Create a plane if 21 points along the curve lie in it
     /// This doesn't handle a failed plane well.
     public func getPlane() -> Plane?   {
@@ -633,9 +639,97 @@ open class Cubic: PenCurve   {
         return (alongVector, perpVector)
     }
     
+    /// Find the range of the parameter where the point is closest to the curve.
+    /// What should the access level be?
+    /// - Parameters:
+    ///   - speck:  Target point
+    ///   - span:  A range of the curve parameter t in which to hunt
+    /// - Returns: A smaller ClosedRange<Double>.
+    /// - See: 'testResolve' under CubicTests
+    func refineRangeDist(speck: Point3D, span: ClosedRange<Double>) -> ClosedRange<Double>?   {
+        
+        /// Number of pieces to divide range
+        let chunks = 10
+        
+        /// The possible return value
+        var tighter: ClosedRange<Double>
+        
+        
+        /// Parameter step
+        let parStep = (span.upperBound - span.lowerBound) / Double(chunks)
+        
+        /// Array of equally spaced parameter values within the range.
+        var params = [Double]()
+        
+        for g in 0...chunks   {
+            let freshT = span.lowerBound + Double(g) * parStep
+            params.append(freshT)
+        }
+        
+        /// Array of separations
+        let seps = params.map{ Point3D.dist(pt1: self.pointAt(t: $0), pt2: speck) }
+        
+        /// Smallest distance
+        let close = seps.min()!
+        
+        /// Index of smallest distance
+        let thumb = seps.index(of: close)!
+        
+        switch thumb   {
+            
+        case 0:  tighter = ClosedRange<Double>(uncheckedBounds: (lower: params[0], upper: params[1]))
+            
+        case seps.count - 1:  tighter = ClosedRange<Double>(uncheckedBounds: (lower: params[seps.count - 2], upper: params[seps.count - 1]))
+            
+        default:  tighter = ClosedRange<Double>(uncheckedBounds: (lower: params[thumb - 1], upper: params[thumb + 1]))
+            
+        }
+        
+        return tighter
+    }
+    
+    
+    /// Find the closest point on the curve
+    /// - Parameters:
+    ///   - speck:  Target point
+    ///   - accuracy:  Optional - How close is close enough?
+    /// - Returns: A nearby Point3D on the curve.
+    /// - SeeAlso:  refineRangeDist()
+    /// - See: 'testFindClosest' under CubicTests
+    public func findClosest(speck: Point3D, accuracy: Double = Point3D.Epsilon) -> Point3D   {
+        
+        var priorPt = self.pointAt(t: 0.5)
+        
+        /// Separation between last and current iterations
+        var sep = Double.greatestFiniteMagnitude
+        
+        var curRange = ClosedRange<Double>(uncheckedBounds: (lower: 0.0, upper: 1.0))
+        
+        var tally = 0
+        
+        repeat   {
+            
+            let refinedRange = self.refineRangeDist(speck: speck, span: curRange)
+            
+            let midRange = ((refinedRange?.lowerBound)! + (refinedRange?.upperBound)!) / 2.0
+            let midPt = self.pointAt(t: midRange)
+            
+            sep = Point3D.dist(pt1: priorPt, pt2: midPt)
+            
+            priorPt = midPt   // Set up for the next iteration
+            curRange = refinedRange!
+            tally += 1
+            
+        } while tally < 7  && sep > accuracy
+        
+        return priorPt
+    }
+    
     
     /// Find the range of the parameter where the curve crosses a line.
     /// This is part of finding the intersection.
+    /// What should the access level be?
+    /// Should the be rewritten as a static function to allow parallel processing?
     /// - Parameters:
     ///   - ray:  The Line to be used in testing for a crossing
     ///   - span:  A range of the curve parameter t in which to hunt
@@ -704,6 +798,7 @@ open class Cubic: PenCurve   {
     ///   - accuracy:  Optional - How close is close enough?
     /// - Returns: Array of points common to both curves - though for now it will return only the first one
     /// - SeeAlso:  crossing()
+    /// - See: 'testIntLine1' and 'testIntLine2' under CubicTests
     public func intersect(ray: Line, accuracy: Double = Point3D.Epsilon) -> [Point3D] {
         
         /// The return array

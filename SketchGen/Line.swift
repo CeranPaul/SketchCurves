@@ -224,6 +224,37 @@ public struct Line: Equatable {
     }
     
     
+    /// Assumed to all be happening in the XY plane
+    /// Needs work!
+    public static func intersectLineCircle(arrow: Line, hoop: Arc) -> Point3D   {
+        
+        /// The return value
+        var RHintersect = Point3D(x: 0.0, y: 0.0, z: 0.0)
+        
+        /// Relative position of the circle center to the line origin
+        let relCenter = arrow.resolveRelative(yonder: hoop.getCenter())
+        
+        if relCenter.perp > hoop.getRadius()   {   // There are a number of ways that this could be handled
+            print("No intersection")
+        } else {
+            
+            let lineAnchor = arrow.getOrigin()
+            let jump = arrow.getDirection() * relCenter.along
+            let middleChord = lineAnchor.offset(jump: jump)
+            let stem = Point3D.dist(pt1: hoop.getCenter(), pt2: middleChord)   // Will be the same as relCenter.perp
+            
+            /// Magnitude of distance between middleChord and the intersection point
+            let halfChord = sqrt(hoop.getRadius() * hoop.getRadius() - stem * stem)
+            
+            let intersectJump = arrow.getDirection() * halfChord
+            
+            RHintersect = middleChord.offset(jump: intersectJump)   // One of two possibilities
+        }
+        
+        return RHintersect
+    }
+    
+    
 }    // End of definition for struct Line
 
 

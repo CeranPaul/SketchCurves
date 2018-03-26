@@ -15,20 +15,20 @@ open class Ellipse: PenCurve {
     /// As contrasted with focii for an orbital ellipse
     fileprivate var ctr: Point3D
     
-    /// Length of the larger axis
+    /// Length of the major axis
     fileprivate var a: Double
     
-    /// Length of the smaller axis
+    /// Length of the minor axis
     fileprivate var b: Double
     
-    /// Orientation of the long axis
+    /// Orientation (in radians) of the long axis
     fileprivate var azimuth: Double
     
     
-    /// Beginning point as angle in radians
+    /// Beginning point
     var start: Point3D
     
-    /// End point as angle in radians
+    /// End point
     var finish: Point3D
     
     /// Whether or not this is closed
@@ -68,6 +68,7 @@ open class Ellipse: PenCurve {
         self.usage = purpose
     }
     
+    
     /// Simple getter for the center point
     open func getCenter() -> Point3D   {
         return self.ctr
@@ -103,8 +104,9 @@ open class Ellipse: PenCurve {
         return try! OrthoVol(corner1: self.start, corner2: self.finish)
     }
     
+    
     /// Determine an X value from a given angle (in radians)
-    open func findX(_ ang: Double) -> Double   {
+    open func findX(ang: Double) -> Double   {
         
         let base = cos(ang)
         let alongX = base * self.a
@@ -114,7 +116,7 @@ open class Ellipse: PenCurve {
     
     
     /// Determine a Y value from a given X
-    open func findY(_ x: Double) -> Double  {
+    open func findY(x: Double) -> Double  {
         
         let y = sqrt(b * b * (1 - (x * x) / (a * a)))
         return y
@@ -149,9 +151,11 @@ open class Ellipse: PenCurve {
         for g in 1...20   {
             
             let stepU = Double(g) * 0.05   // Gee, this is brittle!
+            
             xCG = CGFloat(try! pointAt(t: stepU).x)
             yCG = CGFloat(try! pointAt(t: stepU).y)
-            //            print(String(describing: xCG) + "  " + String(describing: yCG))
+            print(String(describing: xCG) + "  " + String(describing: yCG))
+            
             let midPoint = CGPoint(x: xCG, y: yCG)
             let midScreen = midPoint.applying(tform)
             context.addLine(to: midScreen)

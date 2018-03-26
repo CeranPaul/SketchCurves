@@ -12,12 +12,12 @@ import Foundation
 open class CoordinateSystem   {
     
     /// Can be changed with 'relocate' function
-    private var origin: Point3D
+    var origin: Point3D
     
        // To assure the property of being mutually orthogonal
-    private var axisX: Vector3D
-    private var axisY: Vector3D
-    private var axisZ: Vector3D
+    var axisX: Vector3D
+    var axisY: Vector3D
+    var axisZ: Vector3D
     
     
     /// Construct an equivalent to the global CSYS.
@@ -67,7 +67,9 @@ open class CoordinateSystem   {
     ///   - direction1: A Vector3D
     ///   - direction2: A Vector3D that is not parallel or opposite to direction1
     ///   - useFirst: Use the first input vector as the reference direction?
-    ///   - verticalRef: Does the reference direction represent vertical or horizontal in the base plane?
+    ///   - verticalRef: Does the reference direction represent vertical or horizontal in the local plane?
+    /// - Throws:
+    ///   - NonUnitDirectionError for any bad input vector
     /// - See: 'testFidelity3' under CoordinateSystemTests
     public init(spot: Point3D, direction1: Vector3D, direction2: Vector3D, useFirst: Bool, verticalRef: Bool) throws   {
         
@@ -130,59 +132,6 @@ open class CoordinateSystem   {
         
         return axisZ
         
-    }
-    
-    
-    /// Generate a Transform to rotate and translate TO the global coordinate system.
-    /// Should this become a method of Transform?
-    /// - See: 'testGenToGlobal' under CoordinateSystemTests for a partial set of tests
-    public func genToGlobal() -> Transform   {
-        
-        let rotate = Transform(localX: self.axisX, localY: self.axisY, localZ: self.axisZ)
-        let translate = Transform(deltaX: self.origin.x, deltaY: self.origin.y, deltaZ: self.origin.z)
-        
-        let tform = rotate * translate
-        
-        return tform
-    }
-    
-    /// Generate a Transform to get points FROM the global CSYS.
-    /// Should this become a method of Transform?
-    public func genFromGlobal() -> Transform   {
-        
-           // Construct the transpose of the 3 x 3
-        let newA = self.axisX.i
-        let newB = self.axisY.i
-        let newC = self.axisZ.i
-        let newD = 0.0
-        
-        let newE = self.axisX.j
-        let newF = self.axisY.j
-        let newG = self.axisZ.j
-        let newH = 0.0
-        
-        let newJ = self.axisX.k
-        let newK = self.axisY.k
-        let newM = self.axisZ.k
-        let newN = 0.0
-        
-        let newP = 0.0
-        let newR = 0.0
-        let newS = 0.0
-        let newT = 1.0
-        
-        let transpose = Transform(a: newA, b: newB, c: newC, d: newD, e: newE, f: newF, g: newG, h: newH, j: newJ, k: newK, m: newM, n: newN, p: newP, r: newR, s: newS, t: newT)
-        
-        let rowOrig = RowMtx4(ptIn: self.origin)
-        
-        
-        let flippedOrig = rowOrig * transpose
-        
-        let invertedTranslate = Transform(deltaX: -1.0 * flippedOrig.a, deltaY: -1.0 * flippedOrig.b, deltaZ: -1.0 * flippedOrig.c)
-        
-        let tform = transpose * invertedTranslate
-        
-        return tform
     }
     
     
