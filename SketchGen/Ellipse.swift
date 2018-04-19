@@ -8,7 +8,9 @@
 
 import UIKit
 
-/// An elliptical arc, either whole, or a portion. More of a distorted circle rather than the path of an orbiting body
+/// An elliptical arc, either whole, or a portion.
+/// More of a distorted circle rather than the path of an orbiting body
+/// Not ready for prime time!
 open class Ellipse: PenCurve {
     
     /// Point around which the ellipse is swept
@@ -24,12 +26,21 @@ open class Ellipse: PenCurve {
     /// Orientation (in radians) of the long axis
     fileprivate var azimuth: Double
     
+    /// Transform to the global coordinate system
+    var toGlobal: Transform
+    
+    /// Transform to the local coordinate system
+    var toLocal: Transform
+    
     
     /// Beginning point
     var start: Point3D
     
     /// End point
     var finish: Point3D
+    
+    /// Angle of the endpoint
+    var sweepAngle: Double
     
     /// Whether or not this is closed
     var isFull: Bool
@@ -43,7 +54,15 @@ open class Ellipse: PenCurve {
     open var parameterRange: ClosedRange<Double>
     
     
-    public init(retnec: Point3D, a: Double, b: Double, azimuth: Double, start: Point3D, finish: Point3D)   {
+    
+    /// Basic constructor.  Really needs some input checks!
+    /// - Parameters:
+    ///   - retnec: Center
+    ///   - a: Length of the major axis
+    ///   - b: Length of the minor axis
+    ///   - azimuth: Angle (radians) of the long axis
+    ///   - normal:  Vector perpendicular to the plane of the ellipse
+    public init(retnec: Point3D, a: Double, b: Double, azimuth: Double, start: Point3D, finish: Point3D, normal: Vector3D)   {
         
         self.ctr = retnec
         self.a = a
@@ -59,11 +78,22 @@ open class Ellipse: PenCurve {
         
         self.parameterRange = ClosedRange<Double>(uncheckedBounds: (lower: 0.0, upper: 1.0))
         
+        let horiz = Vector3D.built(from: self.ctr, towards: self.start, unit: true)
+        let vert = try! Vector3D.crossProduct(lhs: normal, rhs: horiz)
+        
+        let localCSYS = try! CoordinateSystem(spot: self.ctr, direction1: horiz, direction2: vert, useFirst: true, verticalRef: false)
+        self.toGlobal = Transform.genToGlobal(csys: localCSYS)
+        self.toLocal = Transform.genFromGlobal(csys: localCSYS)
+        
+           // Find the angle of the end point
+        let delta = Vector3D.built(from: self.ctr, towards: self.finish)
+        self.sweepAngle = acos(delta.i / a)
+        
     }
     
     
     /// Attach new meaning to the curve
-    open func setIntent(_ purpose: PenTypes)   {
+    open func setIntent(purpose: PenTypes)   {
         
         self.usage = purpose
     }
@@ -86,17 +116,26 @@ open class Ellipse: PenCurve {
         return self.finish
     }
     
-    /// Find the point along this line segment specified by the parameter 't'
-    /// - Warning:  No checks are made for the value of t being inside some range
+    /// Find the point along this ellipse specified by the parameter 't'
+    /// - Parameters:
+    ///   - t:  Curve parameter value.  Assumed 0 < t < 1.
+    /// - Returns: Point location at the parameter value
     open func pointAt(t: Double) throws -> Point3D  {
         
+        let theta = t * self.sweepAngle
         
-        // TODO: Make this something besides a cop-out
+        let x = cos(theta) * a
+        var y = findY(x: x)
         
-        let spot = Point3D(x: 0.0, y: 0.0, z: 0.0)
+        if theta > Double.pi   {
+            y *= -1.0
+        }
         
+        let localSpot = Point3D(x: x, y: y, z: 0.0)
+        let spot = Point3D.transform(pip: localSpot, xirtam: self.toGlobal)
         return spot
     }
+    
     
     /// This currently returns a useless value
     public func getExtent() -> OrthoVol  {
@@ -106,7 +145,10 @@ open class Ellipse: PenCurve {
     
     
     /// Determine an X value from a given angle (in radians)
-    open func findX(ang: Double) -> Double   {
+    /// - Parameters:
+    ///   - ang:  Desired angle (radians)
+    /// - Returns: Local X value for the angle
+   open func findX(ang: Double) -> Double   {
         
         let base = cos(ang)
         let alongX = base * self.a
@@ -116,13 +158,16 @@ open class Ellipse: PenCurve {
     
     
     /// Determine a Y value from a given X
+    /// - Returns: Y value for the given X
     open func findY(x: Double) -> Double  {
         
         let y = sqrt(b * b * (1 - (x * x) / (a * a)))
         return y
     }
     
+    
     /// Move, rotate, and scale by a matrix
+    /// This probably doesn't work!
     /// - Throws: CoincidentPointsError if it was scaled to be very small
     open func transform(xirtam: Transform) -> PenCurve {
         
@@ -130,9 +175,10 @@ open class Ellipse: PenCurve {
         let tOmega = Point3D.transform(pip: self.finish, xirtam: xirtam)
         let tCent = Point3D.transform(pip: self.ctr, xirtam: xirtam)
         
-        let transformed = Ellipse(retnec: tCent, a: self.a, b: self.b, azimuth: self.azimuth, start: tAlpha, finish: tOmega)
+        let outward = Vector3D(i: 0.0, j: 0.0, k: 1.0)
+        let transformed = Ellipse(retnec: tCent, a: self.a, b: self.b, azimuth: self.azimuth, start: tAlpha, finish: tOmega, normal: outward)
         
-        transformed.setIntent(self.usage)   // Copy setting instead of having the default
+        transformed.setIntent(purpose: self.usage)   // Copy setting instead of having the default
         return transformed
     }
     
@@ -154,7 +200,7 @@ open class Ellipse: PenCurve {
             
             xCG = CGFloat(try! pointAt(t: stepU).x)
             yCG = CGFloat(try! pointAt(t: stepU).y)
-            print(String(describing: xCG) + "  " + String(describing: yCG))
+  //          print(String(describing: xCG) + "  " + String(describing: yCG))
             
             let midPoint = CGPoint(x: xCG, y: yCG)
             let midScreen = midPoint.applying(tform)

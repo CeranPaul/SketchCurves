@@ -12,7 +12,6 @@ import simd
 // What's the right way to check for equivalence?  End points and control points?
 
 // TODO: Will need a way to find what point, if any, has a particular slope
-// TODO: Find the parameter for a point at some distance along the curve
 // TODO: Add a bisecting function for Vector3D
 
 // TODO: Clip from either end and re-parameterize.  But what about 'undo'?  Careful with a lack of proportionality
@@ -517,7 +516,7 @@ open class Cubic: PenCurve   {
     }
     
     
-    /// Find the change in parameter that meets the crown requirement
+    /// Finds the new parameter that meets the crown requirement.
     /// - Parameters:
     ///   - allowableCrown:  Acceptable deviation from curve
     ///   - currentT:  Present value of the driving parameter
@@ -525,69 +524,76 @@ open class Cubic: PenCurve   {
     /// - Returns: New value for driving parameter
     public func findStep(allowableCrown: Double, currentT: Double, increasing: Bool) -> Double   {
         
+        /// How quickly to refine the parameter guess
+        let factor = 1.25
+        
+        /// Change in parameter - constantly refined.
+        var step = 0.9999 - currentT
+        
+        if !increasing   {
+            step = -0.9999 * currentT
+        }
+        
+        /// Working value of the parameter
         var trialT: Double
+        
+        /// Calculated crown
         var deviation: Double
-        var step = 0.2 * 1.25  // Wild guess for original case
         
         /// Counter to prevent loop runaway
         var safety = 0
         
         repeat   {
             
-            step = step / 1.25
-            
             if increasing   {
-                
                 trialT = currentT + step
                 if currentT > (1.0 - step)   {   // Prevent parameter value > 1.0
                     trialT = 1.0
                 }
-                
-                deviation = self.findCrown(smallerT: currentT, largerT: trialT)
-                
             }  else {
-                
                 trialT = currentT - step
                 if currentT < step   {   // Prevent parameter value < 0.0
                     trialT = 0.0
                 }
-                deviation = self.findCrown(smallerT: trialT, largerT: currentT)
             }
             
+            deviation = self.findCrown(smallerT: trialT, largerT: currentT)
+
+            step = step / factor     // Prepare for the next iteration
             safety += 1
             
-        }  while deviation > allowableCrown  && safety < 9
+        }  while deviation > allowableCrown  && safety < 12    // Fails ugly!
         
         return trialT
     }
     
     /// Calculate the crown over a small segment
+    /// - Parameters:
+    ///   - smallerT:  One location on the curve
+    ///   - largerT:  One location on the curve
+    /// - Returns: Maximum separation.
     public func findCrown(smallerT: Double, largerT: Double) -> Double   {
         
+        let delta = (largerT - smallerT) / 16.0
+        
+        var crownDots = [Point3D]()
+        
         let anchorA = self.pointAt(t: smallerT)
-        let anchorB = self.pointAt(t: largerT)
+        crownDots.append(anchorA)
         
-        let wire = try! LineSeg(end1: anchorA, end2: anchorB)
-        
-        let delta = largerT - smallerT
-        
-        var deviation = 0.0
-        
-        for g in 1...9   {
+        for g in 1...15   {
             
-            let pip = self.pointAt(t: smallerT + Double(g) * delta / 10.0)
-            let diffs = wire.resolveRelative(speck: pip)
-            
-            let separation = diffs.perp.length()   // Always a positive value
-            
-            if separation > deviation   {
-                deviation = separation
-            }
-            
+            let pip = self.pointAt(t: smallerT + Double(g) * delta)
+            crownDots.append(pip)
         }
         
+        let anchorB = self.pointAt(t: largerT)
+        crownDots.append(anchorB)
+        
+        let deviation = Cubic.crownCalcs(dots: crownDots)
         return deviation
     }
+    
     
     /// Create a plane if 21 points along the curve lie in it
     /// This doesn't handle a failed plane well.
@@ -623,7 +629,7 @@ open class Cubic: PenCurve   {
     }
     
     
-    /// Find the position of a point relative to the line segment and its origin.
+    /// Find the position of a point relative to the curve and its origin.
     /// Useless result at the moment.
     /// - Parameters:
     ///   - speck:  Point near the curve.
@@ -640,13 +646,12 @@ open class Cubic: PenCurve   {
     }
     
     /// Find the range of the parameter where the point is closest to the curve.
-    /// What should the access level be?
     /// - Parameters:
     ///   - speck:  Target point
     ///   - span:  A range of the curve parameter t in which to hunt
     /// - Returns: A smaller ClosedRange<Double>.
     /// - See: 'testResolve' under CubicTests
-    func refineRangeDist(speck: Point3D, span: ClosedRange<Double>) -> ClosedRange<Double>?   {
+    public func refineRangeDist(speck: Point3D, span: ClosedRange<Double>) -> ClosedRange<Double>?   {
         
         /// Number of pieces to divide range
         let chunks = 10
@@ -689,7 +694,8 @@ open class Cubic: PenCurve   {
     }
     
     
-    /// Find the closest point on the curve
+    /// Find the closest point on the curve.
+    /// Should be modified to pass back the parameter as well.
     /// - Parameters:
     ///   - speck:  Target point
     ///   - accuracy:  Optional - How close is close enough?
@@ -705,6 +711,7 @@ open class Cubic: PenCurve   {
         
         var curRange = ClosedRange<Double>(uncheckedBounds: (lower: 0.0, upper: 1.0))
         
+        /// A counter to prevent a runaway loop
         var tally = 0
         
         repeat   {
@@ -720,7 +727,7 @@ open class Cubic: PenCurve   {
             curRange = refinedRange!
             tally += 1
             
-        } while tally < 7  && sep > accuracy
+        } while sep > accuracy  && tally < 7   // Fails ugly for the second clause!
         
         return priorPt
     }
@@ -792,7 +799,8 @@ open class Cubic: PenCurve   {
         return nil
     }
     
-    /// Intersection points with a line
+    /// Intersection points with a line.
+    /// Needs to become a thread safe function.
     /// - Parameters:
     ///   - ray:  The Line to be used for intersecting
     ///   - accuracy:  Optional - How close is close enough?
@@ -810,7 +818,7 @@ open class Cubic: PenCurve   {
         /// Separation in points for the given range of parameter t
         var sep = self.findLength()
         
-        var middle = Point3D(x: -1.0, y: -1.0, z: -1.0)
+        var middle = Point3D(x: -1.0, y: -1.0, z: -1.0)   // Dummy value
         
         
         /// Interval in parameter space for hunting
@@ -839,81 +847,21 @@ open class Cubic: PenCurve   {
         return crossings
     }
     
-    /// Intersection points with a line
-    public func intersectOld(ray: Line, accuracy: Double) -> [Point3D] {
+    
+    
+    /// Caluclate deviation from a LineSeg
+    /// - Parameters:
+    ///   - dots:  Array of Point3D.  Order is assumed.
+    /// - Returns: Maximum separation.
+    /// Does not check for an Array length < 3
+    public static func crownCalcs(dots: [Point3D]) -> Double   {
         
-        /// The return array
-        var crossings = [Point3D]()
+        let bar = try! LineSeg(end1: dots.first!, end2: dots.last!)
         
+        let seps = dots.map( { bar.resolveRelative(speck: $0).perp.length() } )
+        let curCrown = seps.max()!
         
-        let ref = Vector3D.built(from: ray.getOrigin(), towards: self.getOneEnd())
-        
-        let refComps = ray.resolveRelative(arrow: ref)
-        
-        /// Normalized vector in the direction from the Line origin to the curve start
-        var perpOneEnd = refComps.perp
-        perpOneEnd.normalize()
-        
-        
-        /// Current step size.  Will get smaller as the search progresses
-        var deltaT = 0.2
-        
-        /// The independent variable
-        var t = -deltaT
-        
-        
-        /// Prior value of the function
-        var previous: Double
-        
-        /// Must start positive.  The goal is to get this to 0.0 within +/- "accuracy"
-        var objective = refComps.perp.length()
-        
-        
-        /// Backstop for the outer loop
-        var outsideCount = 0   // Should this counter and check be replaced by an error call?
-        
-        repeat   {
-            
-            /// Backstop for the inner loop
-            var insideCount = 0   // Should this counter and check be replaced by an error call?
-            
-            repeat   {
-                
-                t += deltaT   // Generate another value for t
-                //                prevDelta = delta
-                previous = objective
-                
-                
-                let slider = self.pointAt(t: t)
-                
-                let cast = Vector3D.built(from: ray.getOrigin(), towards: slider)
-                
-                let comps = ray.resolveRelative(arrow: cast)
-                
-                objective = Vector3D.dotProduct(lhs: perpOneEnd, rhs: comps.perp)
-                //                delta = objective - previous
-                //                print(String(t) + "  " + String(objective))
-                
-                // Prepare for further iterations
-                
-                insideCount += 1
-                
-            } while objective * previous > 0.0 && (t + deltaT) <= 1.0  &&  insideCount < 8   // Loop until objective changes sign
-            
-            deltaT = deltaT / -5.0   // Decrease the step size
-            //            delta *= -1.0   // Change the sign for the (previous) step, as well.
-            
-            outsideCount += 1
-            
-        } while abs(objective) > accuracy && abs(deltaT) > 0.001 && outsideCount < 10   // Iterate until a condition fails
-        
-        // This assumes that none of the loops have overrun
-        let pip = self.pointAt(t: t)
-        crossings.append(pip)
-        
-        print(t)
-        
-        return crossings
+        return curCrown
     }
     
     

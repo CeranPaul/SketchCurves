@@ -186,6 +186,36 @@ class Point3DTests: XCTestCase {
         
     }
     
+    func testUniquePool()   {
+        
+        /// Bag o' points
+        var pond = [Point3D]()
+        
+        let ptA = Point3D(x: 5.0, y: 5.0, z: 2.0)
+        pond.append(ptA)
+        
+        let ptB = Point3D(x: 2.0, y: 5.0, z: 5.0)
+        pond.append(ptB)
+        
+        let ptC = Point3D(x: 1.0, y: 4.2, z: 6.0)
+        pond.append(ptC)
+        
+        let ptD = Point3D(x: -3.0, y: 0.95, z: 0.5)
+        pond.append(ptD)
+        
+        
+        var light = Point3D.isUniquePool(flock: pond)
+        XCTAssert(light)
+        
+        
+        let ptE = Point3D(x: 5.0, y: 5.0, z: 2.0)
+        pond.append(ptE)
+        
+        light = Point3D.isUniquePool(flock: pond)
+        XCTAssertFalse(light)
+        
+    }
+    
     // TODO: Add tests for transform, intersectLinePlane, and project
     
 }

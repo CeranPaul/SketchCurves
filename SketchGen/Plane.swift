@@ -102,7 +102,7 @@ public struct Plane   {
     ///   - enil:  Line for testing
     /// - Returns: Simple flag
     /// - See: 'testIsParallelLine' under PlaneTests
-   public static func isParallel(flat: Plane, enil: Line) -> Bool   {
+    public static func isParallel(flat: Plane, enil: Line) -> Bool   {
         
         let perp = Vector3D.dotProduct(lhs: enil.getDirection(), rhs: flat.normal)
         

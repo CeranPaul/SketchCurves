@@ -18,8 +18,8 @@ open class Transform   {
     var p, r, s, t: Double
     
     
-    /// Construct an identity matrix
-    /// - See: 'testIdentity' under TransformTests
+    /// Construct an identity matrix.
+    /// - See: 'testIdentity' under TransformTests.
     public init()   {
         
         a = 1.0
@@ -297,7 +297,7 @@ public enum Axis {
 
 
 /// Row matrix of length 4.
-/// Distinct from double4 from simD to control the order of operations.
+/// Distinct from double4 in simD to control the order of operations.
 open class RowMtx4   {
     
     var a, b, c, d:  Double
@@ -344,6 +344,10 @@ open class RowMtx4   {
 
 
 /// Compare two of 'em.
+/// - Parameters:
+///   - lhs: First transform
+///   - rhs: Second transform
+///   Returns: Simple flag
 public func == (lhs: Transform, rhs: Transform) -> Bool  {
     
     let a = abs(lhs.a - rhs.a) < Vector3D.EpsilonV
@@ -380,7 +384,11 @@ public func == (lhs: Transform, rhs: Transform) -> Bool  {
 
 
 /// Pre-multiply a row matrix and the square matrix.
+/// Used to transform points and vectors
 /// Custom code that uses a slightly different order than simd.
+/// - Parameters:
+///   - pre: Row matrix of length 4
+///   - rhs: Transform
 /// - See:
 public func * (pre: RowMtx4, mtx: Transform) -> RowMtx4   {
     
@@ -396,11 +404,16 @@ public func * (pre: RowMtx4, mtx: Transform) -> RowMtx4   {
     return RowMtx4.init(valOne: res1, valTwo: res2, valThree: res3, valFour: res4)
 }
 
+
     //TODO: Add a post multiplication function and its tests
 
-//TODO: Add an identity check?
+//TODO: Add an identity check?  Can be covered by doing equals with the result of the empty initializer.
 
-/// Combine rotations by multiplying two square matrices
+
+/// Combine rotations by multiplying two square matrices.
+/// - Parameters:
+///   - lhs: First transform
+///   - rhs: Second transform
 /// - See:
 public func * (lhs: Transform, rhs: Transform) -> Transform   {
 

@@ -148,31 +148,25 @@ public struct  Point3D: Hashable {
     }
     
     
-    /// Check if all contained points are unique
-    /// Not suitable for large arrays - n factorial
-    public static func uniqueChain(chain: [Point3D]) -> Bool   {
+    /// Check if all contained points are unique.
+    /// - Parameters:
+    ///   - flock:  A collection of points
+    /// - Returns: A simple flag
+    public static func isUniquePool(flock: [Point3D]) -> Bool   {
+        
+        /// A hash set
+        var pool = Set<Point3D>()
+        
+        for pip in flock   {
+            pool.insert(pip)
+        }
         
         /// All points have adequate separation
-        var flag = true
-        
-        for (index, pip) in chain.enumerated()   {
-            
-            for g in index + 1..<chain.count   {
-                
-                let sep = Point3D.dist(pt1: pip, pt2: chain[g])
-                
-                if sep < self.Epsilon   {
-                    
-                    flag = false
-                    break
-                }
-                
-            }
-            
-        }
+        let flag = (pool.count == flock.count)
         
         return flag
     }
+    
     
     /// Throw away the Z value and convert
     /// Should this become a computed member variable?

@@ -213,8 +213,8 @@ class DemoPool  {
         let green = Point3D(x: 50.0, y: 0.0, z: 0.0)
         let checker = Point3D(x: 0.0, y: 30.0, z: 0.0)
         
-        
-        let oval = Ellipse(retnec: ctr, a: a, b: b, azimuth: 0.0, start: green, finish: checker)
+        let rocket = Vector3D(i: 0.0, j: 0.0, k: 1.0)
+        let oval = Ellipse(retnec: ctr, a: a, b: b, azimuth: 0.0, start: green, finish: checker, normal: rocket)
         
         displayCurves.append(oval)
         

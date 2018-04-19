@@ -254,13 +254,23 @@ class CubicTests: XCTestCase {
         
     }
     
+    
+    func testFindCrown()   {
+        
+        let hump = cup!.findCrown(smallerT: 0.20, largerT: 0.85)
+        
+        XCTAssertEqual(hump, 0.0541, accuracy: 0.0001)
+    }
+    
     func testFindClosest()   {
         
         let near = Point3D(x: 2.9, y: 1.4, z: 0.7)
         
         let buddy = cup!.findClosest(speck: near)
         
-        print(buddy)
+        let target = Point3D(x: 2.99392, y: 1.65063, z: 0.70000)
+        
+        XCTAssertEqual(buddy, target)
     }
     
     

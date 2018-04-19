@@ -182,11 +182,14 @@ open class Spline: PenCurve   {
         
     }
     
+    
+    /// Transform the set.
+    /// Problem with the return type.
     public func transform(xirtam: Transform) -> PenCurve   {
 
         let spaghetti = self.pieces.map( {$0.transform(xirtam: xirtam)} )
         
-        let roller = Spline(curves: spaghetti as! [Cubic])
+        let _ = Spline(curves: spaghetti as! [Cubic])
         
         return spaghetti.first!
     }

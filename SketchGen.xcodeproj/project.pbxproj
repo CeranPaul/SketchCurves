@@ -78,6 +78,7 @@
 		81D9789F2029476F000ED1FE /* Loop.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81D9789E2029476E000ED1FE /* Loop.swift */; };
 		81D978A120294778000ED1FE /* LoopTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81D978A020294778000ED1FE /* LoopTests.swift */; };
 		81D978A22029479B000ED1FE /* Loop.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81D9789E2029476E000ED1FE /* Loop.swift */; };
+		81DCB7B52088E2E30028E66E /* EllipseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81DCB7B42088E2E30028E66E /* EllipseTests.swift */; };
 		81F250A61EB1059100AED201 /* CoordinateSystemTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81F250A51EB1059100AED201 /* CoordinateSystemTests.swift */; };
 		81F250A71EB1068B00AED201 /* CoordinateSystem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8124968F1D0E0D8C0023A256 /* CoordinateSystem.swift */; };
 		81F250A81EB107CC00AED201 /* NonOrthogonalCSYSError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 812496911D0E0DFC0023A256 /* NonOrthogonalCSYSError.swift */; };
@@ -153,6 +154,7 @@
 		81CDCC261C17E4F000060C8D /* ParallelPlanesError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ParallelPlanesError.swift; sourceTree = "<group>"; };
 		81D9789E2029476E000ED1FE /* Loop.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Loop.swift; sourceTree = "<group>"; };
 		81D978A020294778000ED1FE /* LoopTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoopTests.swift; sourceTree = "<group>"; };
+		81DCB7B42088E2E30028E66E /* EllipseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EllipseTests.swift; sourceTree = "<group>"; };
 		81F250A51EB1059100AED201 /* CoordinateSystemTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoordinateSystemTests.swift; sourceTree = "<group>"; };
 		81F8D6CB1C51F65000A369CF /* PerimeterTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PerimeterTests.swift; sourceTree = "<group>"; };
 		81FEAAA41C4348EE000F0E2A /* CoincidentLinesError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoincidentLinesError.swift; sourceTree = "<group>"; };
@@ -200,19 +202,19 @@
 		81414AFE1C08CE5E00A9DE83 /* SketchGen */ = {
 			isa = PBXGroup;
 			children = (
-				81D9789E2029476E000ED1FE /* Loop.swift */,
 				818D17851D599DF200BE248A /* CurveDemo.swift */,
 				818D17831D599DF200BE248A /* Arc.swift */,
-				8124968F1D0E0D8C0023A256 /* CoordinateSystem.swift */,
 				8106F0021C1FA12C00C74FE6 /* Cubic.swift */,
 				814E0F5C1D3D64EF00200289 /* Spline.swift */,
 				81078A741C587848001C21CD /* Ellipse.swift */,
-				81CDCC1E1C17E3FD00060C8D /* Line.swift */,
 				81414B1F1C08CEE200A9DE83 /* LineSeg.swift */,
+				81D9789E2029476E000ED1FE /* Loop.swift */,
+				81CDCC1E1C17E3FD00060C8D /* Line.swift */,
 				81414B201C08CEE200A9DE83 /* OrthoVol.swift */,
 				81FEAAD11C4E9716000F0E2A /* Perimeter.swift */,
 				81CDCC221C17E44B00060C8D /* Plane.swift */,
 				81414B231C08CEE200A9DE83 /* Point3D.swift */,
+				8124968F1D0E0D8C0023A256 /* CoordinateSystem.swift */,
 				810328901C718F7A00E6FA21 /* Transform.swift */,
 				818D17861D599DF200BE248A /* Vector3D.swift */,
 				81414B211C08CEE200A9DE83 /* PenCurve.swift */,
@@ -236,6 +238,7 @@
 				818D178E1D599F0400BE248A /* ArcTests.swift */,
 				81F250A51EB1059100AED201 /* CoordinateSystemTests.swift */,
 				814E0F5A1D3B359000200289 /* CubicTests.swift */,
+				81DCB7B42088E2E30028E66E /* EllipseTests.swift */,
 				8183F26D1C1A672B009CAF6B /* LineTests.swift */,
 				81414B331C08CF8C00A9DE83 /* LineSegTests.swift */,
 				81414B341C08CF8C00A9DE83 /* OrthoVolTests.swift */,
@@ -318,7 +321,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0710;
-				LastUpgradeCheck = 0920;
+				LastUpgradeCheck = 0930;
 				ORGANIZATIONNAME = "Ceran Digital Media";
 				TargetAttributes = {
 					81414AFB1C08CE5E00A9DE83 = {
@@ -443,6 +446,7 @@
 				814F133F1C153EEA004AB22B /* OrthoVol.swift in Sources */,
 				814E0F5E1D3D64EF00200289 /* Spline.swift in Sources */,
 				81FEAAD31C4E9716000F0E2A /* Perimeter.swift in Sources */,
+				81DCB7B52088E2E30028E66E /* EllipseTests.swift in Sources */,
 				81D978A120294778000ED1FE /* LoopTests.swift in Sources */,
 				8183F2661C18E319009CAF6B /* ParallelPlanesError.swift in Sources */,
 				81414B361C08CF8C00A9DE83 /* LineSegTests.swift in Sources */,
@@ -509,12 +513,14 @@
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
@@ -541,7 +547,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.3;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -562,12 +568,14 @@
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
@@ -588,7 +596,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.3;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
