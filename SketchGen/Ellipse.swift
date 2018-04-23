@@ -222,15 +222,11 @@ open class Ellipse: PenCurve {
     
     
     /// Figure how far the point is off the curve, and how far along the curve it is.  Useful for picks
-    open func resolveRelative(speck: Point3D) -> (along: Vector3D, perp: Vector3D)   {
+    open func resolveRelative(speck: Point3D) -> (along: Double, away: Double)   {
         
         // TODO: Make this return something besides dummy values
-//        let otherSpeck = speck
-        let alongVector = Vector3D(i: 1.0, j: 0.0, k: 0.0)
         
-        let perpVector = Vector3D(i: 0.0, j: 1.0, k: 0.0)
-        
-        return (alongVector, perpVector)
+        return (1.0, 1.0)
     }
     
     

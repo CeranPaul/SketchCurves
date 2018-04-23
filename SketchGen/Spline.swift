@@ -195,20 +195,15 @@ open class Spline: PenCurve   {
     }
     
 
-    /// Find the position of a point relative to the line segment and its origin.
+    /// Find the position of a point relative to the spline and its start point.
     /// Useless result at the moment.
     /// - Parameters:
     ///   - speck:  Point near the curve.
-    /// - Returns: Tuple of Vector components relative to the origin
-    public func resolveRelative(speck: Point3D) -> (along: Vector3D, perp: Vector3D)   {
+    /// - Returns: Tuple of distances relative to the origin
+    public func resolveRelative(speck: Point3D) -> (along: Double, away: Double)   {
         
-        //        let otherSpeck = speck
         
-        let alongVector = Vector3D(i: 1.0, j: 0.0, k: 0.0)
-        
-        let perpVector = Vector3D(i: 0.0, j: 1.0, k: 0.0)
-        
-        return (alongVector, perpVector)
+        return (1.0, 1.0)
     }
     
     

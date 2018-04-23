@@ -20,7 +20,7 @@ class DemoPool  {
     /// Call a demonstration routine
     init()   {
         
-        let demoString = "egg"   // Change this to a different case name
+        let demoString = "gallery"   // Change this to a different case name
         
         switch demoString   {
             
@@ -338,7 +338,7 @@ class DemoPool  {
         
         displayCurves.append(contentsOf: zips)
         
-        let lz = bump.findClosest(speck: horsefly)
+        let lz = bump.findClosest(speck: horsefly).pip
         displayCurves.append(contentsOf: plotPoint(speck: lz, size: 0.05))
    }
     

@@ -43,6 +43,6 @@ public protocol PenCurve   {
        // getLength and intersect are near-term candidates for additional funcs
     
     /// Figure how far the point is off the curve, and how far along the curve it is.  Useful for picks  
-    func resolveRelative(speck: Point3D) -> (along: Vector3D, perp: Vector3D)
+    func resolveRelative(speck: Point3D) -> (along: Double, away: Double)
     
 }

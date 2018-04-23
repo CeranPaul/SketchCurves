@@ -73,7 +73,7 @@ public struct Line: Equatable {
     ///   - arrow:  Trial Vector
     /// - Returns: Tuple of Vectors
     /// - SeeAlso:  'resolveRelative(Point)'
-    public func resolveRelative(arrow: Vector3D) -> (along: Vector3D, perp: Vector3D)   {
+    public func resolveRelativeVec(arrow: Vector3D) -> (along: Vector3D, perp: Vector3D)   {
         
         let along = Vector3D.dotProduct(lhs: arrow, rhs: self.direction)
         let alongVector = self.direction * along
@@ -207,7 +207,7 @@ public struct Line: Equatable {
         let bridgeVector = Vector3D.built(from: straightA.getOrigin(), towards: straightB.getOrigin())
         
         /// Components (vectors) of the full-length bridge vector relative to Line straightA
-        let comps = straightA.resolveRelative(arrow: bridgeVector)
+        let comps = straightA.resolveRelativeVec(arrow: bridgeVector)
         
         var perpDir = comps.perp
         perpDir.normalize()  // The coincidence checks above should keep the vector from having zero length

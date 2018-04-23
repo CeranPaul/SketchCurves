@@ -374,19 +374,22 @@ open class Cubic: PenCurve   {
         return Vector3D(i: myI, j: myJ, k: myK)    // Notice that this is not normalized!
     }
     
-    /// Break into pieces and sum up the distances
+    /// Break into 20 pieces and sum up the distances
+    /// - Parameters:
+    ///   - t:  Optional curve parameter value.  Assumed 0 < t < 1.
     /// - Returns: Double that is an approximate length
-    public func findLength() -> Double   {
+    /// Should bail if t = 0.0
+    public func findLength(t: Double = 1.0) -> Double   {
         
         let pieces = 20
-        let step = 1.0 / Double(pieces)
-        let limit = pieces
+        let step = t / Double(pieces)
         
         var prevPoint = self.pointAt(t: 0.0)
         
+        /// Running total
         var length = 0.0
         
-        for g in 1...limit   {
+        for g in 1...pieces   {
             
             let pip = self.pointAt(t: Double(g) * step)
             let hop = Point3D.dist(pt1: prevPoint, pt2: pip)
@@ -634,7 +637,8 @@ open class Cubic: PenCurve   {
     /// - Parameters:
     ///   - speck:  Point near the curve.
     /// - Returns: Tuple of Vector components relative to the origin
-    public func resolveRelative(speck: Point3D) -> (along: Vector3D, perp: Vector3D)   {
+    /// - SeeAlso:  resolveRelativeNum()
+    public func resolveRelativeVec(speck: Point3D) -> (along: Vector3D, perp: Vector3D)   {
         
 //        let otherSpeck = speck
         
@@ -643,6 +647,20 @@ open class Cubic: PenCurve   {
         let perpVector = Vector3D(i: 0.0, j: 1.0, k: 0.0)
         
         return (alongVector, perpVector)
+    }
+    
+    /// - Parameters:
+    ///   - speck:  Point near the curve.
+    /// - Returns: Tuple of distances relative to the start of the curve.
+    /// - SeeAlso:  resolveRelative()
+    public func resolveRelative(speck: Point3D) -> (along: Double, away: Double)   {
+        
+        let onCurve = findClosest(speck: speck)
+        
+        let distanceAlong = self.findLength(t: onCurve.param)
+        let sep = Point3D.dist(pt1: onCurve.pip, pt2: speck)
+        
+        return (distanceAlong, sep)
     }
     
     /// Find the range of the parameter where the point is closest to the curve.
@@ -702,14 +720,17 @@ open class Cubic: PenCurve   {
     /// - Returns: A nearby Point3D on the curve.
     /// - SeeAlso:  refineRangeDist()
     /// - See: 'testFindClosest' under CubicTests
-    public func findClosest(speck: Point3D, accuracy: Double = Point3D.Epsilon) -> Point3D   {
+    public func findClosest(speck: Point3D, accuracy: Double = Point3D.Epsilon) -> (pip: Point3D, param: Double)   {
         
         var priorPt = self.pointAt(t: 0.5)
         
-        /// Separation between last and current iterations
+        /// Separation between last and current iterations.
         var sep = Double.greatestFiniteMagnitude
         
         var curRange = ClosedRange<Double>(uncheckedBounds: (lower: 0.0, upper: 1.0))
+        
+        /// Working point through the iterations.
+        var midRange: Double
         
         /// A counter to prevent a runaway loop
         var tally = 0
@@ -718,7 +739,7 @@ open class Cubic: PenCurve   {
             
             let refinedRange = self.refineRangeDist(speck: speck, span: curRange)
             
-            let midRange = ((refinedRange?.lowerBound)! + (refinedRange?.upperBound)!) / 2.0
+            midRange = ((refinedRange?.lowerBound)! + (refinedRange?.upperBound)!) / 2.0
             let midPt = self.pointAt(t: midRange)
             
             sep = Point3D.dist(pt1: priorPt, pt2: midPt)
@@ -729,7 +750,7 @@ open class Cubic: PenCurve   {
             
         } while sep > accuracy  && tally < 7   // Fails ugly for the second clause!
         
-        return priorPt
+        return (priorPt, midRange)
     }
     
     
@@ -756,7 +777,7 @@ open class Cubic: PenCurve   {
         let bridgeVec = Vector3D.built(from: ray.getOrigin(), towards: green)
         
         /// Components of bridge along and perpendicular to the Line
-        let bridgeComps = ray.resolveRelative(arrow: bridgeVec)
+        let bridgeComps = ray.resolveRelativeVec(arrow: bridgeVec)
         
         /// Normalized vector in the direction from the Line origin to the curve start
         var ref = bridgeComps.perp
@@ -780,7 +801,7 @@ open class Cubic: PenCurve   {
             
             let bridge = Vector3D.built(from: ray.getOrigin(), towards: pip)
             
-            let components = ray.resolveRelative(arrow: bridge)
+            let components = ray.resolveRelativeVec(arrow: bridge)
             
             /// Non-normalized vector in the direction from the Line origin to the current point
             let hotStuff = components.perp
@@ -858,7 +879,7 @@ open class Cubic: PenCurve   {
         
         let bar = try! LineSeg(end1: dots.first!, end2: dots.last!)
         
-        let seps = dots.map( { bar.resolveRelative(speck: $0).perp.length() } )
+        let seps = dots.map( { bar.resolveRelative(speck: $0).away } )
         let curCrown = seps.max()!
         
         return curCrown

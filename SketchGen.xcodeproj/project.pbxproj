@@ -82,15 +82,12 @@
 		81F250A61EB1059100AED201 /* CoordinateSystemTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81F250A51EB1059100AED201 /* CoordinateSystemTests.swift */; };
 		81F250A71EB1068B00AED201 /* CoordinateSystem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8124968F1D0E0D8C0023A256 /* CoordinateSystem.swift */; };
 		81F250A81EB107CC00AED201 /* NonOrthogonalCSYSError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 812496911D0E0DFC0023A256 /* NonOrthogonalCSYSError.swift */; };
-		81F8D6CC1C51F65100A369CF /* PerimeterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81F8D6CB1C51F65000A369CF /* PerimeterTests.swift */; };
 		81FEAAA51C4348EE000F0E2A /* CoincidentLinesError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81FEAAA41C4348EE000F0E2A /* CoincidentLinesError.swift */; };
 		81FEAAA61C4348EE000F0E2A /* CoincidentLinesError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81FEAAA41C4348EE000F0E2A /* CoincidentLinesError.swift */; };
 		81FEAAA81C4359B1000F0E2A /* ParallelLinesError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81FEAAA71C4359B1000F0E2A /* ParallelLinesError.swift */; };
 		81FEAAA91C4359B1000F0E2A /* ParallelLinesError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81FEAAA71C4359B1000F0E2A /* ParallelLinesError.swift */; };
 		81FEAAAB1C435AF0000F0E2A /* NonCoPlanarLinesError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81FEAAAA1C435AF0000F0E2A /* NonCoPlanarLinesError.swift */; };
 		81FEAAAC1C435AF0000F0E2A /* NonCoPlanarLinesError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81FEAAAA1C435AF0000F0E2A /* NonCoPlanarLinesError.swift */; };
-		81FEAAD21C4E9716000F0E2A /* Perimeter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81FEAAD11C4E9716000F0E2A /* Perimeter.swift */; };
-		81FEAAD31C4E9716000F0E2A /* Perimeter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81FEAAD11C4E9716000F0E2A /* Perimeter.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -156,11 +153,9 @@
 		81D978A020294778000ED1FE /* LoopTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoopTests.swift; sourceTree = "<group>"; };
 		81DCB7B42088E2E30028E66E /* EllipseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EllipseTests.swift; sourceTree = "<group>"; };
 		81F250A51EB1059100AED201 /* CoordinateSystemTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoordinateSystemTests.swift; sourceTree = "<group>"; };
-		81F8D6CB1C51F65000A369CF /* PerimeterTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PerimeterTests.swift; sourceTree = "<group>"; };
 		81FEAAA41C4348EE000F0E2A /* CoincidentLinesError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoincidentLinesError.swift; sourceTree = "<group>"; };
 		81FEAAA71C4359B1000F0E2A /* ParallelLinesError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ParallelLinesError.swift; sourceTree = "<group>"; };
 		81FEAAAA1C435AF0000F0E2A /* NonCoPlanarLinesError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NonCoPlanarLinesError.swift; sourceTree = "<group>"; };
-		81FEAAD11C4E9716000F0E2A /* Perimeter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Perimeter.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -211,7 +206,6 @@
 				81D9789E2029476E000ED1FE /* Loop.swift */,
 				81CDCC1E1C17E3FD00060C8D /* Line.swift */,
 				81414B201C08CEE200A9DE83 /* OrthoVol.swift */,
-				81FEAAD11C4E9716000F0E2A /* Perimeter.swift */,
 				81CDCC221C17E44B00060C8D /* Plane.swift */,
 				81414B231C08CEE200A9DE83 /* Point3D.swift */,
 				8124968F1D0E0D8C0023A256 /* CoordinateSystem.swift */,
@@ -242,7 +236,6 @@
 				8183F26D1C1A672B009CAF6B /* LineTests.swift */,
 				81414B331C08CF8C00A9DE83 /* LineSegTests.swift */,
 				81414B341C08CF8C00A9DE83 /* OrthoVolTests.swift */,
-				81F8D6CB1C51F65000A369CF /* PerimeterTests.swift */,
 				8183F26F1C1A675A009CAF6B /* PlaneTests.swift */,
 				8106F0001C1A7F6B00C74FE6 /* Point3DTests.swift */,
 				814E0F5F1D3D65C900200289 /* SplineTests.swift */,
@@ -385,7 +378,6 @@
 				81FEAAA81C4359B1000F0E2A /* ParallelLinesError.swift in Sources */,
 				81414B261C08CEE200A9DE83 /* PenCurve.swift in Sources */,
 				81414B301C08CF2B00A9DE83 /* Easel2D.swift in Sources */,
-				81FEAAD21C4E9716000F0E2A /* Perimeter.swift in Sources */,
 				81078A751C587848001C21CD /* Ellipse.swift in Sources */,
 				811EB7D3201A68D700432F66 /* NonOrthogonalPointError.swift in Sources */,
 				8183F2681C1A0872009CAF6B /* NonUnitDirectionError.swift in Sources */,
@@ -441,11 +433,9 @@
 				818D178B1D599E2100BE248A /* Vector3D.swift in Sources */,
 				814E0F601D3D65C900200289 /* SplineTests.swift in Sources */,
 				8183F2701C1A675A009CAF6B /* PlaneTests.swift in Sources */,
-				81F8D6CC1C51F65100A369CF /* PerimeterTests.swift in Sources */,
 				811EB7D7201D8F7100432F66 /* ParameterRangeErrorUno.swift in Sources */,
 				814F133F1C153EEA004AB22B /* OrthoVol.swift in Sources */,
 				814E0F5E1D3D64EF00200289 /* Spline.swift in Sources */,
-				81FEAAD31C4E9716000F0E2A /* Perimeter.swift in Sources */,
 				81DCB7B52088E2E30028E66E /* EllipseTests.swift in Sources */,
 				81D978A120294778000ED1FE /* LoopTests.swift in Sources */,
 				8183F2661C18E319009CAF6B /* ParallelPlanesError.swift in Sources */,

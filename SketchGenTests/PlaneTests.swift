@@ -194,21 +194,21 @@ class PlaneTests: XCTestCase {
         
         var trial = Point3D(x: -1.2, y: 3.1, z: 5.0)
         
-        var streets = flat.resolveRelative(pip: trial)
+        var streets = flat.resolveRelativeVec(pip: trial)
         
         XCTAssert(streets.inPlane.isZero())
         XCTAssert(streets.perp.isZero())
         
         
         trial = Point3D(x: -4.2, y: 7.1, z: 5.0)
-        streets = flat.resolveRelative(pip: trial)
+        streets = flat.resolveRelativeVec(pip: trial)
         
         XCTAssert(streets.inPlane.length() == 5.0)
         XCTAssert(streets.perp.isZero())
 
         
         trial = Point3D(x: -1.2, y: 3.1, z: 8.0)
-        streets = flat.resolveRelative(pip: trial)
+        streets = flat.resolveRelativeVec(pip: trial)
         
         XCTAssert(streets.perp.length() == 3.0)
         XCTAssert(streets.inPlane.isZero())
@@ -474,7 +474,7 @@ class PlaneTests: XCTestCase {
         
         XCTAssert(Plane.isParallel(lhs: groundFloor, rhs: build1))
         
-        let diff = groundFloor.resolveRelative(pip: build1.getLocation())
+        let diff = groundFloor.resolveRelativeVec(pip: build1.getLocation())
         
         XCTAssert(Plane.isParallel(lhs: groundFloor, rhs: build1))
         XCTAssertEqual(diff.perp.length(), 1.2, accuracy: Vector3D.EpsilonV)

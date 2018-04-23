@@ -169,7 +169,7 @@ public class LineSeg: PenCurve {    // Can this be a struct, instead?
     ///   - speck:  Point of interest
     /// - Returns: Tuple of vectors - one along the seg, other perp to it
     /// - See: 'testResolveRelative' under LineSegTests
-    public func resolveRelative(speck: Point3D) -> (along: Vector3D, perp: Vector3D)   {
+    public func resolveRelativeVec(speck: Point3D) -> (along: Vector3D, perp: Vector3D)   {
         
         /// Direction of the segment.  Is a unit vector.
         let thisWay = self.getDirection()
@@ -183,6 +183,20 @@ public class LineSeg: PenCurve {    // Can this be a struct, instead?
         return (alongVector, perpVector)
     }
     
+    /// Find two distances describing the position of a point relative to the LineSeg.
+    /// - Parameters:
+    ///   - speck:  Point of interest
+    /// - Returns: Tuple of distances - one along the seg, other away from it
+    public func resolveRelative(speck: Point3D) -> (along: Double, away: Double)   {
+        
+        let components = resolveRelativeVec(speck: speck)
+        
+        let a = components.along.length()
+        let b = components.perp.length()
+        
+        return (a, b)
+    }
+    
     
     /// See if another segment crosses this one
     /// Used for seeing if a screen gesture cuts across the current seg
@@ -192,8 +206,8 @@ public class LineSeg: PenCurve {    // Can this be a struct, instead?
     /// - See: 'testIsCrossing' under LineSegTests
     public func isCrossing(chop: LineSeg) -> Bool   {
         
-        let compsA = self.resolveRelative(speck: chop.endAlpha)
-        let compsB = self.resolveRelative(speck: chop.endOmega)
+        let compsA = self.resolveRelativeVec(speck: chop.endAlpha)
+        let compsB = self.resolveRelativeVec(speck: chop.endOmega)
         
         // Should be negative if ends are on opposite sides
         let compliance = Vector3D.dotProduct(lhs: compsA.perp, rhs: compsB.perp)

@@ -83,7 +83,7 @@ public struct Plane   {
     ///   - pip:  Point of interest
     /// - Returns: Tuple of Vectors
     /// - See: 'testResolveRelative' under PlaneTests
-    public func resolveRelative(pip: Point3D) -> (inPlane: Vector3D, perp: Vector3D)   {
+    public func resolveRelativeVec(pip: Point3D) -> (inPlane: Vector3D, perp: Vector3D)   {
         
         let bridge = Vector3D.built(from: self.location, towards: pip)
         
